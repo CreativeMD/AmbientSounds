@@ -22,7 +22,7 @@ public class TickHandler {
 	public void onClientTick(ClientTickEvent event)
 	{
 		
-		if(event.phase == Phase.START)
+		if(event.phase == Phase.END)
 		{
 			//long start = System.currentTimeMillis();
 			Minecraft mc = Minecraft.getMinecraft();
@@ -54,7 +54,7 @@ public class TickHandler {
 								else if(sound.overridenVolume > sound.volume)
 									sound.resetVolume();	
 							}
-						}else if(volume == 0)
+						}else if(volume <= 0)
 							if(playing.contains(sound))
 								sound.setVolume(sound.overridenVolume - sound.fadeOutAmount());
 					}

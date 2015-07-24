@@ -55,6 +55,7 @@ public abstract class AmbientSound {
 		this.sound.volume = volume;
 		if(volume <= 0)
 		{
+			System.out.println("Stopping sound " + sound.getPositionedSoundLocation().getResourcePath());
 			sound.donePlaying = true;
 			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
 			resetVolume();
