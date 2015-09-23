@@ -33,6 +33,7 @@ public abstract class AmbientSound {
 	public IEnhancedPositionSound sound;
 	public float volume;
 	public float overridenVolume;
+	public boolean loaded = false;
 	
 	public AmbientSound(String name, float volume)
 	{
@@ -55,7 +56,7 @@ public abstract class AmbientSound {
 		this.sound.volume = volume;
 		if(volume <= 0)
 		{
-			System.out.println("Stopping sound " + sound.getPositionedSoundLocation().getResourcePath());
+			//System.out.println("Stopping sound " + sound.getPositionedSoundLocation().getResourcePath());
 			sound.donePlaying = true;
 			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
 			resetVolume();
@@ -65,7 +66,7 @@ public abstract class AmbientSound {
 	
 	public boolean canPlaySound()
 	{
-		return true;
+		return loaded;
 	}
 	
 	public static final float fadeAmount = 0.001F;

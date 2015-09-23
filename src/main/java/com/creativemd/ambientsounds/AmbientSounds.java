@@ -18,8 +18,11 @@ public class AmbientSounds {
 	@EventHandler
     public void Init(FMLInitializationEvent event)
     {
-		MinecraftForge.EVENT_BUS.register(new TickHandler());
-		FMLCommonHandler.instance().bus().register(new TickHandler());
+		if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+		{
+			MinecraftForge.EVENT_BUS.register(new TickHandler());
+			FMLCommonHandler.instance().bus().register(new TickHandler());
+		}
     }
 	
 }
