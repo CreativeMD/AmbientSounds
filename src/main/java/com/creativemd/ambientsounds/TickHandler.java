@@ -9,6 +9,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundCategory;
@@ -17,6 +18,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -31,6 +33,9 @@ public class TickHandler {
 	//public static ArrayList<AmbientSound> loaded = new ArrayList<AmbientSound>();
 	
 	public static boolean loaded = false;
+	public static final int tickTime = 60;
+	public static int timeToTick = 0;
+	public static float height = 1;
 	
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event)
@@ -54,11 +59,61 @@ public class TickHandler {
 				long time = world.getWorldTime() - ((int) (world.getWorldTime()/24000))*24000;
 				boolean isNight = time > 12600 && time < 23400;
 				BiomeGenBase biome = world.getBiomeGenForCoords((int)player.posX, (int)player.posZ);
+				
+				timeToTick--;
+				if(timeToTick <= 0)
+				{
+					float average = 0;
+					int count = 0;
+					
+					for (int x = -2; x < 3; x++) {
+						for (int z = -2; z < 3; z++) {
+							int posX = (int) (player.posX+x*2);
+							int posZ = (int) (player.posZ+z*2);
+							int height = getHeightBlock(world, posX, posZ);
+							
+							//System.out.println("height x=" + posX + " z=" + posZ + " --> y" + height);
+							//world.setBlock(posX, height+1, posZ, Blocks.diamond_block);
+							if(count == 0)
+								average = height;
+							else
+								average = (average*count+height)/(count+1F);
+							
+							//System.out.println("average=" + average);
+							count++;
+						}
+					}
+					
+					float caveMax = average-20F;
+					float biomeMin = average-10F;
+					float biomeMax = average+15F;
+					float windyMin = average+35F;
+					float windyMax = 4000;
+					
+					float y = (float) player.posY;
+					if(caveMax > y)
+						height = 0;
+					else if(y > caveMax && y < biomeMin)
+						height = (y-caveMax)/(biomeMin-caveMax);
+					else if(y > biomeMin && y < biomeMax)
+						height = 1;
+					else if(y > biomeMax && y < windyMin)
+						height = 1+(y-biomeMax)/(windyMin-biomeMax);
+					else if(y > windyMin && y < windyMax)
+						height = 2;
+					else if(y > windyMax)
+						height = 3;
+					
+					System.out.println("Height: " + height + " playerY: " + y + " average: " + average);
+					
+					timeToTick = tickTime;
+				}
+				
 				for (int i = 0; i < AmbientSound.sounds.size(); i++) {
 					AmbientSound sound = AmbientSound.sounds.get(i);
 					if(sound.canPlaySound())
 					{
-						float volume = sound.getVolume(world, player, biome, isNight);
+						float volume = sound.getVolume(world, player, biome, isNight, height);
 						if(volume > 0)
 						{
 							if(!playing.contains(sound))
@@ -80,23 +135,44 @@ public class TickHandler {
 								}*/
 								
 							}else{
-								if(sound.overridenVolume < sound.volume)
+								if(sound.overridenVolume < sound.volume*volume)
 									sound.setVolume(sound.overridenVolume + sound.fadeInAmount());
-								else if(sound.overridenVolume > sound.volume + sound.fadeInAmount())
+								else if(sound.overridenVolume > sound.volume*volume + sound.fadeInAmount())
 									sound.setVolume(sound.overridenVolume - sound.fadeInAmount());
-								else if(sound.overridenVolume > sound.volume)
-									sound.resetVolume();	
+								else if(sound.overridenVolume > sound.volume*volume)
+								{
+									float temp = sound.volume;
+									sound.volume = volume;
+									sound.resetVolume();
+									sound.volume = temp;
+								}
 							}
 						}else if(volume <= 0)
 							if(playing.contains(sound))
 								sound.setVolume(sound.overridenVolume - sound.fadeOutAmount());
 					}
 				}
+			}else{
+				playing.clear();
 			}
 			//System.out.println((System.currentTimeMillis()-start) + " ms for ticking!");
 		}
 		
 	}
+	
+	public int getHeightBlock(World world, int x, int z)
+    {
+        int y;
+        int heighest = 40;
+
+        for (y = 45; y < 256; ++y)
+        {
+            if(!world.isAirBlock(x, y, z))
+            	heighest = y;
+        }
+
+        return heighest;
+    }
 	
 	/*public void playSound(double p_72980_1_, double p_72980_3_, double p_72980_5_, String p_72980_7_, float p_72980_8_, float p_72980_9_, boolean p_72980_10_)
     {

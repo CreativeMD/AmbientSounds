@@ -12,7 +12,7 @@ public class UnterwaterSound extends AmbientSound{
 	}
 
 	@Override
-	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight) {
+	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
 		if(player.isInsideOfMaterial(Material.water))
 			return 1;
 		return 0;

@@ -9,12 +9,29 @@ public class BiomesSound extends AmbientSound{
 	public String[] biomes;
 	public boolean isNight;
 	public boolean needTime = true;
+	public float minTemperature = -100;
 	
-	public BiomesSound(String[] biomes, String customTexture, float volume, boolean isNight)
+	public BiomesSound(String biome, float volume, boolean isNight)
 	{
-		super(customTexture, volume);
+		this(biome, biome, volume, isNight);
+	}
+	
+	public BiomesSound(String biome, String soundName, float volume, boolean isNight)
+	{
+		this(new String[]{biome}, soundName, volume, isNight);
+	}	
+	
+	public BiomesSound(String[] biomes, String soundName, float volume, boolean isNight)
+	{
+		super(soundName, volume);
 		this.biomes = biomes;
 		this.isNight = isNight;
+	}
+	
+	public BiomesSound setMinTemperature(float temperature)
+	{
+		this.minTemperature = temperature;
+		return this;
 	}
 	
 	public BiomesSound setIgnoreTime()
@@ -24,11 +41,11 @@ public class BiomesSound extends AmbientSound{
 	}
 	
 	@Override
-	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight) {
-		if(isNight == this.isNight || !needTime)
+	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
+		if((isNight == this.isNight || !needTime) && biome.temperature >= minTemperature)
 			for (int i = 0; i < biomes.length; i++)
 				if(biome.biomeName.toLowerCase().contains(biomes[i].toLowerCase()))
-						return 1;
+						return getVolumeFromHeight(1, height);
 		return 0;
 	}
 	

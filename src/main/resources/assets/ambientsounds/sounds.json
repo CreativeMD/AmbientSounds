@@ -9,6 +9,16 @@
 			],
 			"category":"ambient"
 	},
+	"savanna-night":{
+        "sounds":
+            [
+                {
+                    "name":"biome/savanna/savanna-night",
+                    "stream":false
+                }
+            ],
+            "category":"ambient"
+    },
 	"forest":{
 		"sounds":
 			[
@@ -108,5 +118,35 @@
 				}
 			],
 			"category":"ambient"
-	}
+	},
+	"cave":{
+        "sounds":
+            [
+                {
+                    "name":"area/cave/cave",
+                    "stream":false
+                }
+            ],
+            "category":"ambient"
+    },
+    "beach":{
+        "sounds":
+            [
+                {
+                    "name":"biome/beach/beach",
+                    "stream":false
+                }
+            ],
+            "category":"ambient"
+    },
+    "snow":{
+        "sounds":
+            [
+                {
+                    "name":"biome/snow/snow",
+                    "stream":false
+                }
+            ],
+            "category":"ambient"
+    }       
 }
