@@ -84,14 +84,16 @@ public class TickHandler {
 						}
 					}
 					
-					float caveMax = average-20F;
-					float biomeMin = average-10F;
+					float caveMax = average-15F;
+					float biomeMin = average-5F;
 					float biomeMax = average+15F;
 					float windyMin = average+35F;
 					float windyMax = 4000;
 					
+					float lightLevel =  world.getLightBrightness((int)player.posX, (int)player.posY, (int)player.posZ);
+					
 					float y = (float) player.posY;
-					if(caveMax > y)
+					if(caveMax > y || (y > caveMax && y < biomeMin+5 && lightLevel < 0.1))
 						height = 0;
 					else if(y > caveMax && y < biomeMin)
 						height = (y-caveMax)/(biomeMin-caveMax);
@@ -104,7 +106,7 @@ public class TickHandler {
 					else if(y > windyMax)
 						height = 3;
 					
-					System.out.println("Height: " + height + " playerY: " + y + " average: " + average);
+					//System.out.println("Height: " + height + " playerY: " + y + " average: " + average + " light=" + lightLevel);
 					
 					timeToTick = tickTime;
 				}
@@ -142,7 +144,7 @@ public class TickHandler {
 								else if(sound.overridenVolume > sound.volume*volume)
 								{
 									float temp = sound.volume;
-									sound.volume = volume;
+									sound.volume = sound.volume*volume;
 									sound.resetVolume();
 									sound.volume = temp;
 								}

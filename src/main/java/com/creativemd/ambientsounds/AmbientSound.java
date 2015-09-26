@@ -29,7 +29,7 @@ public abstract class AmbientSound {
 	
 	public static AmbientSound ocean = new BiomesSound(new String[]{"river", "ocean"}, "ocean", 0.5F, false).setIgnoreTime();
 	
-	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold"}, "snow", 0.65F, false).setIgnoreTime();
+	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold", "desert"}, "snow", 0.7F, false).setIgnoreTime();
 	//public static AmbientSound river = new BiomeSound("river", "ocean", 0.5F, false).setIgnoreTime();
 	
 	public static AmbientSound unterwater = new UnterwaterSound("underwater", 0.5F);

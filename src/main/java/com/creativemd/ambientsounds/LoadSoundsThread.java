@@ -49,6 +49,7 @@ public class LoadSoundsThread extends Thread{
 			System.out.println("Failed to load libary ...");*/
 		System.out.println("Loading AmbientSounds ...");
 		for (int i = 0; i < AmbientSound.sounds.size(); i++) {
+			System.out.println("Loading AmbientSound " + AmbientSound.sounds.get(i).name + " " + (i+1) + "/" + AmbientSound.sounds.size());
 			SoundEventAccessorComposite soundeventaccessorcomposite = manager.sndHandler.getSound(AmbientSound.sounds.get(i).sound.getPositionedSoundLocation());
 			ResourceLocation resourcelocation = null;
 			if(soundeventaccessorcomposite != null)
