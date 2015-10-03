@@ -5,6 +5,8 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,6 +20,7 @@ public class AmbientSounds {
 	
 	
 	@EventHandler
+	@SideOnly(Side.CLIENT)
     public void preInit(FMLPreInitializationEvent event)
     {
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
@@ -43,6 +46,7 @@ public class AmbientSounds {
 	}
 	
 	@EventHandler
+	@SideOnly(Side.CLIENT)
     public void Init(FMLInitializationEvent event)
     {
 		if(FMLCommonHandler.instance().getEffectiveSide().isClient())
