@@ -18,7 +18,7 @@ public class TemperatureSound extends AmbientSound{
 	
 	@Override
 	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
-		if(biome.temperature >= min && biome.temperature <= max)
+		if(biome.getTemperature() >= min && biome.getTemperature() <= max)
 			return getVolumeFromHeight(1, height);
 		return 0;
 	}

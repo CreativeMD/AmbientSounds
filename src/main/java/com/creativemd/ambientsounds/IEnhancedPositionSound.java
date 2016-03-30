@@ -1,14 +1,20 @@
 package com.creativemd.ambientsounds;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.ITickableSound;
+import net.minecraft.client.audio.Sound;
+import net.minecraft.client.audio.SoundEventAccessor;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class IEnhancedPositionSound implements ITickableSound
 {
+	protected Sound field_184367_a;
+	private SoundEventAccessor field_184369_l;
     public final ResourceLocation sound;
     public float volume = 1.0F;
     public float pitch = 1.0F;
@@ -29,7 +35,7 @@ public class IEnhancedPositionSound implements ITickableSound
     }
     
     @Override
-    public ResourceLocation getPositionedSoundLocation()
+    public ResourceLocation getSoundLocation()
     {
         return this.sound;
     }
@@ -90,5 +96,31 @@ public class IEnhancedPositionSound implements ITickableSound
 	@Override
 	public boolean isDonePlaying() {
 		return donePlaying;
+	}
+
+	@Override
+	public SoundEventAccessor func_184366_a(SoundHandler p_184366_1_) {
+		this.field_184369_l = p_184366_1_.func_184398_a(getSoundLocation());
+
+        if (this.field_184369_l == null)
+        {
+           this.field_184367_a = SoundHandler.missing_sound;
+        }
+        else
+        {
+            this.field_184367_a = this.field_184369_l.cloneEntry();
+        }
+
+        return this.field_184369_l;
+	}
+
+	@Override
+	public Sound getSound() {
+		return this.field_184367_a;
+	}
+
+	@Override
+	public SoundCategory getCategory() {
+		return SoundCategory.AMBIENT;
 	}
 }

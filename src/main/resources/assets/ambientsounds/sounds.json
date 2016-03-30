@@ -3,8 +3,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/savanna/savanna",
-					"stream":false
+					"name":"ambientsounds:biome/savanna/savanna",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -13,8 +13,8 @@
         "sounds":
             [
                 {
-                    "name":"biome/savanna/savanna-night",
-                    "stream":false
+                    "name":"ambientsounds:biome/savanna/savanna-night",
+                    "stream":true
                 }
             ],
             "category":"ambient"
@@ -23,8 +23,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/forest/forest",
-					"stream":false
+					"name":"ambientsounds:biome/forest/forest",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -33,8 +33,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/forest/forest-night",
-					"stream":false
+					"name":"ambientsounds:biome/forest/forest-night",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -43,8 +43,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/jungle/jungle",
-					"stream":false
+					"name":"ambientsounds:biome/jungle/jungle",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -53,8 +53,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/jungle/jungle-night",
-					"stream":false
+					"name":"ambientsounds:biome/jungle/jungle-night",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -63,8 +63,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/plains/plains",
-					"stream":false
+					"name":"ambientsounds:biome/plains/plains",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -73,8 +73,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/plains/plains-night",
-					"stream":false
+					"name":"ambientsounds:biome/plains/plains-night",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -83,8 +83,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/swampland/swampland",
-					"stream":false
+					"name":"ambientsounds:biome/swampland/swampland",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -93,8 +93,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/swampland/swampland-night",
-					"stream":false
+					"name":"ambientsounds:biome/swampland/swampland-night",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -103,8 +103,8 @@
 		"sounds":
 			[
 				{
-					"name":"biome/ocean/ocean",
-					"stream":false
+					"name":"ambientsounds:biome/ocean/ocean",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -113,8 +113,8 @@
 		"sounds":
 			[
 				{
-					"name":"area/underwater/underwater",
-					"stream":false
+					"name":"ambientsounds:area/underwater/underwater",
+					"stream":true
 				}
 			],
 			"category":"ambient"
@@ -123,8 +123,8 @@
         "sounds":
             [
                 {
-                    "name":"area/cave/cave",
-                    "stream":false
+                    "name":"ambientsounds:area/cave/cave",
+                    "stream":true
                 }
             ],
             "category":"ambient"
@@ -133,8 +133,8 @@
         "sounds":
             [
                 {
-                    "name":"biome/beach/beach",
-                    "stream":false
+                    "name":"ambientsounds:biome/beach/beach",
+                    "stream":true
                 }
             ],
             "category":"ambient"
@@ -143,8 +143,8 @@
         "sounds":
             [
                 {
-                    "name":"biome/snow/snow",
-                    "stream":false
+                    "name":"ambientsounds:biome/snow/snow",
+                    "stream":true
                 }
             ],
             "category":"ambient"

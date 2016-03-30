@@ -42,9 +42,9 @@ public class BiomesSound extends AmbientSound{
 	
 	@Override
 	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
-		if((isNight == this.isNight || !needTime) && biome.temperature >= minTemperature)
+		if((isNight == this.isNight || !needTime) && biome.getTemperature() >= minTemperature)
 			for (int i = 0; i < biomes.length; i++)
-				if(biome.biomeName.toLowerCase().contains(biomes[i].toLowerCase()))
+				if(biome.getBiomeName().toLowerCase().contains(biomes[i].toLowerCase()))
 						return getVolumeFromHeight(1, height);
 		return 0;
 	}

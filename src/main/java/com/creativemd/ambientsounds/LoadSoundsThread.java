@@ -1,19 +1,18 @@
 package com.creativemd.ambientsounds;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundEventAccessorComposite;
+import net.minecraft.client.audio.Sound;
+import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraft.client.audio.SoundPoolEntry;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.FilenameURL;
 import paulscode.sound.Library;
 import paulscode.sound.SoundSystem;
@@ -50,14 +49,14 @@ public class LoadSoundsThread extends Thread{
 		System.out.println("Loading AmbientSounds ...");
 		for (int i = 0; i < AmbientSound.sounds.size(); i++) {
 			System.out.println("Loading AmbientSound " + AmbientSound.sounds.get(i).name + " " + (i+1) + "/" + AmbientSound.sounds.size());
-			SoundEventAccessorComposite soundeventaccessorcomposite = manager.sndHandler.getSound(AmbientSound.sounds.get(i).sound.getPositionedSoundLocation());
+			SoundEventAccessor soundeventaccessorcomposite = manager.sndHandler.func_184398_a(AmbientSound.sounds.get(i).sound.getSoundLocation());
 			ResourceLocation resourcelocation = null;
 			if(soundeventaccessorcomposite != null)
 			{
-				SoundPoolEntry soundpoolentry = soundeventaccessorcomposite.func_148720_g();
-				resourcelocation = soundpoolentry.getSoundPoolEntryLocation();
+				Sound soundpoolentry = soundeventaccessorcomposite.cloneEntry();
+				resourcelocation = soundpoolentry.getSoundLocation();
 			}else{
-				resourcelocation = AmbientSound.sounds.get(i).sound.getPositionedSoundLocation();
+				resourcelocation = AmbientSound.sounds.get(i).sound.getSoundLocation();
 			}
 				
 			try {
@@ -75,7 +74,7 @@ public class LoadSoundsThread extends Thread{
 		}
 		if(mc.thePlayer != null)
 		{
-			mc.thePlayer.addChatMessage(new ChatComponentText("Done loading AmbientSounds! FPS will increase!"));
+			mc.thePlayer.addChatMessage(new TextComponentString("Done loading AmbientSounds! FPS will increase!"));
 		}
 		System.out.println("Loaded AmbientSounds ...");
 	}
