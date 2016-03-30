@@ -1,10 +1,10 @@
 package com.creativemd.ambientsounds;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class IEnhancedPositionSound implements ITickableSound
@@ -29,7 +29,7 @@ public class IEnhancedPositionSound implements ITickableSound
     }
     
     @Override
-    public ResourceLocation getPositionedSoundLocation()
+    public ResourceLocation getSoundLocation()
     {
         return this.sound;
     }

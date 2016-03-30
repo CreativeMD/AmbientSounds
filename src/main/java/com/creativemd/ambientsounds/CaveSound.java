@@ -12,7 +12,7 @@ public class CaveSound extends AmbientSound{
 
 	@Override
 	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
-		return (world.provider.dimensionId != -1 && world.provider.dimensionId != 1) ? getVolumeFromHeight(0, height) : 0;
+		return (world.provider.getDimensionId() != -1 && world.provider.getDimensionId() != 1) ? getVolumeFromHeight(0, height) : 0;
 	}
 
 }

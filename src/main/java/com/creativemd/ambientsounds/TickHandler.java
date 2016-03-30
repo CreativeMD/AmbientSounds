@@ -5,10 +5,6 @@ import java.net.URL;
 import java.sql.Ref;
 import java.util.ArrayList;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -19,11 +15,15 @@ import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import paulscode.sound.SoundSystem;
 
 public class TickHandler {
@@ -58,7 +58,7 @@ public class TickHandler {
 			{
 				long time = world.getWorldTime() - ((int) (world.getWorldTime()/24000))*24000;
 				boolean isNight = time > 12600 && time < 23400;
-				BiomeGenBase biome = world.getBiomeGenForCoords((int)player.posX, (int)player.posZ);
+				BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos((int)player.posX, 0, (int)player.posZ));
 				
 				timeToTick--;
 				if(timeToTick <= 0)
@@ -90,7 +90,7 @@ public class TickHandler {
 					float windyMin = average+35F;
 					float windyMax = 4000;
 					
-					float lightLevel =  world.getLightBrightness((int)player.posX, (int)player.posY, (int)player.posZ);
+					float lightLevel =  world.getLightBrightness(new BlockPos((int)player.posX, (int)player.posY, (int)player.posZ));
 					
 					float y = (float) player.posY;
 					if(caveMax > y || (y > caveMax && y < biomeMin+5 && lightLevel < 0.1))
@@ -169,7 +169,7 @@ public class TickHandler {
 
         for (y = 45; y < 256; ++y)
         {
-            if(!world.isAirBlock(x, y, z))
+            if(!world.isAirBlock(new BlockPos(x, y, z)))
             	heighest = y;
         }
 
