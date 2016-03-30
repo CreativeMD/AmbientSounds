@@ -18,7 +18,6 @@ public class TickHandler {
 	//public static ArrayList<AmbientSound> loading = new ArrayList<AmbientSound>();
 	//public static ArrayList<AmbientSound> loaded = new ArrayList<AmbientSound>();
 	
-	public static boolean loaded = false;
 	public static final int tickTime = 60;
 	public static int timeToTick = 0;
 	public static float height = 1;
@@ -33,12 +32,6 @@ public class TickHandler {
 			Minecraft mc = Minecraft.getMinecraft();
 			EntityPlayer player = mc.thePlayer;
 			World world = mc.theWorld;
-			
-			if(!loaded)
-			{
-				//new LoadSoundsThread().start();
-				loaded = true;
-			}
 			
 			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
 			{
@@ -99,7 +92,6 @@ public class TickHandler {
 				
 				for (int i = 0; i < AmbientSound.sounds.size(); i++) {
 					AmbientSound sound = AmbientSound.sounds.get(i);
-					sound.loaded = true;
 					if(sound.canPlaySound())
 					{
 						float volume = sound.getVolume(world, player, biome, isNight, height);

@@ -39,7 +39,6 @@ public abstract class AmbientSound {
 	public IEnhancedPositionSound sound;
 	public float volume;
 	public float overridenVolume;
-	public boolean loaded = false;
 	public String name;
 	
 	public AmbientSound(String name, float volume)
@@ -74,7 +73,7 @@ public abstract class AmbientSound {
 	
 	public boolean canPlaySound()
 	{
-		return loaded;
+		return true;
 	}
 	
 	public static final float fadeAmount = 0.001F;
