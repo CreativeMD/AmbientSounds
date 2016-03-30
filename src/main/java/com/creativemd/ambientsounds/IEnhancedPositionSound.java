@@ -2,6 +2,9 @@ package com.creativemd.ambientsounds;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.ITickableSound;
+import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.audio.SoundEventAccessor;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

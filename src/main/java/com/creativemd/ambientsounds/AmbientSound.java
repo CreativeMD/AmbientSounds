@@ -29,7 +29,7 @@ public abstract class AmbientSound {
 	
 	public static AmbientSound ocean = new BiomesSound(new String[]{"river", "ocean"}, "ocean", 0.5F, false).setIgnoreTime();
 	
-	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold", "desert"}, "snow", 0.7F, false).setIgnoreTime();
+	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold", "desert", "extreme", "hills"}, "snow", 0.7F, false).setIgnoreTime();
 	//public static AmbientSound river = new BiomeSound("river", "ocean", 0.5F, false).setIgnoreTime();
 	
 	public static AmbientSound unterwater = new UnterwaterSound("underwater", 0.5F);
@@ -39,7 +39,6 @@ public abstract class AmbientSound {
 	public IEnhancedPositionSound sound;
 	public float volume;
 	public float overridenVolume;
-	public boolean loaded = false;
 	public String name;
 	
 	public AmbientSound(String name, float volume)
@@ -74,7 +73,7 @@ public abstract class AmbientSound {
 	
 	public boolean canPlaySound()
 	{
-		return loaded;
+		return true;
 	}
 	
 	public static final float fadeAmount = 0.001F;

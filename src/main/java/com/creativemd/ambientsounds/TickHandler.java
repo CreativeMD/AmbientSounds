@@ -1,30 +1,16 @@
 package com.creativemd.ambientsounds;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.sql.Ref;
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundCategory;
-import net.minecraft.client.audio.SoundEventAccessorComposite;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.audio.SoundManager;
-import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
-import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import paulscode.sound.SoundSystem;
 
 public class TickHandler {
 	
@@ -32,7 +18,6 @@ public class TickHandler {
 	//public static ArrayList<AmbientSound> loading = new ArrayList<AmbientSound>();
 	//public static ArrayList<AmbientSound> loaded = new ArrayList<AmbientSound>();
 	
-	public static boolean loaded = false;
 	public static final int tickTime = 60;
 	public static int timeToTick = 0;
 	public static float height = 1;
@@ -47,12 +32,6 @@ public class TickHandler {
 			Minecraft mc = Minecraft.getMinecraft();
 			EntityPlayer player = mc.thePlayer;
 			World world = mc.theWorld;
-			
-			if(!loaded)
-			{
-				new LoadSoundsThread().start();
-				loaded = true;
-			}
 			
 			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
 			{
@@ -128,7 +107,7 @@ public class TickHandler {
 											mc.getSoundHandler().playSound(sound.sound);
 										playing.add(sound);
 									}catch (Exception e){
-										
+										e.printStackTrace();
 									}
 								/*}else if(!loading.contains(sound)){
 									loading.add(sound);
