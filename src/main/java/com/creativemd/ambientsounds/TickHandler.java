@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -37,7 +37,7 @@ public class TickHandler {
 			{
 				long time = world.getWorldTime() - ((int) (world.getWorldTime()/24000))*24000;
 				boolean isNight = time > 12600 && time < 23400;
-				BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos((int)player.posX, 0, (int)player.posZ));
+				Biome biome = world.getBiomeGenForCoords(new BlockPos((int)player.posX, 0, (int)player.posZ));
 				
 				timeToTick--;
 				if(timeToTick <= 0)

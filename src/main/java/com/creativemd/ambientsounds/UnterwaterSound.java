@@ -3,7 +3,7 @@ package com.creativemd.ambientsounds;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 
 public class UnterwaterSound extends AmbientSound{
 
@@ -12,8 +12,8 @@ public class UnterwaterSound extends AmbientSound{
 	}
 
 	@Override
-	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
-		if(player.isInsideOfMaterial(Material.water))
+	public float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height) {
+		if(player.isInsideOfMaterial(Material.WATER))
 			return 1;
 		return 0;
 	}

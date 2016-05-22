@@ -13,9 +13,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class IEnhancedPositionSound implements ITickableSound
 {
-	protected Sound field_184367_a;
-	private SoundEventAccessor field_184369_l;
-    public final ResourceLocation sound;
+	protected Sound sound;
+	private SoundEventAccessor soundEvent;
+    public final ResourceLocation resource;
     public float volume = 1.0F;
     public float pitch = 1.0F;
     public float xPos = 0;
@@ -26,10 +26,10 @@ public class IEnhancedPositionSound implements ITickableSound
     public ISound.AttenuationType type;
     public boolean donePlaying = false;
 
-    public IEnhancedPositionSound(ResourceLocation sound, float volume, float pitch)
+    public IEnhancedPositionSound(ResourceLocation resource, float volume, float pitch)
     {
         this.type = ISound.AttenuationType.NONE;
-        this.sound = sound;
+        this.resource = resource;
         this.volume = volume;
         this.pitch = pitch;
     }
@@ -37,7 +37,7 @@ public class IEnhancedPositionSound implements ITickableSound
     @Override
     public ResourceLocation getSoundLocation()
     {
-        return this.sound;
+        return this.resource;
     }
     
     @Override
@@ -99,24 +99,24 @@ public class IEnhancedPositionSound implements ITickableSound
 	}
 
 	@Override
-	public SoundEventAccessor func_184366_a(SoundHandler p_184366_1_) {
-		this.field_184369_l = p_184366_1_.func_184398_a(getSoundLocation());
+	public SoundEventAccessor createAccessor(SoundHandler handler) {
+		this.soundEvent = handler.getAccessor(this.resource);
 
-        if (this.field_184369_l == null)
+        if (this.soundEvent == null)
         {
-           this.field_184367_a = SoundHandler.missing_sound;
+            this.sound = SoundHandler.MISSING_SOUND;
         }
         else
         {
-            this.field_184367_a = this.field_184369_l.cloneEntry();
+            this.sound = this.soundEvent.cloneEntry();
         }
-
-        return this.field_184369_l;
+        
+        return this.soundEvent;
 	}
 
 	@Override
 	public Sound getSound() {
-		return this.field_184367_a;
+		return this.sound;
 	}
 
 	@Override

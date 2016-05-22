@@ -2,7 +2,7 @@ package com.creativemd.ambientsounds;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 
 public class TemperatureSound extends AmbientSound{
 	
@@ -17,7 +17,7 @@ public class TemperatureSound extends AmbientSound{
 	}
 	
 	@Override
-	public float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height) {
+	public float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height) {
 		if(biome.getTemperature() >= min && biome.getTemperature() <= max)
 			return getVolumeFromHeight(1, height);
 		return 0;

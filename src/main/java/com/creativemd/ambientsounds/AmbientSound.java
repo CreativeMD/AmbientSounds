@@ -3,12 +3,10 @@ package com.creativemd.ambientsounds;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 
 public abstract class AmbientSound {
 	
@@ -98,6 +96,6 @@ public abstract class AmbientSound {
 	}
 	
 	/**height: 0 = Underground/Cave, 1 = Biome/ Surface, 2 = Mountain/Windy Air, 3 = Space**/
-	public abstract float getVolume(World world, EntityPlayer player, BiomeGenBase biome, boolean isNight, float height);
+	public abstract float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height);
 	
 }
