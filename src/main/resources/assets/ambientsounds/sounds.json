@@ -99,6 +99,26 @@
 			],
 			"category":"ambient"
 	},
+	"taiga":{
+		"sounds":
+			[
+				{
+					"name":"ambientsounds:biome/taiga/taiga",
+					"stream":true
+				}
+			],
+			"category":"ambient"
+	},
+	"taiga-night":{
+		"sounds":
+			[
+				{
+					"name":"ambientsounds:biome/taiga/taiga-night",
+					"stream":true
+				}
+			],
+			"category":"ambient"
+	},
 	"ocean":{
 		"sounds":
 			[
@@ -148,5 +168,55 @@
                 }
             ],
             "category":"ambient"
-    }       
+    },
+	"nether":{
+        "sounds":
+            [
+                {
+                    "name":"ambientsounds:biome/nether/nether",
+                    "stream":true
+                }
+            ],
+            "category":"ambient"
+    },
+	"end":{
+        "sounds":
+            [
+                {
+                    "name":"ambientsounds:biome/end/end",
+                    "stream":true
+                }
+            ],
+            "category":"ambient"
+    },
+	"mesa":{
+        "sounds":
+            [
+                {
+                    "name":"ambientsounds:biome/mesa/mesa",
+                    "stream":true
+                }
+            ],
+            "category":"ambient"
+    },
+	"extremehills":{
+        "sounds":
+            [
+                {
+                    "name":"ambientsounds:biome/extremehills/extremehills",
+                    "stream":true
+                }
+            ],
+            "category":"ambient"
+    },
+	"storm":{
+        "sounds":
+            [
+                {
+                    "name":"ambientsounds:weather/storm/storm",
+                    "stream":true
+                }
+            ],
+            "category":"ambient"
+    } 
 }
