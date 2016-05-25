@@ -10,6 +10,16 @@ public class UnterwaterSound extends AmbientSound{
 	public UnterwaterSound(String name, float volume) {
 		super(name, volume);
 	}
+	
+	public float getMutingFactorPriority()
+	{
+		return 0.9F;
+	}
+	
+	public float getMutingFactor()
+	{
+		return 0.9F;
+	}
 
 	@Override
 	public float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height) {
