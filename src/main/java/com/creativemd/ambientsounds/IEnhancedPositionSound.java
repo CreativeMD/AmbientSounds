@@ -95,6 +95,8 @@ public class IEnhancedPositionSound implements ITickableSound
 
 	@Override
 	public boolean isDonePlaying() {
+		//if(donePlaying)
+			//System.out.println("This sound is fucking done name=" + this.resource.toString());
 		return donePlaying;
 	}
 

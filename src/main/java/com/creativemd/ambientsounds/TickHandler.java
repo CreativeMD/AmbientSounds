@@ -3,11 +3,14 @@ package com.creativemd.ambientsounds;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Tick;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -22,10 +25,25 @@ public class TickHandler {
 	public static int timeToTick = 0;
 	public static float height = 1;
 	
+	public static synchronized void handleSound(ISound sound)
+	{
+		if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
+			Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+	}
+	
+	@SubscribeEvent
+	public void onWorldUnload(WorldEvent.Unload event)
+	{
+		ArrayList<AmbientSound> playing = new ArrayList<>(TickHandler.playing);
+		for (int i = 0; i < playing.size(); i++) {
+			playing.get(i).setVolume(0);
+		}
+		timeToTick = 0;
+	}
+	
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event)
 	{
-		
 		if(event.phase == Phase.END)
 		{
 			//long start = System.currentTimeMillis();
@@ -35,8 +53,11 @@ public class TickHandler {
 			
 			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
 			{
-				long time = world.getWorldTime() - ((int) (world.getWorldTime()/24000))*24000;
-				boolean isNight = time > 12600 && time < 23400;
+				float angle = (float) (world.getCelestialAngle(mc.getRenderPartialTicks())); //0.25-0.75
+				//System.out.println(angle);
+				//long time = world.getWorldTime() - ((int) (world.getWorldTime()/24000))*24000;
+				//boolean isNight = time > 12600 && time < 23400;
+				boolean isNight = !(angle > 0.75F || angle < 0.25F);
 				Biome biome = world.getBiomeGenForCoords(new BlockPos((int)player.posX, 0, (int)player.posZ));
 				
 				timeToTick--;
@@ -90,21 +111,28 @@ public class TickHandler {
 					timeToTick = tickTime;
 				}
 				
+				float mutingFactor = 0.0F;
+				float mutingPriority = 0.0F;
+				
 				for (int i = 0; i < AmbientSound.sounds.size(); i++) {
 					AmbientSound sound = AmbientSound.sounds.get(i);
+					sound.muteFactor = 1F;
 					if(sound.canPlaySound())
 					{
 						float volume = sound.getVolume(world, player, biome, isNight, height);
 						if(volume > 0)
 						{
+							mutingFactor += sound.getMutingFactor()*(sound.overridenVolume/sound.volume);
+							mutingPriority = Math.max(mutingPriority, sound.getMutingFactorPriority());
 							if(!playing.contains(sound))
 							{
 								sound.setVolume(0.00001F);
 								//if(loaded.contains(sound))
 								//{
 									try{
-										if(!mc.getSoundHandler().isSoundPlaying(sound.sound))
-											mc.getSoundHandler().playSound(sound.sound);
+										//if(!mc.getSoundHandler().isSoundPlaying(sound.sound))
+											//mc.getSoundHandler().playSound(sound.sound);
+										handleSound(sound.sound);
 										playing.add(sound);
 									}catch (Exception e){
 										e.printStackTrace();
@@ -133,8 +161,19 @@ public class TickHandler {
 								sound.setVolume(sound.overridenVolume - sound.fadeOutAmount());
 					}
 				}
+				mutingFactor = Math.min(1F, mutingFactor);
+				for (int i = 0; i < playing.size(); i++) {
+					if(playing.get(i).getMutingFactorPriority() < mutingPriority)
+					{
+						playing.get(i).muteFactor = 1-mutingFactor;
+						playing.get(i).updateVolume();
+					}
+				}
+				//System.out.println("muting: " + mutingFactor + ", priority: " + mutingPriority);
 			}else{
-				playing.clear();
+				for (int i = 0; i < playing.size(); i++) {
+					playing.get(i).setVolume(0);
+				}
 			}
 			//System.out.println((System.currentTimeMillis()-start) + " ms for ticking!");
 		}
@@ -148,7 +187,7 @@ public class TickHandler {
 
         for (y = 45; y < 256; ++y)
         {
-            if(!world.isAirBlock(new BlockPos(x, y, z)))
+            if(world.isBlockNormalCube(new BlockPos(x, y, z), false))
             	heighest = y;
         }
 

@@ -2,9 +2,12 @@ package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
 
+import com.creativemd.ambientsounds.WeatherSound.WeatherType;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
@@ -14,8 +17,10 @@ public abstract class AmbientSound {
 	
 	public static AmbientSound savanna = new BiomesSound("savanna", 0.5F, false).setMinTemperature(0.5F);
 	public static AmbientSound savannaNight = new BiomesSound("savanna", "savanna-night", 0.5F, true).setMinTemperature(0.5F);
-	public static AmbientSound forest = new BiomesSound(new String[]{"forest", "taiga"}, "forest", 0.5F, false).setMinTemperature(0.1F);
-	public static AmbientSound forestNight = new BiomesSound(new String[]{"forest", "taiga"}, "forest-night", 0.5F, true).setMinTemperature(0.1F);
+	public static AmbientSound forest = new BiomesSound(new String[]{"forest"}, "forest", 0.5F, false).setMinTemperature(0.1F);
+	public static AmbientSound forestNight = new BiomesSound(new String[]{"forest"}, "forest-night", 0.5F, true).setMinTemperature(0.1F);
+	public static AmbientSound taiga = new BiomesSound(new String[]{"taiga"}, "taiga", 0.5F, false).setMinTemperature(0.1F);
+	public static AmbientSound taigaNight = new BiomesSound(new String[]{"taiga"}, "taiga-night", 0.5F, true).setMinTemperature(0.1F);
 	public static AmbientSound plains = new BiomesSound("plains", 0.5F, false).setMinTemperature(0.1F);
 	public static AmbientSound plainsNight = new BiomesSound("plains", "plains-night", 0.5F, true).setMinTemperature(0.1F);
 	public static AmbientSound jungle = new BiomesSound("jungle", 0.5F, false).setMinTemperature(0.5F);
@@ -28,15 +33,23 @@ public abstract class AmbientSound {
 	public static AmbientSound ocean = new BiomesSound(new String[]{"river", "ocean"}, "ocean", 0.5F, false).setIgnoreTime();
 	
 	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold", "desert"}, "snow", 0.7F, false).setIgnoreTime();
-	//public static AmbientSound river = new BiomeSound("river", "ocean", 0.5F, false).setIgnoreTime();
+	
+	public static AmbientSound nether = new BiomesSound(new String[]{"hell"}, "nether", 0.3F, false).setIgnoreTime().setIgnoreLocation();
+	public static AmbientSound end = new BiomesSound(new String[]{"the end"}, "end", 0.4F, false).setIgnoreTime().setIgnoreLocation();
+	
+	public static AmbientSound mesa = new BiomesSound(new String[]{"mesa"}, "mesa", 0.5F, false).setIgnoreTime();
+	public static AmbientSound extremeHills = new BiomesSound(new String[]{"extreme hills"}, "extremehills", 0.4F, false).setIgnoreTime();
 	
 	public static AmbientSound unterwater = new UnterwaterSound("underwater", 0.5F);
 	public static AmbientSound cave = new CaveSound("cave", 0.2F);
+	
+	public static AmbientSound storm = new WeatherSound("storm", 0.5F, WeatherType.STORMY);
 	
 	
 	public IEnhancedPositionSound sound;
 	public float volume;
 	public float overridenVolume;
+	public float muteFactor = 1F;
 	public String name;
 	
 	public AmbientSound(String name, float volume)
@@ -52,21 +65,38 @@ public abstract class AmbientSound {
 	{
 		this.sound.volume = volume;
 		this.overridenVolume = volume;
+		//this.muteFactor = 1;
+	}
+	
+	public void updateVolume()
+	{
+		this.sound.volume = this.overridenVolume * muteFactor;
 	}
 	
 	public void setVolume(float volume)
 	{
 		this.sound.donePlaying = false;
 		this.overridenVolume = volume;
-		this.sound.volume = volume;
+		this.sound.volume = volume * muteFactor;
 		if(volume <= 0)
 		{
-			//System.out.println("Stopping sound " + sound.getPositionedSoundLocation().getResourcePath());
+			//System.out.println("Stopping sound " + name);
 			sound.donePlaying = true;
+			//Minecraft.getMinecraft().getSoundHandler().stop(sound.resource.toString(), null);
 			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
 			resetVolume();
 			TickHandler.playing.remove(this);
 		}
+	}
+	
+	public float getMutingFactorPriority()
+	{
+		return 0.0F;
+	}
+	
+	public float getMutingFactor()
+	{
+		return 0.0F;
 	}
 	
 	public boolean canPlaySound()

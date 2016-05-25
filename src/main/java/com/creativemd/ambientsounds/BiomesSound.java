@@ -10,6 +10,7 @@ public class BiomesSound extends AmbientSound{
 	public String[] biomes;
 	public boolean isNight;
 	public boolean needTime = true;
+	public boolean ignoreLocation = false;
 	public float minTemperature = -100;
 	
 	public BiomesSound(String biome, float volume, boolean isNight)
@@ -35,6 +36,12 @@ public class BiomesSound extends AmbientSound{
 		return this;
 	}
 	
+	public BiomesSound setIgnoreLocation()
+	{
+		ignoreLocation = true;
+		return this;
+	}
+	
 	public BiomesSound setIgnoreTime()
 	{
 		needTime = false;
@@ -46,7 +53,7 @@ public class BiomesSound extends AmbientSound{
 		if((isNight == this.isNight || !needTime) && biome.getTemperature() >= minTemperature)
 			for (int i = 0; i < biomes.length; i++)
 				if(biome.getBiomeName().toLowerCase().contains(biomes[i].toLowerCase()))
-						return getVolumeFromHeight(1, height);
+						return ignoreLocation ? 1 : getVolumeFromHeight(1, height);
 		return 0;
 	}
 	
