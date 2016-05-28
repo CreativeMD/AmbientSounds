@@ -117,6 +117,7 @@ public class TickHandler {
 				for (int i = 0; i < AmbientSound.sounds.size(); i++) {
 					AmbientSound sound = AmbientSound.sounds.get(i);
 					sound.muteFactor = 1F;
+					sound.updateVolume();
 					if(sound.canPlaySound())
 					{
 						float volume = sound.getVolume(world, player, biome, isNight, height);
@@ -150,10 +151,12 @@ public class TickHandler {
 									sound.setVolume(sound.overridenVolume - sound.fadeInAmount());
 								else if(sound.overridenVolume > sound.volume*volume)
 								{
-									float temp = sound.volume;
-									sound.volume = sound.volume*volume;
-									sound.resetVolume();
-									sound.volume = temp;
+									sound.overridenVolume = sound.volume*volume;
+									sound.sound.volume = sound.volume*volume;
+									//float temp = sound.volume;
+									//sound.volume = sound.volume*volume;
+									//sound.resetVolume();
+									//sound.volume = temp;
 								}
 							}
 						}else if(volume <= 0)
@@ -162,11 +165,14 @@ public class TickHandler {
 					}
 				}
 				mutingFactor = Math.min(1F, mutingFactor);
-				for (int i = 0; i < playing.size(); i++) {
-					if(playing.get(i).getMutingFactorPriority() < mutingPriority)
-					{
-						playing.get(i).muteFactor = 1-mutingFactor;
-						playing.get(i).updateVolume();
+				if(mutingFactor > 0)
+				{
+					for (int i = 0; i < playing.size(); i++) {
+						if(playing.get(i).getMutingFactorPriority() < mutingPriority)
+						{
+							playing.get(i).muteFactor = 1-mutingFactor;
+							playing.get(i).updateVolume();
+						}
 					}
 				}
 				//System.out.println("muting: " + mutingFactor + ", priority: " + mutingPriority);
