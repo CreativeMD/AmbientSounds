@@ -28,7 +28,11 @@ public class TickHandler {
 	public static synchronized void handleSound(ISound sound)
 	{
 		if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
-			Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			try{
+				Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 	}
 	
 	@SubscribeEvent
@@ -42,7 +46,7 @@ public class TickHandler {
 	}
 	
 	@SubscribeEvent
-	public void onClientTick(ClientTickEvent event)
+	public synchronized void onClientTick(ClientTickEvent event)
 	{
 		if(event.phase == Phase.END)
 		{
