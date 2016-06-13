@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class AmbientSounds {
 	
 	public static final String modid = "ambientsounds";
-	public static final String version = "1.1";
+	public static final String version = "1.1.1";
 	
 	
 	@EventHandler

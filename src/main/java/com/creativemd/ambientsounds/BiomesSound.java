@@ -48,12 +48,17 @@ public class BiomesSound extends AmbientSound{
 		return this;
 	}
 	
+	public static boolean checkBiome(String name, Biome biome)
+	{
+		return biome.getBiomeName().toLowerCase().contains(name.toLowerCase()) || biome.getBiomeName().toLowerCase().contains(name.toLowerCase().replace(" ", "_"));
+	}
+	
 	@Override
 	public float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height) {
 		if((isNight == this.isNight || !needTime) && biome.getTemperature() >= minTemperature)
 			for (int i = 0; i < biomes.length; i++)
-				if(biome.getBiomeName().toLowerCase().contains(biomes[i].toLowerCase()))
-						return ignoreLocation ? 1 : getVolumeFromHeight(1, height);
+				if(checkBiome(biomes[i], biome))
+					return ignoreLocation ? 1 : getVolumeFromHeight(1, height);
 		return 0;
 	}
 	
