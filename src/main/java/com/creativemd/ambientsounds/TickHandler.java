@@ -27,12 +27,17 @@ public class TickHandler {
 	
 	public static synchronized void handleSound(ISound sound)
 	{
-		if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
-			try{
-				Minecraft.getMinecraft().getSoundHandler().playSound(sound);
-			}catch(Exception e){
-				e.printStackTrace();
+		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+			@Override
+			public void run() {
+				if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
+					try{
+						Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 			}
+		});
 	}
 	
 	@SubscribeEvent

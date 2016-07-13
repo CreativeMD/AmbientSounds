@@ -26,6 +26,7 @@ public class AmbientSounds {
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		for (int i = 0; i < AmbientSound.sounds.size(); i++) {
+			AmbientSound.sounds.get(i).volume = config.getFloat(AmbientSound.sounds.get(i).name, "volume", AmbientSound.sounds.get(i).volume, 0, 1, "");
 			if(AmbientSound.sounds.get(i) instanceof BiomesSound)
 			{
 				BiomesSound sound = (BiomesSound) AmbientSound.sounds.get(i);

@@ -83,7 +83,13 @@ public abstract class AmbientSound {
 			//System.out.println("Stopping sound " + name);
 			sound.donePlaying = true;
 			//Minecraft.getMinecraft().getSoundHandler().stop(sound.resource.toString(), null);
-			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+			Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+				
+				@Override
+				public void run() {
+					Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+				}
+			});
 			resetVolume();
 			TickHandler.playing.remove(this);
 		}
