@@ -1,16 +1,19 @@
 package com.creativemd.ambientsounds;
 
+import com.creativemd.ambientsounds.env.AmbientEnv;
+import com.creativemd.ambientsounds.env.HeightEnv.HeightArea;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeManager;
 
-public class BiomesSound extends AmbientSound{
+public class BiomesSound extends AmbientSound {
 	
 	public String[] biomes;
 	public boolean isNight;
 	public boolean needTime = true;
-	public boolean ignoreLocation = false;
+	//public boolean ignoreLocation = false;
 	public float minTemperature = -100;
 	
 	public BiomesSound(String biome, float volume, boolean isNight)
@@ -25,7 +28,7 @@ public class BiomesSound extends AmbientSound{
 	
 	public BiomesSound(String[] biomes, String soundName, float volume, boolean isNight)
 	{
-		super(soundName, volume);
+		super(AmbientEnv.biome, soundName, volume);
 		this.biomes = biomes;
 		this.isNight = isNight;
 	}
@@ -36,11 +39,11 @@ public class BiomesSound extends AmbientSound{
 		return this;
 	}
 	
-	public BiomesSound setIgnoreLocation()
+	/*public BiomesSound setIgnoreLocation()
 	{
 		ignoreLocation = true;
 		return this;
-	}
+	}*/
 	
 	public BiomesSound setIgnoreTime()
 	{
@@ -52,13 +55,20 @@ public class BiomesSound extends AmbientSound{
 	{
 		return biome.getBiomeName().toLowerCase().contains(name.toLowerCase()) || biome.getBiomeName().toLowerCase().contains(name.toLowerCase().replace(" ", "_"));
 	}
-	
+
 	@Override
-	public float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height) {
-		if((isNight == this.isNight || !needTime) && biome.getTemperature() >= minTemperature)
-			for (int i = 0; i < biomes.length; i++)
-				if(checkBiome(biomes[i], biome))
-					return ignoreLocation ? 1 : getVolumeFromHeight(1, height);
+	public float getVolume(World world, EntityPlayer player, boolean isNight) {
+		if((isNight == this.isNight || !needTime))
+		{
+			float volume = 0.0F;
+			for (Biome biome : AmbientEnv.biome.biomes.keySet()) {
+				if(biome.getTemperature() >= minTemperature)
+					for (int i = 0; i < biomes.length; i++)
+						if(checkBiome(biomes[i], biome))
+							volume = Math.max(volume, AmbientEnv.biome.biomes.get(biome));
+			}
+			return volume;
+		}
 		return 0;
 	}
 	

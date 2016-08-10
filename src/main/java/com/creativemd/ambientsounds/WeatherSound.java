@@ -1,11 +1,15 @@
 package com.creativemd.ambientsounds;
 
+import com.creativemd.ambientsounds.env.AmbientEnv;
+import com.creativemd.ambientsounds.env.HeightEnv.HeightArea;
+import com.creativemd.ambientsounds.sound.HeightSound;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
-public class WeatherSound extends AmbientSound {
+public class WeatherSound extends HeightSound {
 	
 	public static enum WeatherType {
 		SUNNY {
@@ -35,7 +39,7 @@ public class WeatherSound extends AmbientSound {
 	public WeatherType type;
 	
 	public WeatherSound(String name, float volume, WeatherType type) {
-		super(name, volume);
+		super(name, volume, HeightArea.Cave);
 		this.type = type;
 	}
 	
@@ -48,15 +52,16 @@ public class WeatherSound extends AmbientSound {
 	{
 		return 0.8F;
 	}
-
+	
 	@Override
-	public float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height) {
-		if(type.isWeather(world, player.getPosition()))
-			if(height < 1)
-				return getVolumeFromHeight(1, height);
-			else
+	public float getVolume(World world, EntityPlayer player, boolean isNight, float volume) {
+		if(type.isWeather(world, player.getPosition())){
+			if(AmbientEnv.height.currentHeight.containsKey(HeightArea.Sky))
 				return 1;
-		return 0;
+			else
+				return volume;
+		}
+		return volume;
 	}
 
 }

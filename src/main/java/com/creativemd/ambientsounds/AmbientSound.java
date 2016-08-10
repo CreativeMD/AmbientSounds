@@ -3,6 +3,7 @@ package com.creativemd.ambientsounds;
 import java.util.ArrayList;
 
 import com.creativemd.ambientsounds.WeatherSound.WeatherType;
+import com.creativemd.ambientsounds.env.AmbientEnv;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
 public abstract class AmbientSound {
+	
+	public static Minecraft mc = Minecraft.getMinecraft();
 	
 	public static ArrayList<AmbientSound> sounds = new ArrayList<AmbientSound>();
 	
@@ -34,8 +37,8 @@ public abstract class AmbientSound {
 	
 	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold", "desert", "arctic", "glacier", "quagmire", "snow"}, "snow", 0.7F, false).setIgnoreTime();
 	
-	public static AmbientSound nether = new BiomesSound(new String[]{"hell", "dead", "inferno", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap"}, "nether", 0.3F, false).setIgnoreTime().setIgnoreLocation();
-	public static AmbientSound end = new BiomesSound(new String[]{"the end"}, "end", 0.4F, false).setIgnoreTime().setIgnoreLocation();
+	public static AmbientSound nether = new BiomesSound(new String[]{"hell", "dead", "inferno", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap"}, "nether", 0.3F, false).setIgnoreTime();
+	public static AmbientSound end = new BiomesSound(new String[]{"the end"}, "end", 0.4F, false).setIgnoreTime();
 	
 	public static AmbientSound mesa = new BiomesSound(new String[]{"mesa", "canyon", "dunes", "outback", "steppe", "xeric shrubland"}, "mesa", 0.5F, false).setIgnoreTime();
 	public static AmbientSound extremeHills = new BiomesSound(new String[]{"extreme hills", "alps", "brushland", "crag", "highland", "mountain", "volcanic", "wasteland"}, "extremehills", 0.4F, false).setIgnoreTime();
@@ -45,16 +48,17 @@ public abstract class AmbientSound {
 	
 	public static AmbientSound storm = new WeatherSound("storm", 0.5F, WeatherType.STORMY);
 	
-	
+	public final AmbientEnv env;
 	public IEnhancedPositionSound sound;
 	public float volume;
 	public float overridenVolume;
 	public float muteFactor = 1F;
 	public String name;
 	
-	public AmbientSound(String name, float volume)
+	public AmbientSound(AmbientEnv env, String name, float volume)
 	{
 		sounds.add(this);
+		this.env = env;
 		this.name = name;
 		this.sound = new IEnhancedPositionSound(new ResourceLocation(AmbientSounds.modid + ":" + name), volume, 1F);
 		this.volume = volume;
@@ -65,7 +69,6 @@ public abstract class AmbientSound {
 	{
 		this.sound.volume = volume;
 		this.overridenVolume = volume;
-		//this.muteFactor = 1;
 	}
 	
 	public void updateVolume()
@@ -73,23 +76,51 @@ public abstract class AmbientSound {
 		this.sound.volume = this.overridenVolume * muteFactor;
 	}
 	
+	public boolean isSoundPlaying()
+	{
+		return mc.getSoundHandler().isSoundPlaying(sound);
+	}
+	
+	public int getTimeToWait()
+	{
+		return timeToWait;
+	}
+	
+	public void resetTimeToWait()
+	{
+		timeToWait = 20;
+	}
+	
+	private int timeToWait = 0;
+	
+	public void tick()
+	{
+		if(timeToWait > 0)
+			timeToWait--;
+	}
+	
+	public boolean playSound()
+	{
+		if(timeToWait <= 0){
+			if(!mc.getSoundHandler().isSoundPlaying(sound))
+				mc.getSoundHandler().playSound(sound);
+			resetTimeToWait();
+			return true;
+		}
+		return false;
+	}
+	
 	public void setVolume(float volume)
 	{
-		this.sound.donePlaying = false;
+		//this.sound.donePlaying = false;
 		this.overridenVolume = volume;
 		this.sound.volume = volume * muteFactor;
+		
 		if(volume <= 0)
 		{
-			//System.out.println("Stopping sound " + name);
-			sound.donePlaying = true;
-			//Minecraft.getMinecraft().getSoundHandler().stop(sound.resource.toString(), null);
-			Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-				
-				@Override
-				public void run() {
-					Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
-				}
-			});
+			//sound.donePlaying = true;
+			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+			resetTimeToWait();
 			resetVolume();
 			TickHandler.playing.remove(this);
 		}
@@ -122,16 +153,6 @@ public abstract class AmbientSound {
 		return fadeAmount;
 	}
 	
-	public float getVolumeFromHeight(int preferedHeight, float height)
-	{
-		if(height > preferedHeight-1 && height <= preferedHeight)
-			return height-(preferedHeight-1);
-		if(height > preferedHeight && height < preferedHeight+1)
-			return 1-(height-preferedHeight);
-		return 0;
-	}
-	
-	/**height: 0 = Underground/Cave, 1 = Biome/ Surface, 2 = Mountain/Windy Air, 3 = Space**/
-	public abstract float getVolume(World world, EntityPlayer player, Biome biome, boolean isNight, float height);
+	public abstract float getVolume(World world, EntityPlayer player, boolean isNight);
 	
 }
