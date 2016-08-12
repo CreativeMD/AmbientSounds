@@ -27,7 +27,7 @@ public class WeatherSound extends HeightSound {
 		STORMY {
 			@Override
 			public boolean isWeather(World world, BlockPos pos) {
-				return RAINY.isWeather(world, pos) && world.isThundering();
+				return world.isThundering();
 			}
 		};
 		
@@ -39,7 +39,7 @@ public class WeatherSound extends HeightSound {
 	public WeatherType type;
 	
 	public WeatherSound(String name, float volume, WeatherType type) {
-		super(name, volume, HeightArea.Cave);
+		super(name, volume, HeightArea.Surface);
 		this.type = type;
 	}
 	
@@ -61,7 +61,7 @@ public class WeatherSound extends HeightSound {
 			else
 				return volume;
 		}
-		return volume;
+		return 0;
 	}
 
 }
