@@ -28,8 +28,8 @@ public abstract class AmbientSound {
 	public static AmbientSound plainsNight = new BiomesSound(new String[]{"plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra"}, "plains-night", 0.5F, true).setMinTemperature(0.1F);
 	public static AmbientSound jungle = new BiomesSound(new String[]{"jungle", "sacred springs", "tropical"}, "jungle", 0.5F, false).setMinTemperature(0.5F);
 	public static AmbientSound jungleNight = new BiomesSound(new String[]{"jungle", "sacred springs", "tropical"}, "jungle-night", 0.5F, true).setMinTemperature(0.5F);
-	public static AmbientSound swampland = new BiomesSound(new String[]{"swampland", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland"}, "swampland", 0.5F, false).setMinTemperature(0.3F);
-	public static AmbientSound swamplandNight = new BiomesSound(new String[]{"swampland", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland"}, "swampland-night", 0.5F, true).setMinTemperature(0.3F);
+	public static AmbientSound swampland = new BiomesSound(new String[]{"swampland", "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland"}, "swampland", 0.5F, false).setMinTemperature(0.3F);
+	public static AmbientSound swamplandNight = new BiomesSound(new String[]{"swampland", "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland"}, "swampland-night", 0.5F, true).setMinTemperature(0.3F);
 	
 	public static AmbientSound beach = new BiomesSound(new String[]{"beach", "mangrove"}, "beach", 0.5F, false).setIgnoreTime();
 	
