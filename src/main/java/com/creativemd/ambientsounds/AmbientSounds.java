@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds")
+@Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds",acceptedMinecraftVersions="")
 public class AmbientSounds {
 	
 	public static final String modid = "ambientsounds";
