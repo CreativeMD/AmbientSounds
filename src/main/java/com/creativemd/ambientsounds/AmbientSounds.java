@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 @Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds",acceptedMinecraftVersions="")
 public class AmbientSounds {
 	
@@ -50,11 +51,8 @@ public class AmbientSounds {
 	@SideOnly(Side.CLIENT)
     public void Init(FMLInitializationEvent event)
     {
-		if(FMLCommonHandler.instance().getEffectiveSide().isClient())
-		{
-			MinecraftForge.EVENT_BUS.register(new TickHandler());
-			FMLCommonHandler.instance().bus().register(new TickHandler());
-		}
+		MinecraftForge.EVENT_BUS.register(new TickHandler());
+		FMLCommonHandler.instance().bus().register(new TickHandler());
     }
 	
 }
