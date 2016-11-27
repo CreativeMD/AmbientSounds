@@ -35,7 +35,7 @@ public class BiomeEnv extends AmbientEnv {
 			for (int x = -range; x <= range; x+=stepSize) {
 				for (int z = -range; z <= range; z+=stepSize) {
 					BlockPos pos = new BlockPos(posX+x, 0, posZ+z);
-					Biome biome = world.getBiomeGenForCoords(pos);
+					Biome biome = world.getBiome(pos);
 					
 					
 					float biomeVolume = (float) ((1-Math.sqrt(center.distanceSq(pos))/(range*2))*volume);
