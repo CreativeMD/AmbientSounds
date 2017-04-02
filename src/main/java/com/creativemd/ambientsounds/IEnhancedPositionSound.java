@@ -24,7 +24,6 @@ public class IEnhancedPositionSound implements ITickableSound
     public boolean repeat = true;
     public int delay = 0;
     public ISound.AttenuationType type;
-    public boolean donePlaying = false;
 
     public IEnhancedPositionSound(ResourceLocation resource, float volume, float pitch)
     {
@@ -89,16 +88,6 @@ public class IEnhancedPositionSound implements ITickableSound
     }
 
 	@Override
-	public void update() {
-		
-	}
-
-	@Override
-	public boolean isDonePlaying() {
-		return donePlaying;
-	}
-
-	@Override
 	public SoundEventAccessor createAccessor(SoundHandler handler) {
 		this.soundEvent = handler.getAccessor(this.resource);
 
@@ -122,5 +111,15 @@ public class IEnhancedPositionSound implements ITickableSound
 	@Override
 	public SoundCategory getCategory() {
 		return SoundCategory.AMBIENT;
+	}
+
+	@Override
+	public void update() {
+		
+	}
+
+	@Override
+	public boolean isDonePlaying() {
+		return false;
 	}
 }

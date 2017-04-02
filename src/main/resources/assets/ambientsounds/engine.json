@@ -1,0 +1,470 @@
+{
+  "regions": [
+    {
+      "name": "savanna",
+      "biomes": [ "savanna", "heathland", "prairie" ]
+    },
+    {
+      "name": "swamp",
+      "biomes": [ "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland" ],
+      "temperature": ">0.5&<=2"
+    },
+    {
+      "name": "jungle",
+      "biomes": [ "jungle", "sacred springs", "tropical" ],
+      "temperature": ">0.5"
+    },
+    {
+      "name": "desert",
+      "variants": [
+        {
+          "biomes": [ "desert", "quagmire" ]
+        },
+        {
+          "top-block": "minecraft:sand"
+        }
+      ]
+
+    },
+    {
+      "name": "snow",
+      "variants": [
+        {
+          "biomes": [ "frozen", "ice", "cold", "arctic", "glacier", "snow" ]
+        },
+        {
+          "top-block": "minecraft:snow"
+        }
+      ]
+    },
+    {
+      "name": "beach",
+      "biomes": [ "beach", "mangrove" ]
+    },
+    {
+      "name": "forest",
+      "variants": [
+        {
+          "biomes": [ "forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland" ]
+        },
+        {
+          "top-block": "minecraft:grass",
+          "treesPerChunk": ">4"
+        }
+      ]
+    },
+    {
+      "name": "plains",
+      "variants": [
+        {
+          "biomes": [ "plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra" ]
+        },
+        {
+          "top-block": "minecraft:grass",
+          "treesPerChunk": "<=4"
+        }
+      ]
+    },
+    {
+      "name": "ocean",
+      "biomes": [ "ocean", "river" ]
+    },
+    {
+      "name": "underworld",
+      "position": {
+        "absolutePosition": "<0",
+        "fadeValue": "5"
+      }
+    },
+    {
+      "name": "cave",
+      "position": {
+        "relativePosition": "<=-15",
+        "absolutePosition": ">=0",
+        "fadeValue": "5"
+      }
+    },
+    {
+      "name": "surface",
+      "position": {
+        "relativePosition": ">=-5&<=15",
+        "fadeValue": "5"
+      }
+    },
+    {
+      "name": "sky",
+      "position": {
+        "relativePosition": ">15",
+        "absolutePosition": "<=4000",
+        "fadeValue": "10"
+      }
+    },
+    {
+      "name": "space",
+      "position": {
+        "absolutePosition": ">4000",
+        "fadeValue": "1000"
+      }
+    }
+  ],
+  "biome-selector": {
+    "regions": [ "surface" ]
+  },
+  "sounds": [
+    {
+      "source": "ambientsounds:animals.bird.bird-megataiga",
+      "selector": {
+        "biomes": [ "mega*taiga" ],
+        "temperature": ">0.1&<0.5"
+      },
+      "day": 1,
+      "night": 0.25,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-taiga",
+      "selector": {
+        "biomes": [ "taiga", "grove", "jade cliffs", "shield" ],
+        "temperature": ">0.1&<0.5"
+      },
+      "day": 1,
+      "night": 0.25,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-roofed",
+      "selector": {
+        "biomes": [ "roofed*forest" ],
+        "temperature": ">0.5&<=1"
+      },
+      "day": 1,
+      "night": 0.25,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-swamp",
+      "selector": {
+        "regions": [ "swamp" ]
+      },
+      "day": 1,
+      "night": 0.25,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-jungle",
+      "selector": {
+        "regions": [ "jungle" ]
+      },
+      "day": 1,
+      "night": 0,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-jungle-night",
+      "selector": {
+        "regions": [ "jungle" ]
+      },
+      "day": 0,
+      "night": 1,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird",
+      "selector": {
+        "regions": [ "forest" ],
+        "temperature": ">0.5&<=1"
+      },
+      "day": 0,
+      "night": 1,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-cold",
+      "selector": [
+        {
+          "regions": [ "forest" ],
+          "temperature": ">0.1&<=0.5"
+        },
+        {
+          "regions": [ "plains" ],
+          "temperature": ">0.5&<=1",
+          "volume": 0.3
+        }
+      ],
+      "day": 1,
+      "night": 0.25,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.crow",
+      "selector": {
+        "regions": [ "forest" ],
+        "temperature": "<=0.1"
+      },
+      "day": 1,
+      "night": 0.5,
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.bird.bird-warm",
+      "selector": [
+        {
+          "regions": [ "forest" ],
+          "temperature": ">1&<=3",
+          "day": 1,
+          "night": 0.5
+        },
+        {
+          "regions": [ "plains", "savanna" ],
+          "temperature": ">1&<=2",
+          "volume": 0.3,
+          "day": 1,
+          "night": 0
+        }
+      ],
+      "full": true
+    },
+    {
+      "source": "ambientsounds:animals.cicadas.cicadas",
+      "selector": {
+        "regions": [ "plains", "savanna" ],
+        "temperature": ">0.5&<=2"
+      },
+      "day": 1,
+      "night": 0.5
+    },
+    {
+      "source": "ambientsounds:animals.cicadas.cicadas-desert",
+      "selector": {
+        "regions": [ "desert" ],
+        "temperature": ">1"
+      },
+      "day": 1,
+      "night": 0
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket-swamp",
+      "selector": {
+        "regions": [ "swamp" ],
+        "temperature": ">0.5&<=2"
+      },
+      "day": 1,
+      "night": 0.5
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket-jungle",
+      "selector": {
+        "regions": [ "jungle" ]
+      },
+      "day": 1,
+      "night": 0
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket-jungle-night",
+      "selector": {
+        "regions": [ "jungle" ]
+      },
+      "day": 0,
+      "night": 1
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket-forest-night",
+      "selector": {
+        "regions": [ "forest" ],
+        "temperature": ">0.1&<=1.5"
+      },
+      "day": 0,
+      "night": 1
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket",
+      "selector": {
+        "regions": [ "forest", "plains", "savanna" ],
+        "temperature": ">0.1&<=1.5"
+      },
+      "day": 0.3,
+      "night": 0.15
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket-night",
+      "selector": {
+        "regions": [ "forest", "plains", "savanna" ],
+        "temperature": ">0.1&<=0.5"
+      },
+      "day": 0,
+      "night": 1
+    },
+    {
+      "source": "ambientsounds:animals.cricket.cricket-warm-night",
+      "selector": [
+        {
+          "regions": [ "forest", "plains", "savanna" ],
+          "temperature": ">0.5&<=1.5",
+          "day": 0,
+          "night": 1
+        },
+        {
+          "regions": [ "swamp" ],
+          "temperature": ">0.5&<=2",
+          "day": 0,
+          "night": 0.5
+        }
+      ]
+    },
+    {
+      "source": "ambientsounds:animals.frog.frog",
+      "selector": {
+        "regions": [ "swamp" ],
+        "temperature": ">0.5&<=2"
+      },
+      "minPause": 100,
+      "maxPause": 750,
+      "length": 100,
+      "day": 0.25,
+      "night": 0.5
+    },
+    {
+      "source": "ambientsounds:animals.owl.owl",
+      "selector": {
+        "regions": [ "forest" ],
+        "temperature": ">0.1&<=1.5"
+      },
+      "minPause": 10,
+      "maxPause": 200,
+      "day": 0,
+      "night": 1
+    },
+    {
+      "source": "ambientsounds:animals.seagull.seagull",
+      "selector": {
+        "regions": [ "beach" ],
+        "temperature": ">0.1&<=1.5"
+      },
+      "minPause": 100,
+      "maxPause": 750
+    },
+    {
+      "source": "ambientsounds:animals.seagull.seagull-long",
+      "selector": {
+        "regions": [ "beach" ],
+        "temperature": ">0.1&<=1.5"
+      },
+      "minPause": 100,
+      "maxPause": 750,
+      "length": 100
+    },
+    {
+      "source": "ambientsounds:animals.wolf.wolf",
+      "selector": {
+        "regions": [ "plains", "savanna" ],
+        "temperature": ">1&<=2"
+      },
+      "minPause": 10,
+      "maxPause": 200,
+      "day": 0,
+      "night": 1
+    },
+    {
+      "source": "ambientsounds:suspense.nether",
+      "selector": {
+        "biomes": [ "hell", "dead", "inferno", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap" ]
+      },
+      "full": true
+    },
+    {
+      "source": "ambientsounds:suspense.end",
+      "selector": {
+        "biomes": [ "the end" ]
+      },
+      "full": true
+    },
+    {
+      "source": "ambientsounds:suspense.cave",
+      "selector": {
+        "regions": [ "cave" ]
+      },
+      "full": true
+    },
+    {
+      "source": "ambientsounds:water.beach",
+      "selector": {
+        "regions": [ "beach" ],
+        "temperature": ">0"
+      },
+      "full": true
+    },
+    {
+      "source": "ambientsounds:water.ocean",
+      "selector": {
+        "regions": [ "ocean" ],
+        "temperature": ">0"
+      },
+      "full": true
+    },
+    {
+      "source": "ambientsounds:water.underwater",
+      "selector": {
+        "underwater": true
+      },
+	  "fade": 0.9,
+      "mute": 0.9
+    },
+    {
+      "source": "ambientsounds:weather.rain",
+      "selector": {
+        "regions": [ "surface" ],
+        "isRaining": true
+      },
+      "mute": 0.5
+    },
+    {
+      "source": "ambientsounds:weather.storm-close",
+      "selector": {
+        "isRaining": true,
+        "isStorming": true,
+        "regions": [ "surface" ]
+      },
+      "mute": 0.5
+    },
+    {
+      "source": "ambientsounds:weather.storm-away",
+      "selector": {
+        "isRaining": true,
+        "isStorming": true,
+        "regions": [ "cave" ]
+      },
+      "mute": 0.5
+    },
+    {
+      "source": "ambientsounds:wind.heavy-wind",
+      "selector": {
+        "biomes": [ "extreme*hills" ]
+      }
+    },
+    {
+      "source": "ambientsounds:wind.light-wind",
+      "selector": {
+        "regions": [ "desert", "snow" ]
+      }
+    },
+    {
+      "source": "ambientsounds:wind.mesa",
+      "selector": {
+        "biomes": [ "mesa" ]
+      }
+    },
+    {
+      "source": "ambientsounds:wind.steady-wind",
+      "selector": [
+        {
+          "regions": [ "ocean" ],
+          "volume": 0.4
+        },
+        {
+          "regions": [ "sky" ],
+          "volume": 0.2
+        }
+      ]
+    }
+  ]
+}

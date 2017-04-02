@@ -1,158 +1,363 @@
 package com.creativemd.ambientsounds;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
-import com.creativemd.ambientsounds.WeatherSound.WeatherType;
-import com.creativemd.ambientsounds.env.AmbientEnv;
+import com.creativemd.ambientsounds.AmbientCondition.AmbientArrayAndCondition;
+import com.creativemd.ambientsounds.AmbientCondition.AmbientArrayOrCondition;
+import com.creativemd.ambientsounds.AmbientCondition.AmbientConditionObjectParser;
+import com.creativemd.ambientsounds.AmbientSituation.BiomeArea;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
-public abstract class AmbientSound {
+public class AmbientSound {
 	
-	public static Minecraft mc = Minecraft.getMinecraft();
+	public static AmbientSoundSelectorParser parser = new AmbientSoundSelectorParser();
 	
-	public static ArrayList<AmbientSound> sounds = new ArrayList<AmbientSound>();
+	public static class AmbientSoundSelectorParser extends AmbientConditionObjectParser {
+		
+		@Override
+		public void treatUnknownValues(AmbientCondition condition, HashMap<String, JsonElement> unknown)
+		{
+			condition.unknownValues = new HashMap<>();
+			
+			for (Iterator<Entry<String, JsonElement>> iterator = unknown.entrySet().iterator(); iterator.hasNext();) {
+				Entry<String, JsonElement> entry = iterator.next();
+				for (Iterator<Entry<String, AmbientPropertyType>> iterator2 = propertiesTypes.entrySet().iterator(); iterator2.hasNext();) {
+					Entry<String, AmbientPropertyType> property = iterator2.next();
+					if(property.getKey().equals(entry.getKey()))
+					{
+						if(property.getValue().isElementValid(entry.getValue()))
+						{
+							condition.unknownValues.put(property.getKey(), property.getValue().getElementValue(entry.getValue()));
+						}else
+							throw new IllegalArgumentException("Expected '" + entry.getKey() + "' to be a " + property.getValue().name().toLowerCase() + "!");
+						break;
+					}
+				}
+			}
+		}
+	}
 	
-	public static AmbientSound savanna = new BiomesSound(new String[]{"savanna", "heathland", "prairie"}, "savanna", 0.5F, false).setMinTemperature(0.5F);
-	public static AmbientSound savannaNight = new BiomesSound(new String[]{"savanna", "heathland", "prairie"}, "savanna-night", 0.5F, true).setMinTemperature(0.5F);
-	public static AmbientSound forest = new BiomesSound(new String[]{"forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland"}, "forest", 0.5F, false).setMinTemperature(0.1F);
-	public static AmbientSound forestNight = new BiomesSound(new String[]{"forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland"}, "forest-night", 0.5F, true).setMinTemperature(0.1F);
-	public static AmbientSound taiga = new BiomesSound(new String[]{"taiga", "grove", "jade cliffs", "shield"}, "taiga", 0.5F, false).setMinTemperature(0.1F);
-	public static AmbientSound taigaNight = new BiomesSound(new String[]{"taiga", "grove", "jade cliffs", "shield"}, "taiga-night", 0.5F, true).setMinTemperature(0.1F);
-	public static AmbientSound plains = new BiomesSound(new String[]{"plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra"}, "plains", 0.5F, false).setMinTemperature(0.1F);
-	public static AmbientSound plainsNight = new BiomesSound(new String[]{"plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra"}, "plains-night", 0.5F, true).setMinTemperature(0.1F);
-	public static AmbientSound jungle = new BiomesSound(new String[]{"jungle", "sacred springs", "tropical"}, "jungle", 0.5F, false).setMinTemperature(0.5F);
-	public static AmbientSound jungleNight = new BiomesSound(new String[]{"jungle", "sacred springs", "tropical"}, "jungle-night", 0.5F, true).setMinTemperature(0.5F);
-	public static AmbientSound swampland = new BiomesSound(new String[]{"swampland", "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland"}, "swampland", 0.5F, false).setMinTemperature(0.3F);
-	public static AmbientSound swamplandNight = new BiomesSound(new String[]{"swampland", "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland"}, "swampland-night", 0.5F, true).setMinTemperature(0.3F);
+	public static enum AmbientPropertyType {
+		STRING
+		{
+			@Override
+			public boolean isElementValid(JsonElement element) {
+				return element.isJsonPrimitive() && ((JsonPrimitive) element).isString();
+			}
+
+			@Override
+			public Object getElementValue(JsonElement element) {
+				return element.getAsString();
+			}
+		},
+		BOOLEAN
+		{
+			@Override
+			public boolean isElementValid(JsonElement element) {
+				return element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean();
+			}
+
+			@Override
+			public Object getElementValue(JsonElement element) {
+				return element.getAsBoolean();
+			}
+		 },
+		 NUMBER
+		 {
+			 @Override
+			 public boolean isElementValid(JsonElement element) {
+				 return element.isJsonPrimitive();
+			 }
+
+			@Override
+			public Object getElementValue(JsonElement element) {
+				return element.getAsDouble();
+			}
+		 };
+		
+		public abstract boolean isElementValid(JsonElement element);
+		
+		public abstract Object getElementValue(JsonElement element);
+		
+	}
 	
-	public static AmbientSound beach = new BiomesSound(new String[]{"beach", "mangrove"}, "beach", 0.5F, false).setIgnoreTime();
+	public static LinkedHashMap<String, AmbientPropertyType> propertiesTypes = new LinkedHashMap<>();
 	
-	public static AmbientSound ocean = new BiomesSound(new String[]{"river", "ocean"}, "ocean", 0.5F, false).setIgnoreTime();
+	static
+	{
+		propertiesTypes.put("mute", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("minPause", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("maxPause", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("length", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("volume", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("day", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("night", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("fade", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("fadeIn", AmbientPropertyType.NUMBER);
+		propertiesTypes.put("fadeOut", AmbientPropertyType.NUMBER);
+	}
 	
-	public static AmbientSound snow = new BiomesSound(new String[]{"frozen", "ice", "cold", "desert", "arctic", "glacier", "quagmire", "snow"}, "snow", 0.7F, false).setIgnoreTime();
+	public static Object getValue(HashMap<String, Object> values, String identifier, Object defaultValue)
+	{
+		Object value = values.get(identifier);
+		if(value != null)
+			return value;
+		return defaultValue;
+	}
 	
-	public static AmbientSound nether = new BiomesSound(new String[]{"hell", "dead", "inferno", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap"}, "nether", 0.3F, false).setIgnoreTime();
-	public static AmbientSound end = new BiomesSound(new String[]{"the end"}, "end", 0.4F, false).setIgnoreTime();
+	public ResourceLocation name;
 	
-	public static AmbientSound mesa = new BiomesSound(new String[]{"mesa", "canyon", "dunes", "outback", "steppe", "xeric shrubland"}, "mesa", 0.5F, false).setIgnoreTime();
-	public static AmbientSound extremeHills = new BiomesSound(new String[]{"extreme hills", "alps", "brushland", "crag", "highland", "mountain", "volcanic", "wasteland"}, "extremehills", 0.4F, false).setIgnoreTime();
+	public boolean isFull;
 	
-	public static AmbientSound unterwater = new UnterwaterSound("underwater", 0.5F);
-	public static AmbientSound cave = new CaveSound("cave", 0.2F);
+	/**!= 0 if there is a limit for the length of the audio**/
+	public int playingTime = -1;
 	
-	public static AmbientSound storm = new WeatherSound("storm", 0.5F, WeatherType.STORMY);
+	/**The time the sound waits before it will be played again**/
+	public int pause = 0;
 	
-	public final AmbientEnv env;
 	public IEnhancedPositionSound sound;
-	public float volume;
-	public float overridenVolume;
-	public float muteFactor = 1F;
-	public String name;
 	
-	public AmbientSound(AmbientEnv env, String name, float volume)
-	{
-		sounds.add(this);
-		this.env = env;
-		this.name = name;
-		this.sound = new IEnhancedPositionSound(new ResourceLocation(AmbientSounds.modid + ":" + name), volume, 1F);
-		this.volume = volume;
-		this.overridenVolume = volume;
+	public float currentVolume;
+	public float aimedVolume;
+	
+	public final HashMap<String, Object> properties = new HashMap<>();
+	public AmbientCondition condition;
+	
+	public AmbientSound(JsonObject object) throws IllegalArgumentException {
+		
+		for (Iterator<Entry<String, JsonElement>> iterator = object.entrySet().iterator(); iterator.hasNext();) {
+			Entry<String, JsonElement> entry = iterator.next();
+			
+			if(entry.getKey().equals("source"))
+			{
+				if(AmbientPropertyType.STRING.isElementValid(entry.getValue()))
+					name = new ResourceLocation(entry.getValue().getAsString());
+				else
+					throw new IllegalArgumentException("Expected 'name' to be a string!");
+			}
+			if(entry.getKey().equals("full"))
+			{
+				if(AmbientPropertyType.BOOLEAN.isElementValid(entry.getValue()))
+					isFull = entry.getValue().getAsBoolean();
+				else
+					throw new IllegalArgumentException("Expected 'full' to be a boolean!");
+			}
+			if(entry.getKey().equals("selector"))
+			{
+				condition = parser.parseCondition(entry.getValue());
+			}
+			
+			if(condition == null)
+				condition = new AmbientCondition() {
+					
+					@Override
+					public boolean is(AmbientSituation situation) {
+						return true;
+					}
+
+					@Override
+					public boolean requiresBiome() {
+						return false;
+					}
+				};
+			
+			for (Iterator<Entry<String, AmbientPropertyType>> iterator2 = propertiesTypes.entrySet().iterator(); iterator2.hasNext();) {
+				Entry<String, AmbientPropertyType> property = iterator2.next();
+				if(property.getKey().equals(entry.getKey()))
+				{
+					if(property.getValue().isElementValid(entry.getValue()))
+					{
+						properties.put(property.getKey(), property.getValue().getElementValue(entry.getValue()));
+					}else
+						throw new IllegalArgumentException("Expected '" + entry.getKey() + "' to be a " + property.getValue().name().toLowerCase() + "!");
+					break;
+				}
+			}
+		}
+		
+		if(name == null)
+			throw new IllegalArgumentException("No 'name' given!");
 	}
 	
-	public void resetVolume()
+	public boolean pickCondition(ArrayList<AmbientCondition> conditions, AmbientSituation situation)
 	{
-		this.sound.volume = volume;
-		this.overridenVolume = volume;
-	}
-	
-	public void updateVolume()
-	{
-		this.sound.volume = this.overridenVolume * muteFactor;
+		int index = conditions.size()-1;
+		AmbientCondition condition = conditions.get(index);
+		if(condition instanceof AmbientArrayAndCondition)
+		{
+			AmbientCondition[] subConditions = ((AmbientArrayAndCondition) condition).conditions;
+			for (int i = 0; i < subConditions.length; i++) {
+				conditions.add(subConditions[i]);
+				if(!pickCondition(conditions, situation))
+				{
+					conditions.remove(index);
+					return false;
+				}
+			}
+			return true;
+		}else if(condition instanceof AmbientArrayOrCondition){
+			AmbientCondition[] subConditions = ((AmbientArrayOrCondition) condition).conditions;
+			ArrayList<BiomeArea> previous = situation.selectedBiomes;
+			for (int i = 0; i < subConditions.length; i++) {
+				situation.selectedBiomes = new ArrayList<>(previous);
+				conditions.add(subConditions[i]);
+				if(pickCondition(conditions, situation))
+					return true;
+			}
+			conditions.remove(index);
+			return false;
+		}else{
+			if(condition.is(situation))
+				return true;
+			else
+			{
+				conditions.remove(index);
+				return false;
+			}
+		}
 	}
 	
 	public boolean isSoundPlaying()
 	{
-		return mc.getSoundHandler().isSoundPlaying(sound);
+		return sound != null;
 	}
 	
-	public int getTimeToWait()
-	{
-		return timeToWait;
-	}
+	public boolean inTickList = false;
 	
-	public void resetTimeToWait()
-	{
-		timeToWait = 20;
-	}
+	public float fadeInAmount = 0;
+	public float fadeOutAmount = 0;
 	
-	private int timeToWait = 0;
-	
-	public void tick()
+	public void stopSound()
 	{
-		if(timeToWait > 0)
-			timeToWait--;
-	}
-	
-	public boolean playSound()
-	{
-		if(timeToWait <= 0){
-			if(!mc.getSoundHandler().isSoundPlaying(sound))
-				mc.getSoundHandler().playSound(sound);
-			resetTimeToWait();
-			return true;
-		}
-		return false;
-	}
-	
-	public void setVolume(float volume)
-	{
-		//this.sound.donePlaying = false;
-		this.overridenVolume = volume;
-		this.sound.volume = volume * muteFactor;
-		
-		if(volume <= 0)
+		if(isSoundPlaying())
 		{
-			//sound.donePlaying = true;
 			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
-			resetTimeToWait();
-			resetVolume();
-			TickHandler.playing.remove(this);
+			sound = null;
 		}
 	}
 	
-	public float getMutingFactorPriority()
+	public void tick(float mute)
 	{
-		return 0.0F;
+		if(isSoundPlaying())
+		{
+			float aimedVolume = this.aimedVolume * mute;
+			if(currentVolume < aimedVolume)
+				currentVolume += Math.min(fadeInAmount, aimedVolume-currentVolume);
+			else if(currentVolume > aimedVolume)
+				currentVolume -= Math.min(fadeOutAmount, currentVolume-aimedVolume);
+			sound.volume = currentVolume;
+			//if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
+				//Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			if(aimedVolume == 0 && currentVolume == 0)
+			{
+				stopSound();
+			}
+		}else if(pause > 0)
+			pause--;
+		else{
+			//TODO Implement playing sound!!!
+		}
 	}
 	
-	public float getMutingFactor()
+	public float mutingFactor = 0;
+	
+	public boolean update(AmbientSituation situation)
 	{
-		return 0.0F;
+		ArrayList<AmbientCondition> conditions = new ArrayList<>();
+		conditions.add(condition);
+		if(!pickCondition(conditions, situation))
+		{
+			aimedVolume = 0;
+			return false;
+		}
+		
+		float volume = 1.0F;
+		boolean requiresBiomes = false;
+		HashMap<String, Object> values = new HashMap<>(properties);
+		for (int i = 0; i < conditions.size(); i++) { 
+			volume = conditions.get(i).getVolumeModifier(situation); //TODO CHECK IF THIS WORKS!!!
+			if(conditions.get(i).unknownValues != null)
+				values.putAll(conditions.get(i).unknownValues);
+			if(conditions.get(i).requiresBiome())
+				requiresBiomes = true;
+		}
+		
+		if(isFull && !requiresBiomes)
+			situation.selectedBiomes.clear();
+		
+		int minPause = (int) ((double) ((Double) getValue(values, "minPause", 0D)));
+		int maxPause = (int) ((double) ((Double) getValue(values, "maxPause", 0D)));
+		int length = (int) ((double) ((Double) getValue(values, "length", 0D)));
+		
+		float configVolume = 1;
+		if(values.containsKey("volume"))
+			configVolume = (float) ((double) ((Double) getValue(values, "volume", 0D)));
+		float day = (float) ((double) ((Double) getValue(values, "day", 0D)));
+		float night = (float) ((double) ((Double) getValue(values, "night", 0D)));
+		
+		
+		
+		float fade = (float) ((double) ((Double) getValue(values, "fade", 0.001)));
+		this.fadeInAmount = this.fadeOutAmount = fade;
+		if(values.containsKey("fadeIn"))
+			fadeInAmount = (float) ((double) ((Double) getValue(values, "fadeIn", 0.001)));
+		if(values.containsKey("fadeOut"))
+			fadeOutAmount = (float) ((double) ((Double) getValue(values, "fadeOut", 0.001)));
+		
+		if(situation.isNight)
+			volume *= night;
+		else
+			volume *= day;
+		
+		if(requiresBiomes)
+		{
+			float biomeVolume = 0;
+			
+			for (int i = 0; i < situation.selectedBiomes.size(); i++) {
+				biomeVolume = Math.max(biomeVolume, situation.biomes.get(situation.selectedBiomes.get(i)));
+			}
+			
+			volume *= biomeVolume;
+		}
+		
+		this.mutingFactor = (float) ((double) ((Double) getValue(values, "mute", 0D))) * volume;
+		
+		volume *= configVolume;
+		
+		if(volume > 0 && pause == 0 && !isSoundPlaying())
+		{
+			if(isFull)
+				situation.playedFull = true;
+			currentVolume = 0.001F;
+			sound = new IEnhancedPositionSound(name, currentVolume, 1.0F);
+			sound.repeat = minPause == 0 && maxPause == 0;
+			Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+		}
+		
+		aimedVolume = volume;
+		
+		return volume > 0;
+		
 	}
 	
-	public boolean canPlaySound()
+	@Override
+	public String toString()
 	{
-		return true;
+		return name + ", " + currentVolume + "/" + aimedVolume;
 	}
-	
-	public static final float fadeAmount = 0.001F;
-	
-	public float fadeInAmount()
-	{
-		return fadeAmount;
-	}
-	
-	public float fadeOutAmount()
-	{
-		return fadeAmount;
-	}
-	
-	public abstract float getVolume(World world, EntityPlayer player, boolean isNight);
 	
 }

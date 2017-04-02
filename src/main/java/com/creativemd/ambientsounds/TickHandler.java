@@ -1,17 +1,24 @@
 package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import com.creativemd.ambientsounds.env.AmbientEnv;
+import com.creativemd.ambientsounds.AmbientSituation.BiomeArea;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Tick;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -24,97 +31,179 @@ public class TickHandler {
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event)
 	{
-		for (int i = 0; i < AmbientEnv.envs.size(); i++) {
-			AmbientEnv.envs.get(i).resetTick();
+		for (int i = 0; i < playing.size(); i++) {
+			playing.get(i).stopSound();
 		}
+		playing.clear();
+		situation = null;
+		timer = 0;
 	}
 	
-	@SubscribeEvent
-	public synchronized void onClientTick(ClientTickEvent event)
+	public int timer = 0;
+	public int envUpdateTickTime = 60;
+	public int soundTickTime = 10;
+	
+	public static float calculateAverageHeight(World world, EntityPlayer player)
 	{
-		if(event.phase == Phase.END)
-		{			
-			Minecraft mc = Minecraft.getMinecraft();
-			EntityPlayer player = mc.thePlayer;
-			World world = mc.theWorld;
+		float sum = 0;
+		int count = 0;
+		
+		for (int x = -2; x < 3; x++) {
+			for (int z = -2; z < 3; z++) {
+				int posX = (int) (player.posX+x*2);
+				int posZ = (int) (player.posZ+z*2);
+				int height = getHeightBlock(world, posX, posZ);
+				
+				sum += height;
+				count++;
+			}
+		}
+		float average = sum/count;
+		
+		float y = (float) player.posY;
+		return y-average;
+	}
+	
+	public static int getHeightBlock(World world, int x, int z)
+    {
+        int y;
+        int heighest = 2;
+
+        for (y = 45; y < 256; ++y)
+        {
+        	IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+            if(state.isBlockNormalCube() || state.getBlock() == Blocks.WATER)
+            	heighest = y;
+        }
+
+        return heighest;
+    }
+	
+	private static LinkedHashMap<BiomeArea, Float> sortByFloatValue(Map<BiomeArea, Float> unsortMap) {
+	    List<Map.Entry<BiomeArea, Float>> list = new LinkedList<Map.Entry<BiomeArea, Float>>(unsortMap.entrySet());
+	    Collections.sort(list, new Comparator<Map.Entry<BiomeArea, Float>>() {
+	        public int compare(Map.Entry<BiomeArea, Float> o1, Map.Entry<BiomeArea, Float> o2) {
+	            return (o1.getValue()).compareTo(o2.getValue());
+	        }
+	    });
+	    LinkedHashMap<BiomeArea, Float> sortedMap = new LinkedHashMap<BiomeArea, Float>();
+	    for (Map.Entry<BiomeArea, Float> entry : list) {
+	        sortedMap.put(entry.getKey(), entry.getValue());
+	    }
+
+	    return sortedMap;
+	}
+	
+	public static LinkedHashMap<BiomeArea, Float> calculateBiomes(World world, EntityPlayer player, float volume)
+	{
+		LinkedHashMap<BiomeArea, Float> biomes = new LinkedHashMap<>();
+		
+		if(world.provider.getDimension() == -1 || world.provider.getDimension() == 1)
+			volume = 1F;
+		
+		if(volume > 0.0)
+		{
+			int range = 10;
+			int stepSize = 5;
 			
-			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
-			{
-				float angle = (float) (world.getCelestialAngle(mc.getRenderPartialTicks())); //0.25-0.75
-				boolean isNight = !(angle > 0.75F || angle < 0.25F);
-				
-				for (int i = 0; i < AmbientEnv.envs.size(); i++) {
-					AmbientEnv env = AmbientEnv.envs.get(i);
-					env.tick(world, player);
-				}
-				
-				
-				float mutingFactor = 0.0F;
-				float mutingPriority = 0.0F;
-				
-				for (int i = 0; i < AmbientSound.sounds.size(); i++) {
-					AmbientSound sound = AmbientSound.sounds.get(i);
-					sound.tick();
-					sound.muteFactor = 1F;
-					sound.updateVolume();
-					if(sound.canPlaySound())
-					{
-						float volume = sound.getVolume(world, player, isNight);
-						if(volume > 0)
-						{
-							mutingFactor += sound.getMutingFactor()*(sound.overridenVolume/sound.volume);
-							mutingPriority = Math.max(mutingPriority, sound.getMutingFactorPriority());
-							if(!playing.contains(sound))
-							{
-								sound.setVolume(0.00001F);
-								try{
-									if(sound.playSound())
-										playing.add(sound);
-								}catch (Exception e){
-									e.printStackTrace();
-								}
-								
-							}else{
-								if(sound.getTimeToWait() <= 0)
-								{
-									if(!mc.getSoundHandler().isSoundPlaying(sound.sound))
-										playing.remove(sound);
-									sound.resetTimeToWait();
-								}
-									
-								if(sound.overridenVolume < sound.volume*volume)
-									sound.setVolume(sound.overridenVolume + sound.fadeInAmount());
-								else if(sound.overridenVolume > sound.volume*volume + sound.fadeInAmount())
-									sound.setVolume(sound.overridenVolume - sound.fadeInAmount());
-								else if(sound.overridenVolume > sound.volume*volume)
-								{
-									sound.overridenVolume = sound.volume*volume;
-									sound.sound.volume = sound.volume*volume;
-								}
-							}
-						}else if(volume <= 0)
-							if(playing.contains(sound))
-								sound.setVolume(sound.overridenVolume - sound.fadeOutAmount());
-					}
-				}
-				mutingFactor = Math.min(1F, mutingFactor);
-				if(mutingFactor > 0)
-				{
-					for (int i = 0; i < playing.size(); i++) {
-						if(playing.get(i).getMutingFactorPriority() < mutingPriority)
-						{
-							playing.get(i).muteFactor = 1-mutingFactor;
-							playing.get(i).updateVolume();
-						}
-					}
-				}
-				
-			}else{
-				for (int i = 0; i < playing.size(); i++) {
-					playing.get(i).setVolume(0);
+			int posX = (int) player.posX;
+			int posZ = (int) player.posZ;
+			BlockPos center = new BlockPos(posX, 0, posZ);
+			
+			for (int x = -range; x <= range; x+=stepSize) {
+				for (int z = -range; z <= range; z+=stepSize) {
+					BlockPos pos = new BlockPos(posX+x, 0, posZ+z);
+					Biome biome = world.getBiome(pos);
+					
+					
+					float biomeVolume = (float) ((1-Math.sqrt(center.distanceSq(pos))/(range*2))*volume);
+					if(biomes.containsKey(biome))
+						biomes.put(new BiomeArea(biome, pos), Math.max(biomes.get(biome), biomeVolume));
+					else
+						biomes.put(new BiomeArea(biome, pos), biomeVolume);
 				}
 			}
 			
+			return sortByFloatValue(biomes);
+		}
+		return biomes;
+	}
+	
+	private static Minecraft mc = Minecraft.getMinecraft();
+	
+	public static AmbientSituation situation = null;
+	
+	@SubscribeEvent
+	public void onTick(ClientTickEvent event)
+	{
+		if(event.phase == Phase.START)
+		{
+			World world = mc.world;
+			EntityPlayer player = mc.player;
+			
+			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
+			{
+				if(situation == null)
+					situation = new AmbientSituation(world, player, null, 0, false);
+				
+				situation.playedFull = false;
+				
+				if(timer % envUpdateTickTime == 0)
+				{
+					float angle = (float) (world.getCelestialAngle(mc.getRenderPartialTicks())); //0.25-0.75
+					situation.isNight = !(angle > 0.75F || angle < 0.25F);
+					situation.relativeHeight = calculateAverageHeight(world, player);
+					
+					situation.selectedBiomes = new ArrayList<>();
+					if(AmbientSoundLoader.biomeCondition.is(situation))
+ 						situation.biomes = calculateBiomes(world, player, AmbientSoundLoader.biomeCondition.getVolumeModifier(situation));
+					else if(situation.biomes != null)
+						situation.biomes.clear();
+					else
+						situation.biomes = new LinkedHashMap<>();
+				}
+				
+				if(timer % soundTickTime == 0)
+				{
+					ArrayList<BiomeArea> biomesFull = new ArrayList<>(situation.biomes.keySet());
+					for (int i = 0; i < AmbientSoundLoader.sounds.size(); i++) {
+						AmbientSound sound = AmbientSoundLoader.sounds.get(i);
+						if(sound.isFull)
+							situation.selectedBiomes = new ArrayList<>(biomesFull);
+						else
+							situation.selectedBiomes = new ArrayList<>(situation.biomes.keySet());
+						
+						boolean canBePlayed = sound.update(situation);
+						
+						if(canBePlayed && sound.isFull)
+							biomesFull.removeAll(situation.selectedBiomes);
+						
+						if((canBePlayed || sound.isSoundPlaying()) && !sound.inTickList)
+						{
+							playing.add(sound);
+							sound.inTickList = true;
+						}else if(!canBePlayed && !sound.isSoundPlaying() && sound.inTickList){
+							sound.inTickList = false;
+							playing.remove(sound);
+						}
+					}
+					
+					System.out.println("================Playing================");
+					for (int i = 0; i < playing.size(); i++) {
+						System.out.println(playing.get(i));
+					}
+				}
+				
+				//TODO IMPLEMENT MUTE
+				
+				for (int i = 0; i < playing.size(); i++) {
+					playing.get(i).tick(1F);
+					
+				}
+				
+				timer++;
+			}
 		}
 	}
+	
 }

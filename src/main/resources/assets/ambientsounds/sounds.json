@@ -1,222 +1,403 @@
 {
-	"savanna":{
-		"sounds":
-			[
+	"animals.bird.bird-megataiga":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/savanna/savanna",
+					"name":"ambientsounds:animals/bird/bird-megataiga",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"savanna-night":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/savanna/savanna-night",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-	"forest":{
-		"sounds":
-			[
+    "animals.bird.bird-taiga":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/forest/forest",
+					"name":"ambientsounds:animals/bird/bird-taiga",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"forest-night":{
-		"sounds":
-			[
+    "animals.bird.bird-roofed":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/forest/forest-night",
+					"name":"ambientsounds:animals/bird/bird-roofed",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"jungle":{
-		"sounds":
-			[
+    "animals.bird.bird-swamp":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/jungle/jungle",
+					"name":"ambientsounds:animals/bird/bird-swamp",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"jungle-night":{
-		"sounds":
-			[
+    "animals.bird.bird-jungle":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/jungle/jungle-night",
+					"name":"ambientsounds:animals/bird/bird-jungle",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"plains":{
-		"sounds":
-			[
+    "animals.bird.bird-jungle-night":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/plains/plains",
+					"name":"ambientsounds:animals/bird/bird-jungle-night",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"plains-night":{
-		"sounds":
-			[
+    "animals.bird.bird":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/plains/plains-night",
+					"name":"ambientsounds:animals/bird/bird",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"swampland":{
-		"sounds":
-			[
+    "animals.bird.bird-cold":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/swampland/swampland",
+					"name":"ambientsounds:animals/bird/bird-cold",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"swampland-night":{
-		"sounds":
-			[
+    "animals.bird.crow":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/swampland/swampland-night",
+					"name":"ambientsounds:animals/bird/crow",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"taiga":{
-		"sounds":
-			[
+    "animals.bird.bird-warm":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/taiga/taiga",
+					"name":"ambientsounds:animals/bird/bird-warm",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"taiga-night":{
-		"sounds":
-			[
+    "animals.cicadas.cicadas":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/taiga/taiga-night",
+					"name":"ambientsounds:animals/cicadas/cicadas",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"ocean":{
-		"sounds":
-			[
+    "animals.cicadas.cicadas-desert":{
+		"sounds": [
 				{
-					"name":"ambientsounds:biome/ocean/ocean",
+					"name":"ambientsounds:animals/cicadas/cicadas-desert",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"underwater":{
-		"sounds":
-			[
+    "animals.cricket.cricket-swamp":{
+		"sounds": [
 				{
-					"name":"ambientsounds:area/underwater/underwater",
+					"name":"ambientsounds:animals/cricket/cricket-swamp",
 					"stream":true
 				}
-			],
-			"category":"ambient"
+		],
+		"category":"ambient"
 	},
-	"cave":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:area/cave/cave",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-    "beach":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/beach/beach",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-    "snow":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/snow/snow",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-	"nether":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/nether/nether",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-	"end":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/end/end",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-	"mesa":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/mesa/mesa",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-	"extremehills":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:biome/extremehills/extremehills",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    },
-	"storm":{
-        "sounds":
-            [
-                {
-                    "name":"ambientsounds:weather/storm/storm",
-                    "stream":true
-                }
-            ],
-            "category":"ambient"
-    } 
+    "animals.cricket.cricket-jungle":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/cricket/cricket-jungle",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.cricket.cricket-jungle-night":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/cricket/cricket-jungle-night",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.cricket.cricket-forest-night":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/cricket/cricket-forest-night",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.cricket.cricket":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/cricket/cricket",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.cricket.cricket-night":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/cricket/cricket-night",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.cricket.cricket-warm-night":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/cricket/cricket-warm-night",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.frog.frog":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/frog/frog1",
+					"stream":true
+				},
+				{
+					"name":"ambientsounds:animals/frog/frog2",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.owl.owl":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/owl/owl1"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl2"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl3"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl4"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl5"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl6"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl7"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl8"
+				},
+				{
+					"name":"ambientsounds:animals/owl/owl9"
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.seagull.seagull":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/seagull/seagull1"
+				},
+				{
+					"name":"ambientsounds:animals/seagull/seagull2"
+				},
+				{
+					"name":"ambientsounds:animals/seagull/seagull3"
+				},
+				{
+					"name":"ambientsounds:animals/seagull/seagull4"
+				},
+				{
+					"name":"ambientsounds:animals/seagull/seagull5"
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.seagull.seagull-long":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/seagull/seagull-long",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "animals.wolf.wolf":{
+		"sounds": [
+				{
+					"name":"ambientsounds:animals/wolf/wolf1"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf2"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf3"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf4"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf5"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf6"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf7"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf8"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf9"
+				},
+				{
+					"name":"ambientsounds:animals/wolf/wolf10"
+				}
+		],
+		"category":"ambient"
+	},
+    "suspense.nether":{
+		"sounds": [
+				{
+					"name":"ambientsounds:suspense/nether",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "suspense.end":{
+		"sounds": [
+				{
+					"name":"ambientsounds:suspense/end",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "suspense.cave":{
+		"sounds": [
+				{
+					"name":"ambientsounds:suspense/cave1",
+					"stream":true
+				},
+				{
+					"name":"ambientsounds:suspense/cave2",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "water.beach":{
+		"sounds": [
+				{
+					"name":"ambientsounds:water/beach",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "water.ocean":{
+		"sounds": [
+				{
+					"name":"ambientsounds:water/ocean",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "water.underwater":{
+		"sounds": [
+				{
+					"name":"ambientsounds:water/underwater",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "weather.rain":{
+		"sounds": [
+				{
+					"name":"ambientsounds:weather/rain",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "weather.storm-close":{
+		"sounds": [
+				{
+					"name":"ambientsounds:weather/storm-close",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "weather.storm-away":{
+		"sounds": [
+				{
+					"name":"ambientsounds:weather/storm-away",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "wind.heavy-wind":{
+		"sounds": [
+				{
+					"name":"ambientsounds:wind/heavy-wind",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "wind.light-wind":{
+		"sounds": [
+				{
+					"name":"ambientsounds:wind/light-wind",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "wind.mesa":{
+		"sounds": [
+				{
+					"name":"ambientsounds:wind/mesa",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	},
+    "wind.steady-wind":{
+		"sounds": [
+				{
+					"name":"ambientsounds:wind/steady-wind",
+					"stream":true
+				}
+		],
+		"category":"ambient"
+	}
 }

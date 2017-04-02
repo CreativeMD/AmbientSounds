@@ -1,58 +1,41 @@
 package com.creativemd.ambientsounds;
 
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-@Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds",acceptedMinecraftVersions="")
+@Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds", acceptedMinecraftVersions = "", clientSideOnly = true)
 public class AmbientSounds {
 	
 	public static final String modid = "ambientsounds";
-	public static final String version = "1.2.0";
+	public static final String version = "2.0.0";
 	
-	
-	@EventHandler
-	@SideOnly(Side.CLIENT)
-    public void preInit(FMLPreInitializationEvent event)
-    {
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
-		for (int i = 0; i < AmbientSound.sounds.size(); i++) {
-			AmbientSound.sounds.get(i).volume = config.getFloat(AmbientSound.sounds.get(i).name, "volume", AmbientSound.sounds.get(i).volume, 0, 1, "");
-			if(AmbientSound.sounds.get(i) instanceof BiomesSound)
-			{
-				BiomesSound sound = (BiomesSound) AmbientSound.sounds.get(i);
-				String[] biomes = config.get("biomeSounds", sound.name, toString(sound.biomes)).getString().split(";");
-				sound.biomes = biomes;
-			}
-		}
-		config.save();
-    }
-	
-	public String toString(String[] array)
-	{
-		String result = "";
-		for (int i = 0; i < array.length; i++) {
-			result += array[i] + ";";
-		}
-		return result;
-	}
+	public static final Logger logger = LogManager.getLogger(AmbientSounds.modid);
 	
 	@EventHandler
-	@SideOnly(Side.CLIENT)
-    public void Init(FMLInitializationEvent event)
-    {
+	public void loadComplete(FMLInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(new TickHandler());
-		FMLCommonHandler.instance().bus().register(new TickHandler());
-    }
+		
+		Minecraft minecraft = Minecraft.getMinecraft();
+		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
+		reloadableResourceManager.registerReloadListener(new IResourceManagerReloadListener() {
+			@Override
+			public void onResourceManagerReload(IResourceManager resourceManager) {
+				AmbientSoundLoader.reloadAmbientSounds();
+			}
+		});
+	}
 	
 }
