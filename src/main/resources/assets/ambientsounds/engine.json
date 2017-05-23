@@ -57,11 +57,13 @@
       "name": "plains",
       "variants": [
         {
-          "biomes": [ "plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra" ]
+          "biomes": [ "plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra" ],
+          "bad-regions": [ "forest", "savanna" ]
         },
         {
           "top-block": "minecraft:grass",
-          "treesPerChunk": "<=4"
+          "treesPerChunk": "<=4",
+          "bad-regions": [ "ocean", "forest", "savanna" ]
         }
       ]
     },
@@ -72,14 +74,14 @@
     {
       "name": "underworld",
       "position": {
-        "absolutePosition": "<0",
+        "absolutePosition": "<-5",
         "fadeValue": "5"
       }
     },
     {
       "name": "cave",
       "position": {
-        "relativePosition": "<=-15",
+        "relativePosition": "<=-10",
         "absolutePosition": ">=0",
         "fadeValue": "5"
       }
@@ -87,7 +89,7 @@
     {
       "name": "surface",
       "position": {
-        "relativePosition": ">=-5&<=15",
+        "relativePosition": ">=-10&<=20",
         "fadeValue": "5"
       }
     },
@@ -103,7 +105,7 @@
       "name": "space",
       "position": {
         "absolutePosition": ">4000",
-        "fadeValue": "1000"
+        "fadeValue": "100"
       }
     }
   ],
@@ -174,7 +176,7 @@
         "regions": [ "forest" ],
         "temperature": ">0.5&<=1"
       },
-      "day": 0,
+      "day": 1,
       "night": 1,
       "full": true
     },
@@ -187,7 +189,7 @@
         },
         {
           "regions": [ "plains" ],
-          "temperature": ">0.5&<=1",
+          "temperature": ">0.5&<1",
           "volume": 0.3
         }
       ],
@@ -197,12 +199,23 @@
     },
     {
       "source": "ambientsounds:animals.bird.crow",
-      "selector": {
-        "regions": [ "forest" ],
-        "temperature": "<=0.1"
-      },
+      "selector": [
+        {
+          "regions": [ "forest" ],
+          "temperature": "<=0.1"
+        },
+        {
+          "regions": [ "plains" ],
+          "temperature": "<=0.1",
+          "minPause": 500,
+          "maxPause": 1000,
+          "volume": 0.4
+        }
+      ],
       "day": 1,
       "night": 0.5,
+      "minPause": 100,
+      "maxPause": 400,
       "full": true
     },
     {
@@ -216,7 +229,7 @@
         },
         {
           "regions": [ "plains", "savanna" ],
-          "temperature": ">1&<=2",
+          "temperature": ">=1&<=2",
           "volume": 0.3,
           "day": 1,
           "night": 0
@@ -230,6 +243,7 @@
         "regions": [ "plains", "savanna" ],
         "temperature": ">0.5&<=2"
       },
+      "volume": 0.015,
       "day": 1,
       "night": 0.5
     },
@@ -278,12 +292,19 @@
     },
     {
       "source": "ambientsounds:animals.cricket.cricket",
-      "selector": {
-        "regions": [ "forest", "plains", "savanna" ],
-        "temperature": ">0.1&<=1.5"
-      },
-      "day": 0.3,
-      "night": 0.15
+      "selector": [
+        {
+          "regions": [ "plains", "savanna" ],
+          "temperature": ">0.1&<=1.5"
+        },
+        {
+          "regions": [ "forest" ],
+          "temperature": ">0.1&<=1.5",
+          "volume": 0.1
+        }
+      ],    
+      "day": 0.23,
+      "night": 0.10
     },
     {
       "source": "ambientsounds:animals.cricket.cricket-night",
@@ -349,8 +370,8 @@
         "regions": [ "beach" ],
         "temperature": ">0.1&<=1.5"
       },
-      "minPause": 100,
-      "maxPause": 750,
+      "minPause": 750,
+      "maxPause": 1250,
       "length": 100
     },
     {
@@ -391,6 +412,7 @@
         "regions": [ "beach" ],
         "temperature": ">0"
       },
+      "volume": 0.4,
       "full": true
     },
     {
@@ -406,7 +428,7 @@
       "selector": {
         "underwater": true
       },
-	  "fade": 0.9,
+	  "fade": 0.1,
       "mute": 0.9
     },
     {
@@ -462,7 +484,7 @@
         },
         {
           "regions": [ "sky" ],
-          "volume": 0.2
+          "volume": 0.6
         }
       ]
     }

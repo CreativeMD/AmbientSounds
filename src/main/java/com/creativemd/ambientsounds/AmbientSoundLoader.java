@@ -34,8 +34,14 @@ public class AmbientSoundLoader {
 	
 	public static void reloadAmbientSounds()
 	{
+		AmbientSounds.config.load();
+		
 		regions.clear();
 		sounds.clear();
+		for (int i = 0; i < TickHandler.playing.size(); i++) {
+			TickHandler.playing.get(i).stopSound();
+		}
+		TickHandler.playing.clear();
 		
 		IResource resource;
 		try {
@@ -78,7 +84,11 @@ public class AmbientSoundLoader {
 					if(array.get(i).isJsonObject())
 					{
 						JsonObject object = array.get(i).getAsJsonObject();
-						sounds.add(new AmbientSound(object));
+						AmbientSound sound = new AmbientSound(object);
+						
+						sound.volumeSetting = AmbientSounds.config.getFloat(sound.name.toString(), "volume", 1, 0, 1, "");
+						
+						sounds.add(sound);
 					}else
 						throw new IllegalArgumentException("Invalid child of 'sounds' array!");
 				} catch (Exception e) {
@@ -92,7 +102,7 @@ public class AmbientSoundLoader {
 			regions.clear();
 			sounds.clear();
 		}		
-		
+		AmbientSounds.config.save();
 	}
 	
 }

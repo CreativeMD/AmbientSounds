@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 
 import com.creativemd.ambientsounds.AmbientCondition.AmbientArrayAndCondition;
@@ -16,13 +18,25 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import paulscode.sound.SoundSystem;
 
 public class AmbientSound {
+	
+	private static Minecraft mc = Minecraft.getMinecraft();
+	private static SoundManager manager = ReflectionHelper.getPrivateValue(SoundHandler.class, mc.getSoundHandler(), "sndManager", "field_147694_f");
+	private static SoundSystem system = ReflectionHelper.getPrivateValue(SoundManager.class, manager, "sndSystem", "field_148620_e");
+	public static AmbientSoundEngine engine = new AmbientSoundEngine(manager, mc.gameSettings, system);
+	
+	private static Random rand = new Random();
 	
 	public static AmbientSoundSelectorParser parser = new AmbientSoundSelectorParser();
 	
@@ -165,13 +179,8 @@ public class AmbientSound {
 				condition = new AmbientCondition() {
 					
 					@Override
-					public boolean is(AmbientSituation situation) {
+					public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 						return true;
-					}
-
-					@Override
-					public boolean requiresBiome() {
-						return false;
 					}
 				};
 			
@@ -193,50 +202,14 @@ public class AmbientSound {
 			throw new IllegalArgumentException("No 'name' given!");
 	}
 	
-	public boolean pickCondition(ArrayList<AmbientCondition> conditions, AmbientSituation situation)
-	{
-		int index = conditions.size()-1;
-		AmbientCondition condition = conditions.get(index);
-		if(condition instanceof AmbientArrayAndCondition)
-		{
-			AmbientCondition[] subConditions = ((AmbientArrayAndCondition) condition).conditions;
-			for (int i = 0; i < subConditions.length; i++) {
-				conditions.add(subConditions[i]);
-				if(!pickCondition(conditions, situation))
-				{
-					conditions.remove(index);
-					return false;
-				}
-			}
-			return true;
-		}else if(condition instanceof AmbientArrayOrCondition){
-			AmbientCondition[] subConditions = ((AmbientArrayOrCondition) condition).conditions;
-			ArrayList<BiomeArea> previous = situation.selectedBiomes;
-			for (int i = 0; i < subConditions.length; i++) {
-				situation.selectedBiomes = new ArrayList<>(previous);
-				conditions.add(subConditions[i]);
-				if(pickCondition(conditions, situation))
-					return true;
-			}
-			conditions.remove(index);
-			return false;
-		}else{
-			if(condition.is(situation))
-				return true;
-			else
-			{
-				conditions.remove(index);
-				return false;
-			}
-		}
-	}
-	
 	public boolean isSoundPlaying()
 	{
 		return sound != null;
 	}
 	
 	public boolean inTickList = false;
+	
+	public boolean keepVolume = false;
 	
 	public float fadeInAmount = 0;
 	public float fadeOutAmount = 0;
@@ -245,58 +218,54 @@ public class AmbientSound {
 	{
 		if(isSoundPlaying())
 		{
-			Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+			engine.stop(sound);
 			sound = null;
 		}
 	}
 	
 	public void tick(float mute)
 	{
-		if(isSoundPlaying())
+		if(isSoundPlaying() && (pause == 0 || sound.playing))
 		{
+			if(!sound.playing)
+				engine.play(sound);
 			float aimedVolume = this.aimedVolume * mute;
 			if(currentVolume < aimedVolume)
 				currentVolume += Math.min(fadeInAmount, aimedVolume-currentVolume);
 			else if(currentVolume > aimedVolume)
 				currentVolume -= Math.min(fadeOutAmount, currentVolume-aimedVolume);
-			sound.volume = currentVolume;
-			//if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
-				//Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			sound.volume = currentVolume*mute;
 			if(aimedVolume == 0 && currentVolume == 0)
-			{
 				stopSound();
-			}
-		}else if(pause > 0)
+		}else if(pause > 0 && (sound == null || !sound.playing)) {
+			sound = null;
+			
+			keepVolume = true;
 			pause--;
-		else{
-			//TODO Implement playing sound!!!
 		}
 	}
 	
 	public float mutingFactor = 0;
 	
+	public float volumeSetting = 1;
+	
 	public boolean update(AmbientSituation situation)
 	{
-		ArrayList<AmbientCondition> conditions = new ArrayList<>();
-		conditions.add(condition);
-		if(!pickCondition(conditions, situation))
+		AmbientSoundResult result = new AmbientSoundResult();
+		if(!condition.is(situation, result))
 		{
 			aimedVolume = 0;
 			return false;
 		}
 		
-		float volume = 1.0F;
-		boolean requiresBiomes = false;
+		float volume = result.volume;
 		HashMap<String, Object> values = new HashMap<>(properties);
-		for (int i = 0; i < conditions.size(); i++) { 
-			volume = conditions.get(i).getVolumeModifier(situation); //TODO CHECK IF THIS WORKS!!!
-			if(conditions.get(i).unknownValues != null)
-				values.putAll(conditions.get(i).unknownValues);
-			if(conditions.get(i).requiresBiome())
-				requiresBiomes = true;
+		for (int i = 0; i < result.conditions.size(); i++) { 
+			if(result.conditions.get(i).unknownValues != null)
+				values.putAll(result.conditions.get(i).unknownValues);
 		}
 		
-		if(isFull && !requiresBiomes)
+		if(isFull && !result.takeBiome)
 			situation.selectedBiomes.clear();
 		
 		int minPause = (int) ((double) ((Double) getValue(values, "minPause", 0D)));
@@ -306,10 +275,8 @@ public class AmbientSound {
 		float configVolume = 1;
 		if(values.containsKey("volume"))
 			configVolume = (float) ((double) ((Double) getValue(values, "volume", 0D)));
-		float day = (float) ((double) ((Double) getValue(values, "day", 0D)));
-		float night = (float) ((double) ((Double) getValue(values, "night", 0D)));
-		
-		
+		float day = (float) ((double) ((Double) getValue(values, "day", 1D)));
+		float night = (float) ((double) ((Double) getValue(values, "night", 1D)));
 		
 		float fade = (float) ((double) ((Double) getValue(values, "fade", 0.001)));
 		this.fadeInAmount = this.fadeOutAmount = fade;
@@ -323,7 +290,7 @@ public class AmbientSound {
 		else
 			volume *= day;
 		
-		if(requiresBiomes)
+		if(result.takeBiome)
 		{
 			float biomeVolume = 0;
 			
@@ -336,28 +303,39 @@ public class AmbientSound {
 		
 		this.mutingFactor = (float) ((double) ((Double) getValue(values, "mute", 0D))) * volume;
 		
-		volume *= configVolume;
+		volume *= configVolume * volumeSetting;
 		
 		if(volume > 0 && pause == 0 && !isSoundPlaying())
 		{
 			if(isFull)
 				situation.playedFull = true;
-			currentVolume = 0.001F;
+			if(!keepVolume)
+			{
+				currentVolume = 0.001F;
+				keepVolume = false;
+			}
 			sound = new IEnhancedPositionSound(name, currentVolume, 1.0F);
 			sound.repeat = minPause == 0 && maxPause == 0;
-			Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			if(maxPause > minPause && maxPause > 0)
+				pause = rand.nextInt(maxPause-minPause)+minPause;
+			else
+				pause = 0;
+			
+			engine.play(sound);
 		}
 		
 		aimedVolume = volume;
 		
 		return volume > 0;
-		
 	}
 	
 	@Override
 	public String toString()
 	{
-		return name + ", " + currentVolume + "/" + aimedVolume;
+		StringBuilder builder = new StringBuilder(name + ", " + currentVolume + "/" + aimedVolume);
+		if(pause > 0)
+			builder.append(" pause: " + pause);
+		return builder.toString();
 	}
 	
 }

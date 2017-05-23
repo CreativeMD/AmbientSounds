@@ -71,12 +71,40 @@
 		],
 		"category":"ambient"
 	},
-    "animals.bird.crow":{
-		"sounds": [
-				{
-					"name":"ambientsounds:animals/bird/crow",
-					"stream":true
-				}
+  "animals.bird.crow": {
+    "sounds": [
+      {
+        "name": "ambientsounds:animals/bird/crow1",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow2",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow3",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow4",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow5",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow6",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow7",
+        "stream": true
+      },
+      {
+        "name": "ambientsounds:animals/bird/crow8",
+        "stream": true
+      }
 		],
 		"category":"ambient"
 	},

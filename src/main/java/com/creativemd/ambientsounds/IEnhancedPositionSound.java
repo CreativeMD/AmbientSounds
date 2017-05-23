@@ -24,7 +24,12 @@ public class IEnhancedPositionSound implements ITickableSound
     public boolean repeat = true;
     public int delay = 0;
     public ISound.AttenuationType type;
-
+    public boolean playing = false;
+    
+    public boolean hasBeenAdded = false;
+    
+    public String systemName;
+    
     public IEnhancedPositionSound(ResourceLocation resource, float volume, float pitch)
     {
         this.type = ISound.AttenuationType.NONE;
@@ -48,7 +53,7 @@ public class IEnhancedPositionSound implements ITickableSound
     @Override
     public int getRepeatDelay()
     {
-        return this.delay;
+        return delay;
     }
     
     @Override

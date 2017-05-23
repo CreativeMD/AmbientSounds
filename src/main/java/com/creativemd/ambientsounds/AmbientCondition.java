@@ -32,29 +32,18 @@ public abstract class AmbientCondition {
 		}
 
 		@Override
-		public boolean is(AmbientSituation situation) {
+		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 			ArrayList<BiomeArea> previous = situation.selectedBiomes;
 			for (int i = 0; i < conditions.length; i++) {
 				situation.selectedBiomes = new ArrayList<>(previous);
-				if(conditions[i].is(situation))
+				if(conditions[i].is(situation, result))
+				{
+					result.conditions.add(conditions[i]);
 					return true;
+				}
 			}
+			situation.selectedBiomes = previous;
 			return false;
-		}
-
-		@Override
-		public boolean requiresBiome() {
-			return false;
-		}
-		
-		@Override
-		public float getVolumeModifier(AmbientSituation situation)
-		{
-			float volume = 1.0F;
-			for (int i = 0; i < conditions.length; i++) {
-				volume *= conditions[i].getVolumeModifier(situation);
-			}
-			return volume;
 		}
 		
 	}
@@ -66,29 +55,56 @@ public abstract class AmbientCondition {
 		public AmbientArrayAndCondition(AmbientCondition[] conditions) {
 			this.conditions = conditions;
 		}
-
+		
 		@Override
-		public boolean is(AmbientSituation situation) {
+		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+			ArrayList<BiomeArea> previous = situation.selectedBiomes;
 			for (int i = 0; i < conditions.length; i++) {
-				if(!conditions[i].is(situation))
+				situation.selectedBiomes = new ArrayList<>(previous);
+				if(!conditions[i].is(situation, result))
 					return false;
+				result.conditions.add(conditions[i]);
 			}
 			return true;
 		}
+		
+	}
+	
+	public static class AmbientInvertCondition extends AmbientCondition {
+		
+		public AmbientCondition condition;
+		
+		public AmbientInvertCondition(AmbientCondition condition) {
+			this.condition = condition;
+		}
 
 		@Override
-		public boolean requiresBiome() {
-			return false;
+		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+			return !condition.is(situation, result);
 		}
 		
-		@Override
-		public float getVolumeModifier(AmbientSituation situation)
+	}
+	
+	public static class AmbientRegionCondition extends AmbientCondition {
+		
+		public String regionName;
+		
+		public AmbientCondition condition;
+		
+		public AmbientRegionCondition(String region)
 		{
-			float volume = 1.0F;
-			for (int i = 0; i < conditions.length; i++) {
-				volume *= conditions[i].getVolumeModifier(situation);
+			this.regionName = region;
+		}
+
+		@Override
+		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+			if(condition == null)
+			{
+				condition = AmbientSoundLoader.regions.get(regionName);
+				if(condition == null)
+					throw new IllegalArgumentException("Region '" + regionName + "' does not exist!");
 			}
-			return volume;
+			return condition.is(situation, result);
 		}
 		
 	}
@@ -230,15 +246,15 @@ public abstract class AmbientCondition {
 					double value = Double.parseDouble(parts[i].replaceFirst(operator.identifier, ""));
 					points[i] = value;
 					conditions[i] = new AmbientCondition() {
-						
 						@Override
-						public boolean is(AmbientSituation situation) {
-							return AmbientMathConditionParser.this.is(operator, value, situation);
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return AmbientMathConditionParser.this.requiresBiome();
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							if(AmbientMathConditionParser.this.is(operator, value, situation))
+							{
+								if(AmbientMathConditionParser.this.requiresBiome())
+									result.takeBiome = true;
+								return true;
+							}
+							return false;
 						}
 					};
 				}
@@ -263,13 +279,8 @@ public abstract class AmbientCondition {
 					{
 						return new AmbientCondition() {
 							@Override
-							public boolean is(AmbientSituation situation) {
+							public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 								return true;
-							}
-
-							@Override
-							public boolean requiresBiome() {
-								return false;
 							}
 						};
 					}
@@ -293,9 +304,8 @@ public abstract class AmbientCondition {
 					}
 					
 					return new AmbientCondition() {
-						
 						@Override
-						public boolean is(AmbientSituation situation) {
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							int i = 0;
 							while(i < situation.selectedBiomes.size())
 							{
@@ -313,12 +323,13 @@ public abstract class AmbientCondition {
 									situation.selectedBiomes.remove(i);
 							}
 							
-							return !situation.selectedBiomes.isEmpty();
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return true;
+							if(!situation.selectedBiomes.isEmpty())
+							{
+								result.takeBiome = true;
+								return true;
+							}
+							
+							return false;
 						}
 					};
 				}
@@ -433,37 +444,33 @@ public abstract class AmbientCondition {
 					final double[] absolutePoints = absolutePointsTemp;
 					
 					return new AmbientCondition() {
-						
 						@Override
-						public boolean is(AmbientSituation situation) {
-							if(relative != null && !relative.is(situation))
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							if(relative != null && !relative.is(situation, result))
 								return false;
-							if(absolute != null && !absolute.is(situation))
+							if(absolute != null && !absolute.is(situation, result))
 								return false;
-							return true;
-						}
-						
-						@Override
-						public float getVolumeModifier(AmbientSituation situation)
-						{
+							
 							double distance = fade;
 							
-							for (int i = 0; i < relativePoints.length; i++) {
-								distance = Math.min(distance, Math.abs(situation.relativeHeight-relativePoints[i]));
+							if(relativePoints != null)
+							{
+								for (int i = 0; i < relativePoints.length; i++) {
+									distance = Math.min(distance, Math.abs(situation.relativeHeight-relativePoints[i]));
+								}
 							}
 							
-							for (int i = 0; i < absolutePoints.length; i++) {
-								distance = Math.min(distance, Math.abs(situation.relativeHeight-absolutePoints[i]));
-							}
+							if(absolutePoints != null)
+							{
+								for (int i = 0; i < absolutePoints.length; i++) {
+									distance = Math.min(distance, Math.abs(situation.relativeHeight-absolutePoints[i]));
+								}
+							}	
 							
 							if(distance < fade)
-								return (float) (distance/fade);
-							return 1.0F;
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return false;
+								result.volume *= (float) (distance/fade);
+							
+							return true;
 						}
 					};
 				}
@@ -480,13 +487,8 @@ public abstract class AmbientCondition {
 				{
 					return new AmbientCondition() {
 						@Override
-						public boolean is(AmbientSituation situation) {
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							return element.getAsBoolean() == situation.player.isInsideOfMaterial(Material.WATER);
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return false;
 						}
 					};
 				}
@@ -503,13 +505,8 @@ public abstract class AmbientCondition {
 				{
 					return new AmbientCondition() {
 						@Override
-						public boolean is(AmbientSituation situation) {
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							return element.getAsBoolean() == situation.world.isRaining();
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return false;
 						}
 					};
 				}
@@ -525,14 +522,10 @@ public abstract class AmbientCondition {
 				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
 				{
 					return new AmbientCondition() {
+						
 						@Override
-						public boolean is(AmbientSituation situation) {
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							return element.getAsBoolean() == situation.world.isThundering();
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return false;
 						}
 					};
 				}
@@ -555,7 +548,7 @@ public abstract class AmbientCondition {
 					
 					return new AmbientCondition() {
 						@Override
-						public boolean is(AmbientSituation situation) {
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							int i = 0;
 							while(i < situation.selectedBiomes.size())
 							{
@@ -565,12 +558,12 @@ public abstract class AmbientCondition {
 								else
 									situation.selectedBiomes.remove(i);
 							}
-							return !situation.selectedBiomes.isEmpty();
-						}
-
-						@Override
-						public boolean requiresBiome() {
-							return true;
+							if(!situation.selectedBiomes.isEmpty())
+							{
+								result.takeBiome = true;
+								return true;
+							}
+							return false;
 						}
 					};
 				}
@@ -617,31 +610,27 @@ public abstract class AmbientCondition {
 					JsonArray array = element.getAsJsonArray();
 					AmbientCondition[] regions = new AmbientCondition[array.size()];
 					for (int i = 0; i < regions.length; i++) {
-						AmbientCondition region = AmbientSoundLoader.regions.get(array.get(i).getAsString());
-						if(region == null)
-							throw new IllegalArgumentException("Region '" + array.get(i).getAsString() + "' does not exist!");
-						regions[i] = region;
+						regions[i] = new AmbientRegionCondition(array.get(i).getAsString());
 					}
 					return new AmbientArrayOrCondition(regions);
-					/*return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation) {
-							for (int i = 0; i < regions.length; i++) {
-								if(regions[i].is(situation))
-									return true;
-							}
-							return false;
-						}
+				}
+				throw new IllegalArgumentException("Expected a string array!");
+			}
+		});
+		
+		regionSelectors.put("bad-regions", new AmbientConditionParser() {
 
-						@Override
-						public boolean requiresBiome() {
-							for (int i = 0; i < regions.length; i++) {
-								if(regions[i].requiresBiome())
-									return true;
-							}
-							return false;
-						}
-					};*/
+			@Override
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
+			{
+				if(element.isJsonArray())
+				{
+					JsonArray array = element.getAsJsonArray();
+					AmbientCondition[] regions = new AmbientCondition[array.size()];
+					for (int i = 0; i < regions.length; i++) {
+						regions[i] = new AmbientInvertCondition(new AmbientRegionCondition(array.get(i).getAsString()));
+					}
+					return new AmbientArrayAndCondition(regions);
 				}
 				throw new IllegalArgumentException("Expected a string array!");
 			}
@@ -670,13 +659,15 @@ public abstract class AmbientCondition {
 		
 	}
 	
-	public abstract boolean requiresBiome();
+	public abstract boolean is(AmbientSituation situation, AmbientSoundResult result);
+	
+	/*public abstract boolean requiresBiome();
 	
 	public abstract boolean is(AmbientSituation situation);
 	
 	public float getVolumeModifier(AmbientSituation situation)
 	{
 		return 1.0F;
-	}
+	}*/
 	
 }

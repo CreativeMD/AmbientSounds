@@ -15,6 +15,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,6 +24,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import paulscode.sound.SoundSystemConfig;
 
 public class TickHandler {
 	
@@ -41,7 +43,7 @@ public class TickHandler {
 	
 	public int timer = 0;
 	public int envUpdateTickTime = 60;
-	public int soundTickTime = 10;
+	public int soundTickTime = 2;
 	
 	public static float calculateAverageHeight(World world, EntityPlayer player)
 	{
@@ -117,10 +119,11 @@ public class TickHandler {
 					
 					
 					float biomeVolume = (float) ((1-Math.sqrt(center.distanceSq(pos))/(range*2))*volume);
-					if(biomes.containsKey(biome))
-						biomes.put(new BiomeArea(biome, pos), Math.max(biomes.get(biome), biomeVolume));
+					BiomeArea area = new BiomeArea(biome, pos);
+					if(biomes.containsKey(area))
+						biomes.put(area, Math.max(biomes.get(area), biomeVolume));
 					else
-						biomes.put(new BiomeArea(biome, pos), biomeVolume);
+						biomes.put(area, biomeVolume);
 				}
 			}
 			
@@ -138,6 +141,7 @@ public class TickHandler {
 	{
 		if(event.phase == Phase.START)
 		{
+			AmbientSound.engine.tick();
 			World world = mc.world;
 			EntityPlayer player = mc.player;
 			
@@ -155,8 +159,9 @@ public class TickHandler {
 					situation.relativeHeight = calculateAverageHeight(world, player);
 					
 					situation.selectedBiomes = new ArrayList<>();
-					if(AmbientSoundLoader.biomeCondition.is(situation))
- 						situation.biomes = calculateBiomes(world, player, AmbientSoundLoader.biomeCondition.getVolumeModifier(situation));
+					AmbientSoundResult biomeResult = new AmbientSoundResult();
+					if(AmbientSoundLoader.biomeCondition.is(situation, biomeResult))
+ 						situation.biomes = calculateBiomes(world, player, biomeResult.volume);
 					else if(situation.biomes != null)
 						situation.biomes.clear();
 					else
@@ -168,6 +173,7 @@ public class TickHandler {
 					ArrayList<BiomeArea> biomesFull = new ArrayList<>(situation.biomes.keySet());
 					for (int i = 0; i < AmbientSoundLoader.sounds.size(); i++) {
 						AmbientSound sound = AmbientSoundLoader.sounds.get(i);
+						
 						if(sound.isFull)
 							situation.selectedBiomes = new ArrayList<>(biomesFull);
 						else
