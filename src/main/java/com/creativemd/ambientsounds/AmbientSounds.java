@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
 @Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds", acceptedMinecraftVersions = "", clientSideOnly = true, guiFactory = "com.creativemd.ambientsounds.AmbientSettings")
@@ -57,6 +58,9 @@ public class AmbientSounds {
 				AmbientSoundLoader.reloadAmbientSounds();
 			}
 		});
+		
+		SoundSystemConfig.setNumberStreamingChannels( 11 );
+		SoundSystemConfig.setNumberNormalChannels( 21 ); 
 		
 		MinecraftForge.EVENT_BUS.register(new TickHandler());
 		

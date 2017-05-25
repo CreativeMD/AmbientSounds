@@ -2,23 +2,31 @@
   "regions": [
     {
       "name": "savanna",
-      "biomes": [ "savanna", "heathland", "prairie" ]
+      "biomes": [ "savanna", "heathland", "prairie", "brushland" ]
     },
     {
       "name": "swamp",
-      "biomes": [ "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland" ],
+      "biomes": [ "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland", "quagmire", "dead forest" ],
       "temperature": ">0.5&<=2"
     },
     {
       "name": "jungle",
-      "biomes": [ "jungle", "sacred springs", "tropical" ],
+      "biomes": [ "jungle", "sacred springs", "tropical", "bamboo forest", "encalyptus forest", "overgrown cliffs" ],
       "temperature": ">0.5"
+    },
+    {
+      "name": "nether",
+      "biomes": [ "hell", "dead", "inferno", "fungi forest", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap" ]
+    },
+    {
+      "name": "taiga",
+      "biomes": [ "taiga", "grove", "jade cliffs", "shield", "coniferous forest", "snowy*forest", "temperate rainforest", "spruce", "meneglin" ]
     },
     {
       "name": "desert",
       "variants": [
         {
-          "biomes": [ "desert", "quagmire" ]
+          "biomes": [ "desert", "quagmire", "shrubland" ]
         },
         {
           "top-block": "minecraft:sand"
@@ -38,6 +46,11 @@
       ]
     },
     {
+      "name": "highland",
+      "biomes": [ "extreme*hills", "alps", "crag", "highland", "mountain peak", "volcanic island", "mountains" ],
+      "temperature": ">0.5"
+    },
+    {
       "name": "beach",
       "biomes": [ "beach", "mangrove" ]
     },
@@ -45,11 +58,12 @@
       "name": "forest",
       "variants": [
         {
-          "biomes": [ "forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland" ]
+          "biomes": [ "forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland", "cherry blossom grove", "origin valley", "rainforest", "maple wood", "shield" ]
         },
         {
           "top-block": "minecraft:grass",
-          "treesPerChunk": ">4"
+          "treesPerChunk": ">4",
+          "bad-regions": [ "jungle" ]
         }
       ]
     },
@@ -57,19 +71,19 @@
       "name": "plains",
       "variants": [
         {
-          "biomes": [ "plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra" ],
+          "biomes": [ "plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra", "mushroom island", "darklands" ],
           "bad-regions": [ "forest", "savanna" ]
         },
         {
           "top-block": "minecraft:grass",
           "treesPerChunk": "<=4",
-          "bad-regions": [ "ocean", "forest", "savanna" ]
+          "bad-regions": [ "ocean", "forest", "savanna", "highland", "nether" ]
         }
       ]
     },
     {
       "name": "ocean",
-      "biomes": [ "ocean", "river" ]
+      "biomes": [ "ocean", "river", "coral reef", "kelp forest" ]
     },
     {
       "name": "underworld",
@@ -109,9 +123,28 @@
       }
     }
   ],
-  "biome-selector": {
-    "regions": [ "surface" ]
-  },
+  "dimensions": [
+    {
+      "name": "nether",
+      "id": -1,
+      "rain": false,
+      "storm": false,
+      "average-height": 0
+    },
+    {
+      "name": "the end",
+      "id": 1,
+      "rain": false,
+      "storm": false,
+      "average-height": 0
+    }, 
+    {
+      "name": "surface",
+      "biome-selector": {
+        "regions": [ "surface" ]
+      }
+    }
+  ],
   "sounds": [
     {
       "source": "ambientsounds:animals.bird.bird-megataiga",
@@ -126,7 +159,7 @@
     {
       "source": "ambientsounds:animals.bird.bird-taiga",
       "selector": {
-        "biomes": [ "taiga", "grove", "jade cliffs", "shield" ],
+        "regions": [ "taiga" ],
         "temperature": ">0.1&<0.5"
       },
       "day": 1,
@@ -177,7 +210,7 @@
         "temperature": ">0.5&<=1"
       },
       "day": 1,
-      "night": 1,
+      "night": 0.5,
       "full": true
     },
     {
@@ -191,6 +224,10 @@
           "regions": [ "plains" ],
           "temperature": ">0.5&<1",
           "volume": 0.3
+        },
+        {
+          "regions": [ "highland" ],
+          "volume": 0.1
         }
       ],
       "day": 1,
@@ -262,6 +299,7 @@
         "regions": [ "swamp" ],
         "temperature": ">0.5&<=2"
       },
+      "volume": 0.5,
       "day": 1,
       "night": 0.5
     },
@@ -300,7 +338,7 @@
         {
           "regions": [ "forest" ],
           "temperature": ">0.1&<=1.5",
-          "volume": 0.1
+          "volume": 0.5
         }
       ],    
       "day": 0.23,
@@ -312,6 +350,7 @@
         "regions": [ "forest", "plains", "savanna" ],
         "temperature": ">0.1&<=0.5"
       },
+      "volume": 0.5,
       "day": 0,
       "night": 1
     },
@@ -319,16 +358,22 @@
       "source": "ambientsounds:animals.cricket.cricket-warm-night",
       "selector": [
         {
-          "regions": [ "forest", "plains", "savanna" ],
+          "regions": [ "plains", "savanna" ],
           "temperature": ">0.5&<=1.5",
           "day": 0,
-          "night": 1
+          "night": 0.3
+        },
+        {
+          "regions": [ "forest" ],
+          "temperature": ">0.5&<=1.5",
+          "day": 0,
+          "night": 0.1
         },
         {
           "regions": [ "swamp" ],
           "temperature": ">0.5&<=2",
           "day": 0,
-          "night": 0.5
+          "night": 0.1
         }
       ]
     },
@@ -340,9 +385,8 @@
       },
       "minPause": 100,
       "maxPause": 750,
-      "length": 100,
-      "day": 0.25,
-      "night": 0.5
+      "day": 0.15,
+      "night": 0.35
     },
     {
       "source": "ambientsounds:animals.owl.owl",
@@ -362,7 +406,9 @@
         "temperature": ">0.1&<=1.5"
       },
       "minPause": 100,
-      "maxPause": 750
+      "maxPause": 750,
+      "day": 1,
+      "night": 0.2
     },
     {
       "source": "ambientsounds:animals.seagull.seagull-long",
@@ -371,8 +417,9 @@
         "temperature": ">0.1&<=1.5"
       },
       "minPause": 750,
-      "maxPause": 1250,
-      "length": 100
+      "maxPause": 1500,
+      "day": 1,
+      "night": 0.2
     },
     {
       "source": "ambientsounds:animals.wolf.wolf",
@@ -388,14 +435,15 @@
     {
       "source": "ambientsounds:suspense.nether",
       "selector": {
-        "biomes": [ "hell", "dead", "inferno", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap" ]
+        "regions": [ "nether" ]
       },
+      "volume": 0.5,
       "full": true
     },
     {
       "source": "ambientsounds:suspense.end",
       "selector": {
-        "biomes": [ "the end" ]
+        "biomes": [ "the*end" ]
       },
       "full": true
     },
@@ -412,7 +460,7 @@
         "regions": [ "beach" ],
         "temperature": ">0"
       },
-      "volume": 0.4,
+      "volume": 0.3,
       "full": true
     },
     {
@@ -442,7 +490,6 @@
     {
       "source": "ambientsounds:weather.storm-close",
       "selector": {
-        "isRaining": true,
         "isStorming": true,
         "regions": [ "surface" ]
       },
@@ -451,7 +498,6 @@
     {
       "source": "ambientsounds:weather.storm-away",
       "selector": {
-        "isRaining": true,
         "isStorming": true,
         "regions": [ "cave" ]
       },
@@ -460,8 +506,9 @@
     {
       "source": "ambientsounds:wind.heavy-wind",
       "selector": {
-        "biomes": [ "extreme*hills" ]
-      }
+        "regions": [ "highland" ]
+      },
+      "volume": 0.5
     },
     {
       "source": "ambientsounds:wind.light-wind",
@@ -472,7 +519,7 @@
     {
       "source": "ambientsounds:wind.mesa",
       "selector": {
-        "biomes": [ "mesa" ]
+        "biomes": [ "mesa", "lush desert", "outback", "wasteland", "steppe" ]
       }
     },
     {

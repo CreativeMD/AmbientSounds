@@ -18,19 +18,30 @@ import com.google.gson.JsonPrimitive;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public class AmbientSoundLoader {
 	
 	public static ResourceLocation engine = new ResourceLocation(AmbientSounds.modid, "engine.json");
 	
-	public static AmbientCondition biomeCondition;
+	//public static AmbientCondition biomeCondition;
 	
 	public static LinkedHashMap<String, AmbientCondition> regions = new LinkedHashMap<>();
 	public static ArrayList<AmbientSound> sounds = new ArrayList<>();
 	
+	public static ArrayList<AmbientDimension> dimensions = new ArrayList<>();
 	
 	private static Minecraft mc = Minecraft.getMinecraft();
 	private static JsonParser parser = new JsonParser();
+	
+	public static AmbientDimension getDimension(World world)
+	{
+		for (int i = 0; i < dimensions.size(); i++) {
+			if(dimensions.get(i).is(world))
+				return dimensions.get(i);
+		}
+		return null;
+	}
 	
 	public static void reloadAmbientSounds()
 	{
@@ -38,6 +49,8 @@ public class AmbientSoundLoader {
 		
 		regions.clear();
 		sounds.clear();
+		dimensions.clear();
+		
 		for (int i = 0; i < TickHandler.playing.size(); i++) {
 			TickHandler.playing.get(i).stopSound();
 		}
@@ -71,11 +84,18 @@ public class AmbientSoundLoader {
 				}
 			}
 			
-			try{
-				biomeCondition = AmbientCondition.parser.parseCondition(root.get("biome-selector"));
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new JsonParseException("Could not load 'biome-selector'!");
+			array = root.get("dimensions").getAsJsonArray();
+			for (int i = 0; i < array.size(); i++) {
+				try{
+					if(array.get(i).isJsonObject())
+					{
+						dimensions.add(new AmbientDimension(array.get(i)));
+					}else
+						throw new IllegalArgumentException("Invalid child of 'dimensions' array!");
+				}catch(Exception e){
+					e.printStackTrace();
+					AmbientSounds.logger.error("Could not load " + i + ". child of 'dimensions' array!");
+				}
 			}
 			
 			array = root.get("sounds").getAsJsonArray();

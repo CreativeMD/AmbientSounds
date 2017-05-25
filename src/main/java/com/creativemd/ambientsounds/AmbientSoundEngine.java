@@ -86,14 +86,16 @@ public class AmbientSoundEngine {
         {
         	IEnhancedPositionSound sound = iterator.next();
         	
-        	Source source = null;
+        	/*Source source = null;
         	synchronized( SoundSystemConfig.THREAD_SYNC )
             {
         		source = library.getSource(sound.systemName);;
             
         	
 	        	if (source == null || source.channel == null || source.stopped() || (!source.toLoop && !isChannelPlaying((ChannelLWJGLOpenAL) source.channel)))
-	            {
+	            {*/
+        		if(!system.playing(sound.systemName))
+        		{
 	        		if(sound.hasBeenAdded)
 	        		{
 		            	if(sound.repeat)
@@ -101,14 +103,14 @@ public class AmbientSoundEngine {
 		            		System.out.println("Unexpected ending sound " + sound.getSoundLocation() + " " + sound.systemName);
 		            	}
 		            	sound.playing = false;
-		            	if(source != null)
-		            		library.removeSource(sound.systemName);
+		            	//if(source != null)
+		            	library.removeSource(sound.systemName);
 		                iterator.remove();
 	        		}
-	            }else if(source.playing()){
+	            }else{
 	            	sound.hasBeenAdded = true;
 	            }
-            }
+            //}
         }
         
 		for (IEnhancedPositionSound itickablesound : this.sounds)

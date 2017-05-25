@@ -43,6 +43,10 @@ public class AmbientSituation {
 	public float relativeHeight;
 	public boolean isNight;
 	public boolean playedFull = false;
+	public boolean isRaining;
+	public boolean isThundering;
+	
+	public float biomeVolume = 1.0F;
 	
 	public ArrayList<BiomeArea> selectedBiomes;
 	
@@ -52,6 +56,8 @@ public class AmbientSituation {
 		this.biomes = biomes;
 		this.relativeHeight = relativeHeight;
 		this.isNight = isNight;
+		this.isRaining = world.isRainingAt(player.getPosition());
+		this.isThundering = world.isThundering();
 	}
 	
 	

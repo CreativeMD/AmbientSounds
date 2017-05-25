@@ -278,12 +278,12 @@ public class AmbientSound {
 		float day = (float) ((double) ((Double) getValue(values, "day", 1D)));
 		float night = (float) ((double) ((Double) getValue(values, "night", 1D)));
 		
-		float fade = (float) ((double) ((Double) getValue(values, "fade", 0.001)));
+		float fade = (float) ((double) ((Double) getValue(values, "fade", 0.002)));
 		this.fadeInAmount = this.fadeOutAmount = fade;
 		if(values.containsKey("fadeIn"))
-			fadeInAmount = (float) ((double) ((Double) getValue(values, "fadeIn", 0.001)));
+			fadeInAmount = (float) ((double) ((Double) getValue(values, "fadeIn", 0.002)));
 		if(values.containsKey("fadeOut"))
-			fadeOutAmount = (float) ((double) ((Double) getValue(values, "fadeOut", 0.001)));
+			fadeOutAmount = (float) ((double) ((Double) getValue(values, "fadeOut", 0.002)));
 		
 		if(situation.isNight)
 			volume *= night;
@@ -301,7 +301,7 @@ public class AmbientSound {
 			volume *= biomeVolume;
 		}
 		
-		this.mutingFactor = (float) ((double) ((Double) getValue(values, "mute", 0D))) * volume;
+		this.mutingFactor = (float) ((double) ((Double) getValue(values, "mute", 0D)));
 		
 		volume *= configVolume * volumeSetting;
 		

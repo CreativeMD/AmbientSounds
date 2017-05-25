@@ -506,7 +506,7 @@ public abstract class AmbientCondition {
 					return new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							return element.getAsBoolean() == situation.world.isRaining();
+							return element.getAsBoolean() == situation.isRaining;
 						}
 					};
 				}
@@ -525,7 +525,7 @@ public abstract class AmbientCondition {
 						
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							return element.getAsBoolean() == situation.world.isThundering();
+							return element.getAsBoolean() == situation.isThundering;
 						}
 					};
 				}

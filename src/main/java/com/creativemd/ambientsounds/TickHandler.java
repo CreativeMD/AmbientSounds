@@ -18,6 +18,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.world.WorldEvent;
@@ -154,14 +155,28 @@ public class TickHandler {
 				
 				if(timer % envUpdateTickTime == 0)
 				{
+					situation.world = world;
+					situation.player = player;
+					situation.biomeVolume = 1;
+					
 					float angle = (float) (world.getCelestialAngle(mc.getRenderPartialTicks())); //0.25-0.75
 					situation.isNight = !(angle > 0.75F || angle < 0.25F);
 					situation.relativeHeight = calculateAverageHeight(world, player);
 					
+					AmbientDimension dimension = AmbientSoundLoader.getDimension(world);
+					
+					situation.isRaining = world.isRainingAt(player.getPosition());
+					situation.isThundering = world.isThundering();
+					
+					situation.biomeVolume = 1.0F;
+					
 					situation.selectedBiomes = new ArrayList<>();
-					AmbientSoundResult biomeResult = new AmbientSoundResult();
-					if(AmbientSoundLoader.biomeCondition.is(situation, biomeResult))
- 						situation.biomes = calculateBiomes(world, player, biomeResult.volume);
+										
+					if(dimension != null)
+						dimension.manipulateSituation(situation);
+						
+					if(situation.biomeVolume > 0)
+						situation.biomes = calculateBiomes(world, player, situation.biomeVolume);
 					else if(situation.biomes != null)
 						situation.biomes.clear();
 					else
@@ -200,10 +215,19 @@ public class TickHandler {
 					}
 				}
 				
-				//TODO IMPLEMENT MUTE
+				float mutingFactor = 0.0F;
 				
+				mutingFactor = Math.min(1F, mutingFactor);
 				for (int i = 0; i < playing.size(); i++) {
-					playing.get(i).tick(1F);
+					if(playing.get(i).mutingFactor*playing.get(i).currentVolume > mutingFactor)
+					{
+						mutingFactor = playing.get(i).mutingFactor*playing.get(i).currentVolume;
+					}
+				}
+				
+				float mute = 1-mutingFactor;
+				for (int i = 0; i < playing.size(); i++) {
+					playing.get(i).tick(mutingFactor > playing.get(i).mutingFactor*playing.get(i).currentVolume ? mute : 1F);
 					
 				}
 				
