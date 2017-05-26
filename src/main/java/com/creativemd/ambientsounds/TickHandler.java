@@ -209,10 +209,10 @@ public class TickHandler {
 						}
 					}
 					
-					System.out.println("================Playing================");
+					/*System.out.println("================Playing================");
 					for (int i = 0; i < playing.size(); i++) {
 						System.out.println(playing.get(i));
-					}
+					}*/
 				}
 				
 				float mutingFactor = 0.0F;
