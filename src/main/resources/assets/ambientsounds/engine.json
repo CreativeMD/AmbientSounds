@@ -47,8 +47,7 @@
     },
     {
       "name": "highland",
-      "biomes": [ "extreme*hills", "alps", "crag", "highland", "mountain peak", "volcanic island", "mountains" ],
-      "temperature": ">0.5"
+      "biomes": [ "extreme*hills", "alps", "crag", "highland", "mountain peak", "volcanic island", "mountains" ]
     },
     {
       "name": "beach",
@@ -385,8 +384,8 @@
       },
       "minPause": 100,
       "maxPause": 750,
-      "day": 0.15,
-      "night": 0.35
+      "day": 0.05,
+      "night": 0.15
     },
     {
       "source": "ambientsounds:animals.owl.owl",

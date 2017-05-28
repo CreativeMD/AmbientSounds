@@ -33,10 +33,15 @@ public class AmbientSounds {
 	
 	public static Configuration config;
 	
+	public static boolean debugging;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+		debugging = config.getBoolean("debugging", "Custom", false, "Useful if you want to modify the engine");
+		config.save();
 	}
 	
 	@EventHandler

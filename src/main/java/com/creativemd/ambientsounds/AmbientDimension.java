@@ -200,8 +200,10 @@ public class AmbientDimension {
 						@Override
 						public void manipulateSituation(AmbientSituation situation) {
 							AmbientSoundResult result = new AmbientSoundResult();
-							condition.is(situation, result);
-							situation.biomeVolume = result.volume;
+							if(condition.is(situation, result))
+								situation.biomeVolume = result.volume;
+							else
+								situation.biomeVolume = 0;
 						}
 						
 						@Override

@@ -36,6 +36,7 @@ public class TickHandler {
 	{
 		for (int i = 0; i < playing.size(); i++) {
 			playing.get(i).stopSound();
+			playing.get(i).inTickList = false;
 		}
 		playing.clear();
 		situation = null;
@@ -209,10 +210,13 @@ public class TickHandler {
 						}
 					}
 					
-					/*System.out.println("================Playing================");
-					for (int i = 0; i < playing.size(); i++) {
-						System.out.println(playing.get(i));
-					}*/
+					if(AmbientSounds.debugging)
+					{
+						System.out.println("================Playing================");
+						for (int i = 0; i < playing.size(); i++) {
+							System.out.println(playing.get(i));
+						}
+					}
 				}
 				
 				float mutingFactor = 0.0F;
