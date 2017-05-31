@@ -21,7 +21,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
+import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -150,7 +153,7 @@ public class TickHandler {
 			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
 			{
 				if(situation == null)
-					situation = new AmbientSituation(world, player, null, 0, false);
+					situation = new AmbientSituation(world, player, new LinkedHashMap<>(), 0, false);
 				
 				situation.playedFull = false;
 				
@@ -240,4 +243,15 @@ public class TickHandler {
 		}
 	}
 	
+	@SubscribeEvent
+	public void onSoundLoadEvent(SoundLoadEvent event)
+	{
+		AmbientSound.engine = new AmbientSoundEngine(event.getManager(), mc.gameSettings);
+	}
+	
+	@SubscribeEvent(priority = EventPriority.LOW)
+	public void onSoundSetup(SoundSetupEvent event) {
+		SoundSystemConfig.setNumberStreamingChannels( 11 );
+		SoundSystemConfig.setNumberNormalChannels( 21 ); 
+	}
 }

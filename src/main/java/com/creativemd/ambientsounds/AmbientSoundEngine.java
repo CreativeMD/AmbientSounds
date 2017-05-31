@@ -55,7 +55,7 @@ public class AmbientSoundEngine {
 		return null;
 	}
 	
-	public AmbientSoundEngine(SoundManager manager, GameSettings settings, SoundSystem system) {
+	public AmbientSoundEngine(SoundManager manager, GameSettings settings) {
 		this.settings = settings;
 		this.manager = manager;
 	}
@@ -104,7 +104,10 @@ public class AmbientSoundEngine {
 		            	}
 		            	sound.playing = false;
 		            	//if(source != null)
-		            	library.removeSource(sound.systemName);
+		            	if(library != null)
+		            		library.removeSource(sound.systemName);
+		            	else
+		            		System.out.println("No library found. Something went wrong!");
 		                iterator.remove();
 	        		}
 	            }else{
