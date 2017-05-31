@@ -49,18 +49,18 @@ public class AmbientSounds {
 		ClientCommandHandler.instance.registerCommand(new CommandBase() {
 			
 			@Override
-			public String getUsage(ICommandSender sender) {
-				return "reload ambient sound engine";
-			}
-			
-			@Override
-			public String getName() {
-				return "ambient-reload";
-			}
-			
-			@Override
 			public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 				AmbientSoundLoader.reloadAmbientSounds();
+			}
+
+			@Override
+			public String getCommandName() {
+				return "ambient-reload";
+			}
+
+			@Override
+			public String getCommandUsage(ICommandSender sender) {
+				return "reload ambient sound engine";
 			}
 		});
 		

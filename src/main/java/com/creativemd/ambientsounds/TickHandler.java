@@ -144,8 +144,8 @@ public class TickHandler {
 		if(event.phase == Phase.START)
 		{
 			AmbientSound.engine.tick();
-			World world = mc.world;
-			EntityPlayer player = mc.player;
+			World world = mc.theWorld;
+			EntityPlayer player = mc.thePlayer;
 			
 			if(world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0)
 			{

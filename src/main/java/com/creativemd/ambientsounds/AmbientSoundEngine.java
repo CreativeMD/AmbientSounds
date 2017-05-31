@@ -146,7 +146,7 @@ public class AmbientSoundEngine {
         if(f1 > 0.0F)
         {
             boolean flag = p_sound.canRepeat() && p_sound.getRepeatDelay() == 0;
-            String s = MathHelper.getRandomUUID(ThreadLocalRandom.current()).toString();
+            String s = MathHelper.getRandomUuid(ThreadLocalRandom.current()).toString();
             ResourceLocation resourcelocation1 = sound.getSoundAsOggLocation();
 
             if (sound.isStreaming())
@@ -203,12 +203,12 @@ public class AmbientSoundEngine {
 	
 	private float getClampedPitch(ISound soundIn)
     {
-        return MathHelper.clamp(soundIn.getPitch(), 0.5F, 2.0F);
+        return MathHelper.clamp_float(soundIn.getPitch(), 0.5F, 2.0F);
     }
 
     private float getClampedVolume(ISound soundIn)
     {
-        return MathHelper.clamp(soundIn.getVolume() * getVolume(soundIn.getCategory()), 0.0F, 1.0F);
+        return MathHelper.clamp_float(soundIn.getVolume() * getVolume(soundIn.getCategory()), 0.0F, 1.0F);
     }
     
     private float getVolume(SoundCategory category)
