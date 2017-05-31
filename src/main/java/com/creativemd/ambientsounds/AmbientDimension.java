@@ -1,11 +1,15 @@
 package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.creativemd.ambientsounds.AmbientCondition.AmbientConditionParser;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -89,6 +93,28 @@ public class AmbientDimension {
 						@Override
 						public boolean is(World world) {
 							return world.provider.getDimension() == element.getAsInt();
+						}
+					};
+				}else if(element.isJsonArray()){
+					JsonArray array = element.getAsJsonArray();
+					int[] ids = new int[array.size()];
+					for (int i = 0; i < array.size(); i++) {
+						JsonElement e = array.get(i);
+						if(e.isJsonPrimitive() && ((JsonPrimitive) e).isNumber()){
+							ids[i] = e.getAsInt();
+						}else
+							throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
+					}
+					return new AmbientDimensionProperty() {
+						
+						@Override
+						public void manipulateSituation(AmbientSituation situation) {
+							
+						}
+						
+						@Override
+						public boolean is(World world) {
+							return ArrayUtils.contains(ids, world.provider.getDimension());
 						}
 					};
 				}else

@@ -33,8 +33,7 @@ public class AmbientSound {
 	
 	private static Minecraft mc = Minecraft.getMinecraft();
 	private static SoundManager manager = ReflectionHelper.getPrivateValue(SoundHandler.class, mc.getSoundHandler(), "sndManager", "field_147694_f");
-	private static SoundSystem system = ReflectionHelper.getPrivateValue(SoundManager.class, manager, "sndSystem", "field_148620_e");
-	public static AmbientSoundEngine engine = new AmbientSoundEngine(manager, mc.gameSettings, system);
+	public static AmbientSoundEngine engine = new AmbientSoundEngine(manager, mc.gameSettings);
 	
 	private static Random rand = new Random();
 	
