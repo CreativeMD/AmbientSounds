@@ -42,6 +42,8 @@ public class AmbientSounds {
 		config.load();
 		debugging = config.getBoolean("debugging", "Custom", false, "Useful if you want to modify the engine");
 		config.save();
+		
+		MinecraftForge.EVENT_BUS.register(new TickHandler());
 	}
 	
 	@EventHandler
@@ -67,7 +69,6 @@ public class AmbientSounds {
 		SoundSystemConfig.setNumberStreamingChannels( 11 );
 		SoundSystemConfig.setNumberNormalChannels( 21 ); 
 		
-		MinecraftForge.EVENT_BUS.register(new TickHandler());
 		
 		Minecraft minecraft = Minecraft.getMinecraft();
 		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();

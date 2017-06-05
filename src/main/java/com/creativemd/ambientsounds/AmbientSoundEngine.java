@@ -44,6 +44,7 @@ public class AmbientSoundEngine {
 	public List<IEnhancedPositionSound> sounds = new ArrayList<>();
 	
 	private static Field system = ReflectionHelper.findField(SoundManager.class, "sndSystem", "field_148620_e");
+	private static Field loaded = ReflectionHelper.findField(SoundManager.class, "loaded", "field_148617_f");
 	
 	public SoundSystem getSystem()
 	{
@@ -60,7 +61,7 @@ public class AmbientSoundEngine {
 		this.manager = manager;
 	}
 	
-	public boolean isChannelPlaying(ChannelLWJGLOpenAL channel)
+	/*public boolean isChannelPlaying(ChannelLWJGLOpenAL channel)
 	{
 		int state = AL10.alGetSourcei( channel.ALSource.get( 0 ),
                 AL10.AL_SOURCE_STATE );
@@ -68,7 +69,7 @@ public class AmbientSoundEngine {
 		if(state != AL10.AL_PAUSED && state != AL10.AL_STOPPED)
 			return true;
 		return false;
-	}
+	}*/
 	
 	public void tick()
 	{
@@ -80,6 +81,13 @@ public class AmbientSoundEngine {
 		
 		
 		Iterator<IEnhancedPositionSound> iterator = sounds.iterator();
+		
+		try {
+			if(!loaded.getBoolean(manager))
+				return ;
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		
 		
         while (iterator.hasNext())
@@ -98,12 +106,11 @@ public class AmbientSoundEngine {
         		{
 	        		if(sound.hasBeenAdded)
 	        		{
-		            	if(sound.repeat)
+		            	if(sound.repeat && AmbientSounds.debugging)
 		            	{
 		            		System.out.println("Unexpected ending sound " + sound.getSoundLocation() + " " + sound.systemName);
 		            	}
 		            	sound.playing = false;
-		            	//if(source != null)
 		            	if(library != null)
 		            		library.removeSource(sound.systemName);
 		            	else
@@ -128,6 +135,13 @@ public class AmbientSoundEngine {
 	
 	public void play(IEnhancedPositionSound p_sound)
 	{
+		try {
+			if(!loaded.getBoolean(manager))
+				return ;
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
 		SoundSystem system = getSystem();
 		
         SoundEventAccessor soundeventaccessor = p_sound.createAccessor(manager.sndHandler);
