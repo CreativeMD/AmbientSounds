@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import paulscode.sound.SoundSystemConfig;
+import paulscode.sound.SoundSystemException;
 
 public class TickHandler {
 	
@@ -37,6 +38,8 @@ public class TickHandler {
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event)
 	{
+		if(!event.getWorld().isRemote)
+			return ;
 		for (int i = 0; i < playing.size(); i++) {
 			playing.get(i).stopSound();
 			playing.get(i).inTickList = false;
@@ -253,5 +256,10 @@ public class TickHandler {
 	public void onSoundSetup(SoundSetupEvent event) {
 		SoundSystemConfig.setNumberStreamingChannels( 11 );
 		SoundSystemConfig.setNumberNormalChannels( 21 ); 
+		try {
+			SoundSystemConfig.setCodec("ogg", CodecJOrbisFixed.class);
+		} catch (SoundSystemException e) {
+			e.printStackTrace();
+		}
 	}
 }
