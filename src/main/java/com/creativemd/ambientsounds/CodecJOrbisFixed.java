@@ -622,6 +622,7 @@ public class CodecJOrbisFixed implements ICodec
                 
                 }catch(Exception e){
                 	e.printStackTrace();
+                	endOfStream( SET, true );
                 	return null;
                 }
 
