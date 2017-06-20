@@ -581,7 +581,7 @@ public abstract class AmbientCondition {
 				while(i < situation.selectedBiomes.size())
 				{
 					BiomeArea area = situation.selectedBiomes.get(i);
-					if(operator.is(value, area.biome.theBiomeDecorator.treesPerChunk))
+					if(operator.is(value, area.biome.decorator.treesPerChunk))
 						i++;
 					else
 						situation.selectedBiomes.remove(i);
