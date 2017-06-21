@@ -66,6 +66,8 @@ import paulscode.sound.SoundSystemLogger;
  * <br>
  *    http://www.paulscode.com
  * </b><br><br>
+ * 
+ *   Modified by: CreativeMD
  */
 public class CodecJOrbisFixed implements ICodec
 {
@@ -570,7 +572,7 @@ public class CodecJOrbisFixed implements ICodec
                     return null;
                 }
                 
-                try{
+                try{ //Change (by CreativeMD): To catch all exception which might occur due to thread sync issues
 	                processPackets: while( true )
 	                {
 	                    switch( joggStreamState.packetout( joggPacket ) )
@@ -620,11 +622,11 @@ public class CodecJOrbisFixed implements ICodec
 	                    }
 	                }
                 
-                }catch(Exception e){
+                }catch(Exception e){ //Change (by CreativeMD): To catch all exception which might occur due to thread sync issues
                 	e.printStackTrace();
                 	endOfStream( SET, true );
                 	return null;
-                }
+                } //Change end
 
                 if( joggPage.eos() != 0 )
                     endOfStream( SET, true );
