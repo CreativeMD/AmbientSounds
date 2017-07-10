@@ -178,20 +178,10 @@ public class AmbientSettings implements IModGuiFactory {
 		
 		return new AmbientConfigGUI(parentScreen, elements);
 	}
-
-	@Override
-	public Class<? extends GuiScreen> mainConfigGuiClass() {
-		return AmbientConfigGUI.class;
-	}
-
+	
 	@Override
 	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
+		
 		return null;
 	}
 
