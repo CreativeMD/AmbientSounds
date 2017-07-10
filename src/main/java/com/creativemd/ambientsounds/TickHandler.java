@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.creativemd.ambientsounds.AmbientSituation.BiomeArea;
 
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,7 +83,7 @@ public class TickHandler {
         for (y = 45; y < 256; ++y)
         {
         	IBlockState state = world.getBlockState(new BlockPos(x, y, z));
-            if(state.isBlockNormalCube() || state.getBlock() == Blocks.WATER)
+            if((state.isOpaqueCube() && !(state.getBlock() instanceof BlockLeaves)) || state.getBlock() == Blocks.WATER)
             	heighest = y;
         }
 
