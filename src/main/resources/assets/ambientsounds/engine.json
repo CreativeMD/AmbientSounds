@@ -2,7 +2,7 @@
   "regions": [
     {
       "name": "savanna",
-      "biomes": [ "savanna", "heathland", "prairie", "brushland" ]
+      "biomes": [ "savanna", "heathland", "prairie", "brushland", "lush desert", "Outback", "Shrubland", "spiny forest" ]
     },
     {
       "name": "swamp",
@@ -57,12 +57,13 @@
       "name": "forest",
       "variants": [
         {
-          "biomes": [ "forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland", "cherry blossom grove", "origin valley", "rainforest", "maple wood", "shield" ]
+          "biomes": [ "forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland", "cherry blossom grove", "origin valley", "rainforest", "maple wood", "shield" ],
+          "bad-regions": [ "nether" ]
         },
         {
           "top-block": "minecraft:grass",
           "treesPerChunk": ">4",
-          "bad-regions": [ "jungle" ]
+          "bad-regions": [ "jungle", "nether" ]
         }
       ]
     },
