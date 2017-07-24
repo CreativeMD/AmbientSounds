@@ -257,10 +257,5 @@ public class TickHandler {
 	public void onSoundSetup(SoundSetupEvent event) {
 		SoundSystemConfig.setNumberStreamingChannels( 11 );
 		SoundSystemConfig.setNumberNormalChannels( 21 ); 
-		try {
-			SoundSystemConfig.setCodec("ogg", CodecJOrbisFixed.class);
-		} catch (SoundSystemException e) {
-			e.printStackTrace();
-		}
 	}
 }
