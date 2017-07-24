@@ -75,7 +75,7 @@ public class AmbientSoundEngine {
 	{
 		
 		SoundSystem system = getSystem();
-		//Library library = ReflectionHelper.getPrivateValue(SoundSystem.class, system, "soundLibrary");
+		Library library = ReflectionHelper.getPrivateValue(SoundSystem.class, system, "soundLibrary");
 		//system.CommandQueue(null);
 		//system.interruptCommandThread();
 		
@@ -111,10 +111,10 @@ public class AmbientSoundEngine {
 		            		System.out.println("Unexpected ending sound " + sound.getSoundLocation() + " " + sound.systemName);
 		            	}
 		            	sound.playing = false;
-		            	/*if(library != null)
+		            	if(library != null)
 		            		library.removeSource(sound.systemName);
 		            	else
-		            		System.out.println("No library found. Something went wrong!");*/
+		            		System.out.println("No library found. Something went wrong!");
 		                iterator.remove();
 	        		}
 	            }else{
