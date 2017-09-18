@@ -34,6 +34,8 @@ public class AmbientSounds {
 	public static Configuration config;
 	
 	public static boolean debugging;
+	public static int streamingChannels = 11;
+	public static int normalChannels = 21;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -41,6 +43,8 @@ public class AmbientSounds {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		debugging = config.getBoolean("debugging", "Custom", false, "Useful if you want to modify the engine");
+		streamingChannels = config.getInt("streamingChannels", "engine", streamingChannels, 1, 32, "Streaming + Normal channels may have to be 32 in total.");
+		normalChannels = config.getInt("normalChannels", "engine", normalChannels, 1, 32, "Streaming + Normal channels may have to be 32 in total.");
 		config.save();
 		
 		MinecraftForge.EVENT_BUS.register(new TickHandler());
