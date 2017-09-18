@@ -255,7 +255,7 @@ public class TickHandler {
 	
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onSoundSetup(SoundSetupEvent event) {
-		SoundSystemConfig.setNumberStreamingChannels( 11 );
-		SoundSystemConfig.setNumberNormalChannels( 21 ); 
+		SoundSystemConfig.setNumberStreamingChannels( AmbientSounds.streamingChannels );
+		SoundSystemConfig.setNumberNormalChannels( AmbientSounds.normalChannels ); 
 	}
 }
