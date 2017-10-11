@@ -346,7 +346,7 @@ public abstract class AmbientCondition {
 				while(i < situation.selectedBiomes.size())
 				{
 					BiomeArea area = situation.selectedBiomes.get(i);
-					if(operator.is(value, area.biome.getFloatTemperature(area.pos)))
+					if(operator.is(value, area.biome.getTemperature(area.pos)))
 						i++;
 					else
 						situation.selectedBiomes.remove(i);
