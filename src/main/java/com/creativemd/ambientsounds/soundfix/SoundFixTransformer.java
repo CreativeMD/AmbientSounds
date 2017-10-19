@@ -40,7 +40,7 @@ public class SoundFixTransformer extends CreativeTransformer {
 					AbstractInsnNode insn = (AbstractInsnNode) iterator.next();	
 					if(insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("paulscode/sound/Source") && ((MethodInsnNode) insn).name.equals("cleanup"))
 					{
-						m.instructions.insertBefore(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/creativecore/core/soundfix/SoundFixMethods", "cleanupSource", "(Lpaulscode/sound/Source;)V", false));
+						m.instructions.insertBefore(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/ambientsounds/soundfix/SoundFixMethods", "cleanupSource", "(Lpaulscode/sound/Source;)V", false));
 						m.instructions.remove(insn);
 						break;
 					}
@@ -57,12 +57,12 @@ public class SoundFixTransformer extends CreativeTransformer {
 					AbstractInsnNode insn = (AbstractInsnNode) iterator.next();
 					if(insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("java/util/ListIterator") && ((MethodInsnNode) insn).name.equals("next"))
 					{
-						insn = insn.getNext();
+						insn = insn.getNext().getNext();
 						
 						int varIndex = 2;
 						
 						m.instructions.insert(insn, new VarInsnNode(Opcodes.ASTORE, varIndex));
-						m.instructions.insert(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/creativecore/core/soundfix/SoundFixMethods", "removeSource", "(Lpaulscode/sound/Source;)Lpaulscode/sound/Source;", false));
+						m.instructions.insert(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/creativemd/ambientsounds/soundfix/SoundFixMethods", "removeSource", "(Lpaulscode/sound/Source;)Lpaulscode/sound/Source;", false));
 						m.instructions.insert(insn, new VarInsnNode(Opcodes.ALOAD, varIndex));
 						break;
 					}
