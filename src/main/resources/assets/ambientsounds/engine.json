@@ -483,7 +483,8 @@
       "source": "ambientsounds:weather.rain",
       "selector": {
         "regions": [ "surface" ],
-        "isRaining": true
+        "isRaining": true,
+        "bad-regions": [ "snow" ]
       },
       "mute": 0.5
     },
@@ -491,7 +492,8 @@
       "source": "ambientsounds:weather.storm-close",
       "selector": {
         "isStorming": true,
-        "regions": [ "surface" ]
+        "regions": [ "surface" ],
+        "bad-regions": [ "snow" ]
       },
       "mute": 0.5
     },
@@ -499,7 +501,8 @@
       "source": "ambientsounds:weather.storm-away",
       "selector": {
         "isStorming": true,
-        "regions": [ "cave" ]
+        "regions": [ "cave" ],
+        "bad-regions": [ "snow" ]
       },
       "mute": 0.5
     },
