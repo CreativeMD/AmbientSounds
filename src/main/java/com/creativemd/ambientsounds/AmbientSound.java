@@ -147,6 +147,9 @@ public class AmbientSound {
 	public float currentVolume;
 	public float aimedVolume;
 	
+	public float currentPitch;
+	public float aimedPitch;
+	
 	public final HashMap<String, Object> properties = new HashMap<>();
 	public AmbientCondition condition;
 	
@@ -213,6 +216,8 @@ public class AmbientSound {
 	public float fadeInAmount = 0;
 	public float fadeOutAmount = 0;
 	
+	public float fadePitch = 0.01F;
+	
 	public void stopSound()
 	{
 		if(isSoundPlaying())
@@ -233,7 +238,15 @@ public class AmbientSound {
 				currentVolume += Math.min(fadeInAmount, aimedVolume-currentVolume);
 			else if(currentVolume > aimedVolume)
 				currentVolume -= Math.min(fadeOutAmount, currentVolume-aimedVolume);
+			
+			if(currentPitch < aimedPitch)
+				currentPitch += Math.min(fadePitch, aimedPitch-currentPitch);
+			else if(currentPitch > aimedPitch)
+				currentPitch -= Math.min(fadePitch, currentPitch-aimedPitch);
+			
+			sound.pitch = currentPitch;
 			sound.volume = currentVolume*mute;
+			
 			if(aimedVolume == 0 && currentVolume == 0)
 				stopSound();
 		}else if(pause > 0 && (sound == null || !sound.playing)) {
@@ -311,6 +324,7 @@ public class AmbientSound {
 			if(!keepVolume)
 			{
 				currentVolume = 0.001F;
+				currentPitch = 1F;
 				keepVolume = false;
 			}
 			sound = new IEnhancedPositionSound(name, currentVolume, 1.0F);
@@ -324,6 +338,7 @@ public class AmbientSound {
 		}
 		
 		aimedVolume = volume;
+		aimedPitch = result.pitch;
 		
 		return volume > 0;
 	}
