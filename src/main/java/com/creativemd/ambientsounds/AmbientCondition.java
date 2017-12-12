@@ -337,6 +337,40 @@ public abstract class AmbientCondition {
 			}
 		});
 		
+		regionSelectors.put("bad-biomes", new AmbientConditionParser() {
+
+			@Override
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
+			{
+				if(element.isJsonArray())
+				{
+					JsonArray array = element.getAsJsonArray();
+					String[] names = new String[array.size()];
+					for (int i = 0; i < names.length; i++) {
+						names[i] = array.get(i).getAsString();
+					}
+					
+					return new AmbientCondition() {
+						@Override
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							int i = 0;
+							while(i < situation.selectedBiomes.size())
+							{
+								BiomeArea area = situation.selectedBiomes.get(i);
+								for (int j = 0; j < names.length; j++) {
+									if(checkBiome(names[j], area.biome))
+										return false;
+								}
+							}
+							
+							return true;
+						}
+					};
+				}
+				throw new IllegalArgumentException("Expected a string array!");
+			}
+		});
+		
 		regionSelectors.put("temperature", new AmbientMathConditionParser() {
 			
 			@Override
