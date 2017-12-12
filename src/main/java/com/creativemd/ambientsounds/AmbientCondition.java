@@ -683,6 +683,78 @@ public abstract class AmbientCondition {
 				return parser.parseCondition(element);
 			}
 		});
+		
+		regionSelectors.put("dimensions", new AmbientConditionParser() {
+			
+			@Override
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if(element.isJsonArray())
+				{
+					JsonArray array = element.getAsJsonArray();
+					return new AmbientCondition() {
+						
+						
+						@Override
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							for(int i = 0; i < array.size(); i++)
+							{
+								JsonElement element = array.get(i);
+								if(element.getAsJsonPrimitive().isNumber())
+								{
+									if(situation.world.provider.getDimension() == element.getAsInt())
+										return true;
+								}
+								else if(element.getAsJsonPrimitive().isString())
+								{
+									if(situation.world.provider.getDimensionType().name().equals(element.getAsString()))
+										return true;
+								}
+								else
+									throw new IllegalArgumentException("Expected a string or a number!");
+							}
+							return false;
+						}
+					};
+				}
+				throw new IllegalArgumentException("Expected a string array!");
+			}
+		});
+		
+		regionSelectors.put("bad-dimensions", new AmbientConditionParser() {
+			
+			@Override
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if(element.isJsonArray())
+				{
+					JsonArray array = element.getAsJsonArray();
+					return new AmbientCondition() {
+						
+						
+						@Override
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							for(int i = 0; i < array.size(); i++)
+							{
+								JsonElement element = array.get(i);
+								if(element.getAsJsonPrimitive().isNumber())
+								{
+									if(situation.world.provider.getDimension() == element.getAsInt())
+										return false;
+								}
+								else if(element.getAsJsonPrimitive().isString())
+								{
+									if(situation.world.provider.getDimensionType().name().equals(element.getAsString()))
+										return false;
+								}
+								else
+									throw new IllegalArgumentException("Expected a string or a number!");
+							}
+							return true;
+						}
+					};
+				}
+				throw new IllegalArgumentException("Expected a string array!");
+			}
+		});
 	}
 	
 	public static boolean checkBiome(String name, Biome biome)
