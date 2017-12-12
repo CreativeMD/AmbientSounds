@@ -551,7 +551,7 @@ public abstract class AmbientCondition {
 							{
 								
 								int depth = 0;
-								AxisAlignedBB bb = situation.player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
+								AxisAlignedBB bb = situation.player.getEntityBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
 								while(situation.world.isMaterialInBB(bb, Material.WATER))
 								{
 									depth++;
