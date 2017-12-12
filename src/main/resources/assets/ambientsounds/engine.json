@@ -16,11 +16,12 @@
     },
     {
       "name": "nether",
-      "biomes": [ "hell", "dead", "inferno", "fungi forest", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap" ]
+      "biomes": [ "hell", "dead", "inferno", "fungi forest", "corrupted sands", "boneyard", "phantasmagoric inferno", "polar chasm", "undergarden", "visceral heap" ],
+      "bad-biomes": [ "dead forest" ]
     },
     {
       "name": "taiga",
-      "biomes": [ "taiga", "grove", "jade cliffs", "shield", "coniferous forest", "snowy*forest", "temperate rainforest", "spruce", "meneglin" ]
+      "biomes": [ "taiga", "grove", "jade cliffs", "shield", "coniferous forest", "snowy*forest", "temperate rainforest", "spruce", "meneglin", "dead forest" ]
     },
     {
       "name": "desert",
@@ -474,7 +475,9 @@
     {
       "source": "ambientsounds:water.underwater",
       "selector": {
-        "underwater": true
+        "underwater-pitch": {
+            "pitchPerBlock": 0.1
+        }
       },
 	  "fade": 0.1,
       "mute": 0.9
