@@ -284,7 +284,12 @@ public abstract class AmbientCondition {
 							}
 						};
 					}
-					return null;
+					return new AmbientCondition() {
+						@Override
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							return false;
+						}
+					};
 				}
 				throw new IllegalArgumentException("Expected a boolean!");
 			}
