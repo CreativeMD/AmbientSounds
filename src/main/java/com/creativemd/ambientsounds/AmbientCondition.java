@@ -17,6 +17,7 @@ import com.google.gson.JsonPrimitive;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -532,6 +533,43 @@ public abstract class AmbientCondition {
 					};
 				}
 				throw new IllegalArgumentException("Expected a boolean!");
+			}
+		});
+		
+		regionSelectors.put("underwater-pitch", new AmbientConditionParser() {
+
+			@Override
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
+			{
+				if(element.isJsonObject())
+				{
+					JsonObject object = element.getAsJsonObject();
+					return new AmbientCondition() {
+						@Override
+						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
+							if(situation.player.isInsideOfMaterial(Material.WATER))
+							{
+								
+								int depth = 0;
+								AxisAlignedBB bb = situation.player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
+								while(situation.world.isMaterialInBB(bb, Material.WATER))
+								{
+									depth++;
+									bb = bb.offset(new BlockPos(0, 1, 0));
+								}
+								
+								double minPitch = object.has("min") ? object.get("min").getAsDouble() : 0.5;
+								double maxPitch = object.has("max") ? object.get("max").getAsDouble() : 2;
+								double pitchPerBlock = object.has("pitchPerBlock") ? object.get("pitchPerBlock").getAsDouble() : 0.3;
+								
+								result.pitch = (float) Math.max(minPitch, maxPitch - (depth * pitchPerBlock));
+								return true;
+							}
+							return false;
+						}
+					};
+				}
+				throw new IllegalArgumentException("Expected an object!");
 			}
 		});
 		
