@@ -367,6 +367,7 @@ public abstract class AmbientCondition {
 									if(checkBiome(names[j], area.biome))
 										return false;
 								}
+								i++;
 							}
 							
 							return true;
