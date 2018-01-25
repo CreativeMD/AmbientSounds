@@ -70,9 +70,6 @@ public class AmbientSounds {
 			}
 		});
 		
-		SoundSystemConfig.setNumberStreamingChannels( 11 );
-		SoundSystemConfig.setNumberNormalChannels( 21 ); 
-		
 		
 		Minecraft minecraft = Minecraft.getMinecraft();
 		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
