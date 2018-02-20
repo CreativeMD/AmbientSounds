@@ -41,8 +41,13 @@ public class TickHandler {
 	{
 		if(!event.getWorld().isRemote)
 			return ;
+		
 		for (int i = 0; i < playing.size(); i++) {
-			playing.get(i).stopSound();
+			try{
+				playing.get(i).stopSound();
+			}catch(Exception e){
+				
+			}
 			playing.get(i).inTickList = false;
 		}
 		playing.clear();
