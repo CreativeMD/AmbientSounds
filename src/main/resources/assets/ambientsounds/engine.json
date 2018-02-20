@@ -27,7 +27,7 @@
       "name": "desert",
       "variants": [
         {
-          "biomes": [ "desert", "quagmire", "shrubland" ]
+          "biomes": [ "desert", "quagmire" ]
         },
         {
           "top-block": "minecraft:sand"
