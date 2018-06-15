@@ -121,6 +121,63 @@ public class AmbientDimension {
 					throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
 			}
 		});
+		dimensionParser.put("location", new AmbientDimensionPropertyParser() {
+			
+			@Override
+			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
+				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber())
+				{
+				
+					return new AmbientDimensionProperty() {
+						
+						@Override
+						public void manipulateSituation(AmbientSituation situation) {
+							
+						}
+						
+						@Override
+						public boolean is(World world) {
+							return world.provider.getDimension() == element.getAsInt();
+						}
+					};
+				}else if((element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) || element.isJsonArray()){
+					String[] names;
+					if(element.isJsonPrimitive())
+					{
+						names = new String[] {element.getAsString()};
+					}
+					else
+					{
+						JsonArray array = element.getAsJsonArray();
+						names = new String[array.size()];
+						for (int i = 0; i < array.size(); i++) {
+							JsonElement e = array.get(i);
+							if(e.isJsonPrimitive() && ((JsonPrimitive) e).isString()) {
+								names[i] = e.getAsString().toLowerCase();
+							}else
+								throw new IllegalArgumentException("Expected a string instead of '" + element + "'!");
+						}
+					}
+					return new AmbientDimensionProperty() {
+						
+						@Override
+						public void manipulateSituation(AmbientSituation situation) {
+							
+						}
+						
+						@Override
+						public boolean is(World world) {
+							for (int j = 0; j < names.length; j++) {
+								if(names[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
+									return true;
+							}
+							return false;
+						}
+					};
+				}else
+					throw new IllegalArgumentException("Expected a string instead of '" + element + "'!");
+			}
+		});
 		dimensionParser.put("rain", new AmbientDimensionPropertyParser() {
 			
 			@Override
