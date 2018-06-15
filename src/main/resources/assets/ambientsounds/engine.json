@@ -2,16 +2,17 @@
   "regions": [
     {
       "name": "savanna",
-      "biomes": [ "savanna", "heathland", "prairie", "brushland", "lush desert", "Outback", "Shrubland", "spiny forest" ]
+      "biomes": [ "savanna", "heathland", "prairie", "brushland", "lush desert", "outback", "shrubland", "spiny forest" ]
     },
     {
       "name": "swamp",
-      "biomes": [ "swamp", "bayou", "bog", "marsh", "moor", "mystic grove", "silkglades", "sludgepit", "wetland", "quagmire", "dead forest" ],
+      "biomes": [ "swamp", "bayou", "bog", "marsh", "moor", "fen", "mystic grove", "bamboo marsh", "silkglades", "sludgepit", "wetland", "quagmire", "dead forest", "patchy islands", "deep waters", "coarse islands", "erebus", "fungal forest", "tyros swamp" ],
       "temperature": ">0.5&<=2"
     },
     {
       "name": "jungle",
-      "biomes": [ "jungle", "sacred springs", "tropical", "bamboo forest", "encalyptus forest", "overgrown cliffs" ],
+      "biomes": [ "jungle", "sacred springs", "tropical", "bamboo forest", "bambona beach", "encalyptus forest", "overgrown cliffs", "tropics", "tyros" ],
+      "bad-biomes": [ "tropics plains", "tropics beach", "tyros swamp" ],
       "temperature": ">0.5"
     },
     {
@@ -21,13 +22,17 @@
     },
     {
       "name": "taiga",
-      "biomes": [ "taiga", "grove", "jade cliffs", "shield", "coniferous forest", "snowy*forest", "temperate rainforest", "spruce", "meneglin", "dead forest" ]
+      "biomes": [ "taiga", "grove", "jade cliffs", "shield", "coniferous forest", "land of lakes", "snowy*forest", "temperate rainforest", "seasonal forest", "spruce", "meneglin", "redwood", "dead forest", "ominous woods", "autumnal forest", "boreal forest", "maple wood", "meadow", "thornlands", "twilight highlands" ]
+    },
+    {
+      "name": "mesa",
+      "biomes": [ "mesa", "lush desert", "outback", "wasteland", "steppe", "arid highland", "canyon" ]
     },
     {
       "name": "desert",
       "variants": [
         {
-          "biomes": [ "desert", "quagmire" ]
+          "biomes": [ "desert", "quagmire", "petrified forest", "menelaus" ]
         },
         {
           "top-block": "minecraft:sand"
@@ -48,17 +53,17 @@
     },
     {
       "name": "highland",
-      "biomes": [ "extreme*hills", "alps", "crag", "highland", "mountain peak", "volcanic island", "mountains" ]
+      "biomes": [ "extreme*hills", "alps", "crag", "highland", "mountain", "volcanic island", "mountains", "cliffs", "defiled hills", "volcanic island", "final plateau", "twilight glaciers" ]
     },
     {
       "name": "beach",
-      "biomes": [ "beach", "mangrove" ]
+      "biomes": [ "beach", "mangrove", "shore", "tropics beach" ]
     },
     {
       "name": "forest",
       "variants": [
         {
-          "biomes": [ "forest", "blossom", "land of lakes", "mangrove", "woods", "meadow", "orchard", "origin island", "thicket", "woodland", "cherry blossom grove", "origin valley", "rainforest", "maple wood", "shield" ],
+          "biomes": [ "forest", "blossom", "mangrove", "woods", "orchard", "origin island", "thicket", "woodland", "grove", "origin valley", "rainforest", "lush hills", "orchad", "valley", "origin island", "birch hills", "twilight clearing" ],
           "bad-regions": [ "nether" ]
         },
         {
@@ -72,7 +77,7 @@
       "name": "plains",
       "variants": [
         {
-          "biomes": [ "plains", "chaparral", "fen", "field", "flower", "grass", "oasis", "tundra", "mushroom island", "darklands" ],
+          "biomes": [ "plains", "chaparral", "field", "flower", "grass", "oasis", "tundra", "mushroom island", "darklands", "badlands", "pasture", "rocky plateau", "tropics plains" ],
           "bad-regions": [ "forest", "savanna" ]
         },
         {
@@ -84,7 +89,7 @@
     },
     {
       "name": "ocean",
-      "biomes": [ "ocean", "river", "coral reef", "kelp forest" ]
+      "biomes": [ "ocean", "river", "coral reef", "kelp forest", "lake", "stream", "sea" ]
     },
     {
       "name": "underworld",
@@ -138,7 +143,40 @@
       "rain": false,
       "storm": false,
       "average-height": 0
-    }, 
+    },
+    {
+      "name": "abyssalcraft",
+      "location": [ "The Abyssal Wasteland", "The Dreadlands", "Omothol", "The Dark Realm" ],
+      "biome-selector": {
+        "always": false
+      }
+    },
+    {
+      "name": "void",
+      "location": [ "The Void", "???" ],
+      "biome-selector": {
+        "always": false
+      }
+    },
+    {
+      "name": "twilight_forest",
+      "location": "twilight_forest",
+      "biome-selector": {
+        "regions": [ "surface" ]
+      }
+    },
+    {
+      "name": "betweenlands",
+      "location": "betweenlands",
+      "average-height": 0
+    },
+    {
+      "name": "cave-dimensions",
+      "location": [ "deep_dark", "underground" ],
+      "biome-selector": {
+        "always": false
+      }
+    },
     {
       "name": "surface",
       "biome-selector": {
@@ -341,7 +379,7 @@
           "temperature": ">0.1&<=1.5",
           "volume": 0.5
         }
-      ],    
+      ],
       "day": 0.23,
       "night": 0.10
     },
@@ -443,16 +481,27 @@
     },
     {
       "source": "ambientsounds:suspense.end",
-      "selector": {
-        "biomes": [ "the*end" ]
-      },
+      "selector": [
+        {
+          "biomes": [ "the*end", "ender" ]
+        },
+        {
+          "dimensions": [ "twilight_forest", "abyssalcraft", "void" ],
+          "volume": 0.2
+        }
+      ],
       "full": true
     },
     {
       "source": "ambientsounds:suspense.cave",
-      "selector": {
-        "regions": [ "cave" ]
-      },
+      "selector": [
+        {
+          "regions": [ "cave" ]
+        },
+        {
+          "dimensions": [ "cave-dimensions" ]
+        }
+      ],
       "full": true
     },
     {
@@ -476,10 +525,10 @@
       "source": "ambientsounds:water.underwater",
       "selector": {
         "underwater-pitch": {
-            "pitchPerBlock": 0.1
+          "pitchPerBlock": 0.1
         }
       },
-	  "fade": 0.1,
+      "fade": 0.1,
       "mute": 0.9
     },
     {
@@ -525,7 +574,7 @@
     {
       "source": "ambientsounds:wind.mesa",
       "selector": {
-        "biomes": [ "mesa", "lush desert", "outback", "wasteland", "steppe" ]
+        "regions": [ "mesa" ]
       }
     },
     {
