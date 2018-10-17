@@ -1,7 +1,6 @@
 package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -11,15 +10,12 @@ import com.creativemd.ambientsounds.AmbientSituation.BiomeArea;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
 public abstract class AmbientCondition {
@@ -31,14 +27,13 @@ public abstract class AmbientCondition {
 		public AmbientArrayOrCondition(AmbientCondition[] conditions) {
 			this.conditions = conditions;
 		}
-
+		
 		@Override
 		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 			ArrayList<BiomeArea> previous = situation.selectedBiomes;
 			for (int i = 0; i < conditions.length; i++) {
 				situation.selectedBiomes = new ArrayList<>(previous);
-				if(conditions[i].is(situation, result))
-				{
+				if (conditions[i].is(situation, result)) {
 					result.conditions.add(conditions[i]);
 					return true;
 				}
@@ -62,7 +57,7 @@ public abstract class AmbientCondition {
 			ArrayList<BiomeArea> previous = situation.selectedBiomes;
 			for (int i = 0; i < conditions.length; i++) {
 				situation.selectedBiomes = new ArrayList<>(previous);
-				if(!conditions[i].is(situation, result))
+				if (!conditions[i].is(situation, result))
 					return false;
 				result.conditions.add(conditions[i]);
 			}
@@ -78,7 +73,7 @@ public abstract class AmbientCondition {
 		public AmbientInvertCondition(AmbientCondition condition) {
 			this.condition = condition;
 		}
-
+		
 		@Override
 		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 			return !condition.is(situation, result);
@@ -92,17 +87,15 @@ public abstract class AmbientCondition {
 		
 		public AmbientCondition condition;
 		
-		public AmbientRegionCondition(String region)
-		{
+		public AmbientRegionCondition(String region) {
 			this.regionName = region;
 		}
-
+		
 		@Override
 		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-			if(condition == null)
-			{
+			if (condition == null) {
 				condition = AmbientSoundLoader.regions.get(regionName);
-				if(condition == null)
+				if (condition == null)
 					throw new IllegalArgumentException("Region '" + regionName + "' does not exist!");
 			}
 			return condition.is(situation, result);
@@ -121,22 +114,20 @@ public abstract class AmbientCondition {
 	public static class AmbientConditionObjectParser extends AmbientConditionParser {
 		
 		@Override
-		public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-		{
-			if(element.isJsonArray())
-			{
+		public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+			if (element.isJsonArray()) {
 				JsonArray array = element.getAsJsonArray();
 				AmbientCondition[] conditions = new AmbientCondition[array.size()];
 				for (int i = 0; i < array.size(); i++) {
-					try{
+					try {
 						conditions[i] = parseCondition(array.get(i));
-					}catch(Exception e){
+					} catch (Exception e) {
 						AmbientSounds.logger.error("Could not load condition of '" + element + "'!");
 						e.printStackTrace();
 					}
 				}
 				return new AmbientArrayOrCondition(conditions);
-			}else if(element.isJsonObject()){
+			} else if (element.isJsonObject()) {
 				JsonObject object = element.getAsJsonObject();
 				ArrayList<AmbientCondition> conditions = new ArrayList<>();
 				HashMap<String, JsonElement> unknown = new HashMap<>();
@@ -144,28 +135,25 @@ public abstract class AmbientCondition {
 				for (Iterator<Entry<String, JsonElement>> iterator = object.entrySet().iterator(); iterator.hasNext();) {
 					Entry<String, JsonElement> entry = iterator.next();
 					AmbientConditionParser parser = regionSelectors.get(entry.getKey());
-					if(parser != null)
-					{
-						try{
+					if (parser != null) {
+						try {
 							conditions.add(parser.parseCondition(entry.getValue()));
-						}catch(Exception e){
+						} catch (Exception e) {
 							AmbientSounds.logger.error("Could not load condition of '" + entry.getKey() + ":" + entry.getValue() + "'!");
 							e.printStackTrace();
 						}
-					}	
-					else
+					} else
 						unknown.put(entry.getKey(), entry.getValue());
 				}
 				
 				AmbientCondition condition = new AmbientArrayAndCondition(conditions.toArray(new AmbientCondition[0]));
 				treatUnknownValues(condition, unknown);
-				return condition;				
+				return condition;
 			}
 			throw new IllegalArgumentException("Expected element to be either an array or an object!");
 		}
 		
-		public void treatUnknownValues(AmbientCondition condition, HashMap<String, JsonElement> unknown)
-		{
+		public void treatUnknownValues(AmbientCondition condition, HashMap<String, JsonElement> unknown) {
 			
 		}
 	}
@@ -213,10 +201,9 @@ public abstract class AmbientCondition {
 			
 			public abstract boolean is(double base, double value);
 			
-			public static MathOperator getOperator(String input) throws IllegalArgumentException
-			{
+			public static MathOperator getOperator(String input) throws IllegalArgumentException {
 				for (int i = 0; i < values().length; i++) {
-					if(input.startsWith(values()[i].identifier))
+					if (input.startsWith(values()[i].identifier))
 						return values()[i];
 				}
 				throw new IllegalArgumentException("Missing valid operator: '" + input + "'!");
@@ -226,8 +213,7 @@ public abstract class AmbientCondition {
 		
 		public abstract double getValue(AmbientSituation situation);
 		
-		public boolean is(MathOperator operator, double value, AmbientSituation situation)
-		{
+		public boolean is(MathOperator operator, double value, AmbientSituation situation) {
 			return operator.is(value, getValue(situation));
 		}
 		
@@ -237,8 +223,7 @@ public abstract class AmbientCondition {
 		
 		@Override
 		public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-			if(element.isJsonPrimitive() && ((JsonPrimitive) element).isString())
-			{
+			if (element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) {
 				String[] parts = element.getAsString().split("&");
 				AmbientCondition[] conditions = new AmbientCondition[parts.length];
 				points = new double[parts.length];
@@ -249,9 +234,8 @@ public abstract class AmbientCondition {
 					conditions[i] = new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							if(AmbientMathConditionParser.this.is(operator, value, situation))
-							{
-								if(AmbientMathConditionParser.this.requiresBiome())
+							if (AmbientMathConditionParser.this.is(operator, value, situation)) {
+								if (AmbientMathConditionParser.this.requiresBiome())
 									result.takeBiome = true;
 								return true;
 							}
@@ -267,17 +251,13 @@ public abstract class AmbientCondition {
 	
 	public static LinkedHashMap<String, AmbientConditionParser> regionSelectors = new LinkedHashMap<>();
 	
-	static
-	{
+	static {
 		regionSelectors.put("always", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
-					if(element.getAsBoolean())
-					{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
+					if (element.getAsBoolean()) {
 						return new AmbientCondition() {
 							@Override
 							public boolean is(AmbientSituation situation, AmbientSoundResult result) {
@@ -297,12 +277,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("biomes", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonArray())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					String[] names = new String[array.size()];
 					for (int i = 0; i < names.length; i++) {
@@ -313,24 +291,21 @@ public abstract class AmbientCondition {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							int i = 0;
-							while(i < situation.selectedBiomes.size())
-							{
+							while (i < situation.selectedBiomes.size()) {
 								BiomeArea area = situation.selectedBiomes.get(i);
 								boolean foundIt = false;
 								for (int j = 0; j < names.length; j++) {
-									if(checkBiome(names[j], area.biome))
-									{
+									if (checkBiome(names[j], area.biome)) {
 										i++;
 										foundIt = true;
 										break;
 									}
 								}
-								if(!foundIt)
+								if (!foundIt)
 									situation.selectedBiomes.remove(i);
 							}
 							
-							if(!situation.selectedBiomes.isEmpty())
-							{
+							if (!situation.selectedBiomes.isEmpty()) {
 								result.takeBiome = true;
 								return true;
 							}
@@ -344,12 +319,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("bad-biomes", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonArray())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					String[] names = new String[array.size()];
 					for (int i = 0; i < names.length; i++) {
@@ -360,11 +333,10 @@ public abstract class AmbientCondition {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							int i = 0;
-							while(i < situation.selectedBiomes.size())
-							{
+							while (i < situation.selectedBiomes.size()) {
 								BiomeArea area = situation.selectedBiomes.get(i);
 								for (int j = 0; j < names.length; j++) {
-									if(checkBiome(names[j], area.biome))
+									if (checkBiome(names[j], area.biome))
 										return false;
 								}
 								i++;
@@ -381,13 +353,11 @@ public abstract class AmbientCondition {
 		regionSelectors.put("temperature", new AmbientMathConditionParser() {
 			
 			@Override
-			public boolean is(MathOperator operator, double value, AmbientSituation situation)
-			{
+			public boolean is(MathOperator operator, double value, AmbientSituation situation) {
 				int i = 0;
-				while(i < situation.selectedBiomes.size())
-				{
+				while (i < situation.selectedBiomes.size()) {
 					BiomeArea area = situation.selectedBiomes.get(i);
-					if(operator.is(value, area.biome.getTemperature(area.pos)))
+					if (operator.is(value, area.biome.getTemperature(area.pos)))
 						i++;
 					else
 						situation.selectedBiomes.remove(i);
@@ -399,7 +369,7 @@ public abstract class AmbientCondition {
 			public double getValue(AmbientSituation situation) {
 				return 0;
 			}
-
+			
 			@Override
 			public boolean requiresBiome() {
 				return true;
@@ -409,36 +379,30 @@ public abstract class AmbientCondition {
 		regionSelectors.put("position", new AmbientConditionParser() {
 			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonObject())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonObject()) {
 					JsonObject object = element.getAsJsonObject();
 					double fadeValue = 0;
-					if(object.has("fadeValue"))
-					{
+					if (object.has("fadeValue")) {
 						JsonElement fade = object.get("fadeValue");
-						if(fade.isJsonPrimitive())
+						if (fade.isJsonPrimitive())
 							fadeValue = fade.getAsDouble();
 						else
 							throw new IllegalArgumentException("Expected a number for 'fadeValue'!");
 					}
 					
-					
 					double[] relativePointsTemp = null;
 					AmbientCondition relativePosition = null;
-					if(object.has("relativePosition"))
-					{
+					if (object.has("relativePosition")) {
 						JsonElement relative = object.get("relativePosition");
-						if(relative.isJsonPrimitive() && ((JsonPrimitive) relative).isString())
-						{
+						if (relative.isJsonPrimitive() && ((JsonPrimitive) relative).isString()) {
 							AmbientMathConditionParser parser = new AmbientMathConditionParser() {
 								
 								@Override
 								public double getValue(AmbientSituation situation) {
 									return situation.relativeHeight;
 								}
-
+								
 								@Override
 								public boolean requiresBiome() {
 									return false;
@@ -447,7 +411,7 @@ public abstract class AmbientCondition {
 							relativePosition = parser.parseCondition(relative);
 							relativePointsTemp = parser.points;
 							
-						}else
+						} else
 							throw new IllegalArgumentException("Expected a string for 'relativePosition'!");
 					}
 					
@@ -455,18 +419,16 @@ public abstract class AmbientCondition {
 					
 					double[] absolutePointsTemp = null;
 					AmbientCondition absolutePosition = null;
-					if(object.has("absolutePosition"))
-					{
+					if (object.has("absolutePosition")) {
 						JsonElement absolute = object.get("absolutePosition");
-						if(absolute.isJsonPrimitive() && ((JsonPrimitive) absolute).isString())
-						{
+						if (absolute.isJsonPrimitive() && ((JsonPrimitive) absolute).isString()) {
 							AmbientMathConditionParser parser = new AmbientMathConditionParser() {
 								
 								@Override
 								public double getValue(AmbientSituation situation) {
 									return situation.player.posY;
 								}
-
+								
 								@Override
 								public boolean requiresBiome() {
 									return false;
@@ -474,7 +436,7 @@ public abstract class AmbientCondition {
 							};
 							absolutePosition = parser.parseCondition(absolute);
 							absolutePointsTemp = parser.points;
-						}else
+						} else
 							throw new IllegalArgumentException("Expected a string for 'absolutePosition'!");
 					}
 					
@@ -487,29 +449,27 @@ public abstract class AmbientCondition {
 					return new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							if(relative != null && !relative.is(situation, result))
+							if (relative != null && !relative.is(situation, result))
 								return false;
-							if(absolute != null && !absolute.is(situation, result))
+							if (absolute != null && !absolute.is(situation, result))
 								return false;
 							
 							double distance = fade;
 							
-							if(relativePoints != null)
-							{
+							if (relativePoints != null) {
 								for (int i = 0; i < relativePoints.length; i++) {
-									distance = Math.min(distance, Math.abs(situation.relativeHeight-relativePoints[i]));
+									distance = Math.min(distance, Math.abs(situation.relativeHeight - relativePoints[i]));
 								}
 							}
 							
-							if(absolutePoints != null)
-							{
+							if (absolutePoints != null) {
 								for (int i = 0; i < absolutePoints.length; i++) {
-									distance = Math.min(distance, Math.abs(situation.relativeHeight-absolutePoints[i]));
+									distance = Math.min(distance, Math.abs(situation.relativeHeight - absolutePoints[i]));
 								}
-							}	
+							}
 							
-							if(distance < fade)
-								result.volume *= (float) (distance/fade);
+							if (distance < fade)
+								result.volume *= (float) (distance / fade);
 							
 							return true;
 						}
@@ -520,12 +480,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("underwater", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
 					return new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
@@ -538,23 +496,19 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("underwater-pitch", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonObject())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonObject()) {
 					JsonObject object = element.getAsJsonObject();
 					return new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							if(situation.player.isInsideOfMaterial(Material.WATER))
-							{
+							if (situation.player.isInsideOfMaterial(Material.WATER)) {
 								
 								int depth = 0;
 								AxisAlignedBB bb = situation.player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
-								while(situation.world.isMaterialInBB(bb, Material.WATER))
-								{
+								while (situation.world.isMaterialInBB(bb, Material.WATER)) {
 									depth++;
 									bb = bb.offset(new BlockPos(0, 1, 0));
 								}
@@ -575,12 +529,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("isRaining", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
 					return new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
@@ -593,12 +545,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("isStorming", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
 					return new AmbientCondition() {
 						
 						@Override
@@ -612,32 +562,28 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("top-block", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isString())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) {
 					String name = element.getAsString();
 					Block block = Block.getBlockFromName(name);
 					
-					if(block == null)
+					if (block == null)
 						throw new IllegalArgumentException("Invalid block name '" + name + "'!");
 					
 					return new AmbientCondition() {
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
 							int i = 0;
-							while(i < situation.selectedBiomes.size())
-							{
+							while (i < situation.selectedBiomes.size()) {
 								BiomeArea area = situation.selectedBiomes.get(i);
-								if(area.biome.topBlock.getBlock() == block)
+								if (area.biome.topBlock.getBlock() == block)
 									i++;
 								else
 									situation.selectedBiomes.remove(i);
 							}
-							if(!situation.selectedBiomes.isEmpty())
-							{
+							if (!situation.selectedBiomes.isEmpty()) {
 								result.takeBiome = true;
 								return true;
 							}
@@ -649,17 +595,14 @@ public abstract class AmbientCondition {
 			}
 		});
 		
-
 		regionSelectors.put("treesPerChunk", new AmbientMathConditionParser() {
 			
 			@Override
-			public boolean is(MathOperator operator, double value, AmbientSituation situation)
-			{
+			public boolean is(MathOperator operator, double value, AmbientSituation situation) {
 				int i = 0;
-				while(i < situation.selectedBiomes.size())
-				{
+				while (i < situation.selectedBiomes.size()) {
 					BiomeArea area = situation.selectedBiomes.get(i);
-					if(operator.is(value, area.biome.decorator.treesPerChunk))
+					if (operator.is(value, area.biome.decorator.treesPerChunk))
 						i++;
 					else
 						situation.selectedBiomes.remove(i);
@@ -671,7 +614,7 @@ public abstract class AmbientCondition {
 			public double getValue(AmbientSituation situation) {
 				return 0;
 			}
-
+			
 			@Override
 			public boolean requiresBiome() {
 				return true;
@@ -679,12 +622,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("regions", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonArray())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					AmbientCondition[] regions = new AmbientCondition[array.size()];
 					for (int i = 0; i < regions.length; i++) {
@@ -697,12 +638,10 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("bad-regions", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
-				if(element.isJsonArray())
-				{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
+				if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					AmbientCondition[] regions = new AmbientCondition[array.size()];
 					for (int i = 0; i < regions.length; i++) {
@@ -715,10 +654,9 @@ public abstract class AmbientCondition {
 		});
 		
 		regionSelectors.put("variants", new AmbientConditionParser() {
-
+			
 			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException
-			{
+			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
 				return parser.parseCondition(element);
 			}
 		});
@@ -727,28 +665,21 @@ public abstract class AmbientCondition {
 			
 			@Override
 			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonArray())
-				{
+				if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					return new AmbientCondition() {
 						
-						
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							for(int i = 0; i < array.size(); i++)
-							{
+							for (int i = 0; i < array.size(); i++) {
 								JsonElement element = array.get(i);
-								if(element.getAsJsonPrimitive().isNumber())
-								{
-									if(situation.world.provider.getDimension() == element.getAsInt())
+								if (element.getAsJsonPrimitive().isNumber()) {
+									if (situation.world.provider.getDimension() == element.getAsInt())
 										return true;
-								}
-								else if(element.getAsJsonPrimitive().isString())
-								{
-									if(situation.world.provider.getDimensionType().name().equals(element.getAsString()))
+								} else if (element.getAsJsonPrimitive().isString()) {
+									if (situation.world.provider.getDimensionType().name().equals(element.getAsString()))
 										return true;
-								}
-								else
+								} else
 									throw new IllegalArgumentException("Expected a string or a number!");
 							}
 							return false;
@@ -763,28 +694,21 @@ public abstract class AmbientCondition {
 			
 			@Override
 			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonArray())
-				{
+				if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					return new AmbientCondition() {
 						
-						
 						@Override
 						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							for(int i = 0; i < array.size(); i++)
-							{
+							for (int i = 0; i < array.size(); i++) {
 								JsonElement element = array.get(i);
-								if(element.getAsJsonPrimitive().isNumber())
-								{
-									if(situation.world.provider.getDimension() == element.getAsInt())
+								if (element.getAsJsonPrimitive().isNumber()) {
+									if (situation.world.provider.getDimension() == element.getAsInt())
 										return false;
-								}
-								else if(element.getAsJsonPrimitive().isString())
-								{
-									if(situation.world.provider.getDimensionType().name().equals(element.getAsString()))
+								} else if (element.getAsJsonPrimitive().isString()) {
+									if (situation.world.provider.getDimensionType().name().equals(element.getAsString()))
 										return false;
-								}
-								else
+								} else
 									throw new IllegalArgumentException("Expected a string or a number!");
 							}
 							return true;
@@ -796,8 +720,7 @@ public abstract class AmbientCondition {
 		});
 	}
 	
-	public static boolean checkBiome(String name, Biome biome)
-	{
+	public static boolean checkBiome(String name, Biome biome) {
 		String biomename = biome.getBiomeName().toLowerCase().replace("_", " ");
 		return biomename.matches(".*" + name.replace("*", ".*") + ".*"); //THIS WILL NOT WORK!!!!
 		
@@ -811,13 +734,13 @@ public abstract class AmbientCondition {
 	
 	public abstract boolean is(AmbientSituation situation, AmbientSoundResult result);
 	
-	/*public abstract boolean requiresBiome();
-	
-	public abstract boolean is(AmbientSituation situation);
-	
-	public float getVolumeModifier(AmbientSituation situation)
-	{
-		return 1.0F;
-	}*/
+	/* public abstract boolean requiresBiome();
+	 * 
+	 * public abstract boolean is(AmbientSituation situation);
+	 * 
+	 * public float getVolumeModifier(AmbientSituation situation)
+	 * {
+	 * return 1.0F;
+	 * } */
 	
 }

@@ -1,7 +1,6 @@
 package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,16 +21,14 @@ public class AmbientSituation {
 		}
 		
 		@Override
-		public boolean equals(Object object)
-		{
-			if(object instanceof BiomeArea)
+		public boolean equals(Object object) {
+			if (object instanceof BiomeArea)
 				return ((BiomeArea) object).biome == biome;
 			return false;
 		}
 		
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return biome.hashCode();
 		}
 		
@@ -59,6 +56,5 @@ public class AmbientSituation {
 		this.isRaining = world.isRainingAt(player.getPosition());
 		this.isThundering = world.isThundering();
 	}
-	
 	
 }

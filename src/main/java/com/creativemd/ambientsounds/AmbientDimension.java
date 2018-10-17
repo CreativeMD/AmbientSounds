@@ -1,14 +1,12 @@
 package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.creativemd.ambientsounds.AmbientCondition.AmbientConditionParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,40 +19,35 @@ public class AmbientDimension {
 	public final String name;
 	public final ArrayList<AmbientDimensionProperty> properties = new ArrayList<>();
 	
-	public AmbientDimension(JsonElement element) throws IllegalArgumentException
-	{
-		if(element.isJsonObject())
-		{
+	public AmbientDimension(JsonElement element) throws IllegalArgumentException {
+		if (element.isJsonObject()) {
 			JsonObject object = element.getAsJsonObject();
 			name = object.get("name").getAsString();
 			
 			for (Iterator<Entry<String, AmbientDimensionPropertyParser>> iterator = dimensionParser.entrySet().iterator(); iterator.hasNext();) {
 				Entry<String, AmbientDimensionPropertyParser> entry = iterator.next();
 				JsonElement property = object.get(entry.getKey());
-				if(property != null)
-				{
+				if (property != null) {
 					AmbientDimensionProperty ambientDimensionProperty = entry.getValue().parseCondition(property);
-					if(ambientDimensionProperty != null)
+					if (ambientDimensionProperty != null)
 						properties.add(ambientDimensionProperty);
 				}
 			}
-		}else
+		} else
 			throw new IllegalArgumentException("Invalid Dimension " + element);
 	}
 	
-	public boolean is(World world)
-	{
+	public boolean is(World world) {
 		for (int i = 0; i < properties.size(); i++) {
-			if(!properties.get(i).is(world))
+			if (!properties.get(i).is(world))
 				return false;
 		}
 		return true;
 	}
 	
-	public void manipulateSituation(AmbientSituation situation)
-	{
+	public void manipulateSituation(AmbientSituation situation) {
 		for (int i = 0; i < properties.size(); i++) {
-			properties.get(i).manipulateSituation(situation);				
+			properties.get(i).manipulateSituation(situation);
 		}
 	}
 	
@@ -74,15 +67,13 @@ public class AmbientDimension {
 	
 	public static LinkedHashMap<String, AmbientDimensionPropertyParser> dimensionParser = new LinkedHashMap<>();
 	
-	static
-	{
+	static {
 		dimensionParser.put("id", new AmbientDimensionPropertyParser() {
 			
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber())
-				{
-				
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber()) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
@@ -95,14 +86,14 @@ public class AmbientDimension {
 							return world.provider.getDimension() == element.getAsInt();
 						}
 					};
-				}else if(element.isJsonArray()){
+				} else if (element.isJsonArray()) {
 					JsonArray array = element.getAsJsonArray();
 					int[] ids = new int[array.size()];
 					for (int i = 0; i < array.size(); i++) {
 						JsonElement e = array.get(i);
-						if(e.isJsonPrimitive() && ((JsonPrimitive) e).isNumber()){
+						if (e.isJsonPrimitive() && ((JsonPrimitive) e).isNumber()) {
 							ids[i] = e.getAsInt();
-						}else
+						} else
 							throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
 					}
 					return new AmbientDimensionProperty() {
@@ -117,7 +108,7 @@ public class AmbientDimension {
 							return ArrayUtils.contains(ids, world.provider.getDimension());
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
 			}
 		});
@@ -125,9 +116,8 @@ public class AmbientDimension {
 			
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber())
-				{
-				
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber()) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
@@ -140,21 +130,18 @@ public class AmbientDimension {
 							return world.provider.getDimension() == element.getAsInt();
 						}
 					};
-				}else if((element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) || element.isJsonArray()){
+				} else if ((element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) || element.isJsonArray()) {
 					String[] names;
-					if(element.isJsonPrimitive())
-					{
-						names = new String[] {element.getAsString()};
-					}
-					else
-					{
+					if (element.isJsonPrimitive()) {
+						names = new String[] { element.getAsString() };
+					} else {
 						JsonArray array = element.getAsJsonArray();
 						names = new String[array.size()];
 						for (int i = 0; i < array.size(); i++) {
 							JsonElement e = array.get(i);
-							if(e.isJsonPrimitive() && ((JsonPrimitive) e).isString()) {
+							if (e.isJsonPrimitive() && ((JsonPrimitive) e).isString()) {
 								names[i] = e.getAsString().toLowerCase();
-							}else
+							} else
 								throw new IllegalArgumentException("Expected a string instead of '" + element + "'!");
 						}
 					}
@@ -168,13 +155,13 @@ public class AmbientDimension {
 						@Override
 						public boolean is(World world) {
 							for (int j = 0; j < names.length; j++) {
-								if(names[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
+								if (names[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
 									return true;
 							}
 							return false;
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Expected a string instead of '" + element + "'!");
 			}
 		});
@@ -182,9 +169,8 @@ public class AmbientDimension {
 			
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
-				
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
@@ -197,7 +183,7 @@ public class AmbientDimension {
 							return true;
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Expected a boolean instead of '" + element + "'!");
 			}
 		});
@@ -205,9 +191,8 @@ public class AmbientDimension {
 			
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
-				
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
@@ -220,7 +205,7 @@ public class AmbientDimension {
 							return true;
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Expected a boolean instead of '" + element + "'!");
 			}
 		});
@@ -228,9 +213,8 @@ public class AmbientDimension {
 			
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber())
-				{
-				
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber()) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
@@ -243,7 +227,7 @@ public class AmbientDimension {
 							return true;
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
 			}
 		});
@@ -251,9 +235,8 @@ public class AmbientDimension {
 			
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if(element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean())
-				{
-				
+				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
@@ -266,7 +249,7 @@ public class AmbientDimension {
 							return true;
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Expected a boolean instead of '" + element + "'!");
 			}
 		});
@@ -275,15 +258,14 @@ public class AmbientDimension {
 			@Override
 			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
 				AmbientCondition condition = AmbientCondition.parser.parseCondition(element);
-				if(condition != null)
-				{
-				
+				if (condition != null) {
+					
 					return new AmbientDimensionProperty() {
 						
 						@Override
 						public void manipulateSituation(AmbientSituation situation) {
 							AmbientSoundResult result = new AmbientSoundResult();
-							if(condition.is(situation, result))
+							if (condition.is(situation, result))
 								situation.biomeVolume = result.volume;
 							else
 								situation.biomeVolume = 0;
@@ -294,11 +276,10 @@ public class AmbientDimension {
 							return true;
 						}
 					};
-				}else
+				} else
 					throw new IllegalArgumentException("Missing condition");
 			}
 		});
-	}	
-	
+	}
 	
 }

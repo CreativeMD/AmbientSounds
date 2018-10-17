@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
 @Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds", acceptedMinecraftVersions = "", clientSideOnly = true, guiFactory = "com.creativemd.ambientsounds.AmbientSettings")
@@ -38,8 +37,7 @@ public class AmbientSounds {
 	public static int normalChannels = 21;
 	
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
+	public void preInit(FMLPreInitializationEvent event) {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		debugging = config.getBoolean("debugging", "Custom", false, "Useful if you want to modify the engine");
@@ -69,7 +67,6 @@ public class AmbientSounds {
 				AmbientSoundLoader.reloadAmbientSounds();
 			}
 		});
-		
 		
 		Minecraft minecraft = Minecraft.getMinecraft();
 		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();

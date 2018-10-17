@@ -10,22 +10,22 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
-import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
+import net.minecraftforge.fml.client.config.IConfigElement;
 
 public class AmbientSettings implements IModGuiFactory {
-
+	
 	@Override
 	public void initialize(Minecraft minecraftInstance) {
 		
 	}
-
+	
 	@Override
 	public boolean hasConfigGui() {
 		return true;
 	}
-
+	
 	@Override
 	public GuiScreen createConfigGui(GuiScreen parentScreen) {
 		List<IConfigElement> elements = new ArrayList<>();
@@ -184,5 +184,5 @@ public class AmbientSettings implements IModGuiFactory {
 		
 		return null;
 	}
-
+	
 }
