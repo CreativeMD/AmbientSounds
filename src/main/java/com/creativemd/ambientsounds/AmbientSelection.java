@@ -42,7 +42,7 @@ public class AmbientSelection {
 		}
 		
 		if (subSelection != null)
-			assignProperties(properties);
+			subSelection.assignProperties(properties);
 	}
 	
 }

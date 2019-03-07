@@ -11,7 +11,7 @@ public class AmbientDimension {
 	public String name;
 	
 	@SerializedName("biome-selector")
-	public AmbientCondition biomeSelector;
+	public AmbientConditionExtended biomeSelector;
 	
 	public AmbientRegion[] regions;
 	
@@ -45,7 +45,8 @@ public class AmbientDimension {
 					return true;
 			}
 		}
-		return false;
+		
+		return id == null && dimensionIds == null && dimensionNames == null;
 	}
 	
 	public void manipulateEnviroment(AmbientEnviroment env) {

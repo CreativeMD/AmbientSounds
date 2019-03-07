@@ -52,10 +52,14 @@ public class AmbientSound extends AmbientCondition {
 	}
 	
 	protected int getRandomFile() {
+		if (files.length == 1)
+			return 0;
 		return rand.nextInt(files.length - 1);
 	}
 	
 	protected int getRandomFileExcept(int i) {
+		if (files.length == 2)
+			return i == 0 ? 1 : 0;
 		int index = rand.nextInt(files.length - 2);
 		if (index >= i)
 			index++;
@@ -129,14 +133,17 @@ public class AmbientSound extends AmbientCondition {
 					stream2.pitch -= Math.min(fadePitch, stream2.pitch - aimedPitch);
 				stream2.ticksPlayed++;
 			}
+		} else {
+			
+			if (pauseTimer == -1)
+				if (currentPropertries.pause != null)
+					pauseTimer = (int) currentPropertries.pause.randomValue();
+				
+			if (pauseTimer <= 0)
+				stream1 = play(getRandomFile());
+			else
+				pauseTimer--;
 		}
-		
-		if (pauseTimer == -1)
-			onSoundFinished();
-		
-		pauseTimer--;
-		if (pauseTimer <= 0)
-			stream1 = play(getRandomFile());
 		
 		return aimedVolume > 0 || currentVolume > 0;
 	}
@@ -207,15 +214,13 @@ public class AmbientSound extends AmbientCondition {
 	}
 	
 	public void onSoundFinished() {
-		if (currentPropertries.pause != null)
-			pauseTimer = (int) currentPropertries.pause.randomValue();
-		
 		if (stream1.finished) {
 			stream1 = null;
 			if (stream2 != null) {
 				engine.soundEngine.stop(stream2);
 				stream2 = null;
 			}
+			pauseTimer = -1;
 		} else
 			stream2 = null;
 	}

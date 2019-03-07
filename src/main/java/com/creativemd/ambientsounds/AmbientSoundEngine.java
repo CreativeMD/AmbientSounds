@@ -50,7 +50,6 @@ public class AmbientSoundEngine {
 	public AmbientSoundEngine(SoundManager manager, GameSettings settings) {
 		this.settings = settings;
 		this.manager = manager;
-		this.library = ReflectionHelper.getPrivateValue(SoundSystem.class, getSystem(), "soundLibrary");
 	}
 	
 	public void tick() {
@@ -63,6 +62,9 @@ public class AmbientSoundEngine {
 		}
 		
 		SoundSystem system = getSystem();
+		
+		if (library == null)
+			this.library = ReflectionHelper.getPrivateValue(SoundSystem.class, getSystem(), "soundLibrary");
 		
 		Double mute = null;
 		for (Iterator iterator = sounds.iterator(); iterator.hasNext();) {

@@ -1,5 +1,6 @@
 package com.creativemd.ambientsounds;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,7 +13,12 @@ import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 
@@ -32,7 +38,21 @@ public class AmbientEngine {
 	
 	public static final ResourceLocation engineLocation = new ResourceLocation(AmbientSounds.modid, "engine.json");
 	private static final JsonParser parser = new JsonParser();
-	private static final Gson gson = new Gson();
+	private static final Gson gson = generateGson();
+	
+	private static Gson generateGson() {
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
+			
+			@Override
+			public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+				if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())
+					return new ResourceLocation(json.getAsString());
+				return null;
+			}
+		});
+		return builder.create();
+	}
 	
 	public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
 		AmbientSounds.config.load();
@@ -99,7 +119,7 @@ public class AmbientEngine {
 	public void stopEngine() {
 		if (!activeRegions.isEmpty()) {
 			for (AmbientRegion region : activeRegions)
-				region.stopSounds();
+				region.deactivate();
 			activeRegions.clear();
 		}
 	}
@@ -112,8 +132,6 @@ public class AmbientEngine {
 				AmbientSounds.logger.error("Found invalid region in '{0}' at index={1}", dimension.name, i);
 			return false;
 		}
-		
-		region.init(this);
 		return true;
 	}
 	
@@ -122,8 +140,6 @@ public class AmbientEngine {
 			AmbientDimension dimension = dimensions[i];
 			if (dimension.name == null || dimension.name.isEmpty())
 				throw new RuntimeException("Invalid dimension name at index=" + i);
-			
-			dimension.init(this);
 			
 			if (dimension.regions != null)
 				for (int j = 0; j < dimension.regions.length; j++) {
@@ -141,6 +157,12 @@ public class AmbientEngine {
 			}
 		}
 		
+		for (AmbientDimension dimension : dimensions)
+			dimension.init(this);
+		
+		for (AmbientRegion region : allRegions.values()) {
+			region.init(this);
+		}
 	}
 	
 	public void tick(AmbientEnviroment env) {
@@ -176,8 +198,10 @@ public class AmbientEngine {
 		if (!activeRegions.isEmpty()) {
 			for (Iterator iterator = activeRegions.iterator(); iterator.hasNext();) {
 				AmbientRegion region = (AmbientRegion) iterator.next();
-				if (region.fastTick())
+				if (!region.fastTick()) {
+					region.deactivate();
 					iterator.remove();
+				}
 			}
 		}
 	}
@@ -222,7 +246,7 @@ public class AmbientEngine {
 					float biomeVolume = (float) ((1 - Math.sqrt(center.distanceSq(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
 					BiomeArea area = new BiomeArea(biome, pos);
 					if (biomes.containsKey(area))
-						biomes.add(area, Math.max(biomes.getValue(area), biomeVolume));
+						biomes.set(area, Math.max(biomes.getValue(area), biomeVolume));
 					else
 						biomes.add(area, biomeVolume);
 				}
