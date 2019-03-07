@@ -1,285 +1,65 @@
 package com.creativemd.ambientsounds;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.world.World;
 
 public class AmbientDimension {
 	
-	public final String name;
-	public final ArrayList<AmbientDimensionProperty> properties = new ArrayList<>();
+	public String name;
 	
-	public AmbientDimension(JsonElement element) throws IllegalArgumentException {
-		if (element.isJsonObject()) {
-			JsonObject object = element.getAsJsonObject();
-			name = object.get("name").getAsString();
-			
-			for (Iterator<Entry<String, AmbientDimensionPropertyParser>> iterator = dimensionParser.entrySet().iterator(); iterator.hasNext();) {
-				Entry<String, AmbientDimensionPropertyParser> entry = iterator.next();
-				JsonElement property = object.get(entry.getKey());
-				if (property != null) {
-					AmbientDimensionProperty ambientDimensionProperty = entry.getValue().parseCondition(property);
-					if (ambientDimensionProperty != null)
-						properties.add(ambientDimensionProperty);
-				}
-			}
-		} else
-			throw new IllegalArgumentException("Invalid Dimension " + element);
+	@SerializedName("biome-selector")
+	public AmbientCondition biomeSelector;
+	
+	public AmbientRegion[] regions;
+	
+	public Boolean night;
+	public Boolean rain;
+	public Boolean storm;
+	
+	public Integer id;
+	
+	@SerializedName(value = "dimension-ids")
+	public int[] dimensionIds;
+	@SerializedName(value = "dimension-names")
+	public String[] dimensionNames;
+	
+	public void init(AmbientEngine engine) {
+		if (biomeSelector != null)
+			biomeSelector.init(engine);
 	}
 	
 	public boolean is(World world) {
-		for (int i = 0; i < properties.size(); i++) {
-			if (!properties.get(i).is(world))
-				return false;
+		
+		if (id != null && world.provider.getDimension() == id)
+			return true;
+		
+		if (dimensionIds != null && ArrayUtils.contains(dimensionIds, world.provider.getDimension()))
+			return true;
+		
+		if (dimensionNames != null) {
+			for (int j = 0; j < dimensionNames.length; j++) {
+				if (dimensionNames[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
+					return true;
+			}
 		}
-		return true;
+		return false;
 	}
 	
-	public void manipulateSituation(AmbientSituation situation) {
-		for (int i = 0; i < properties.size(); i++) {
-			properties.get(i).manipulateSituation(situation);
-		}
-	}
-	
-	public abstract static class AmbientDimensionProperty {
+	public void manipulateEnviroment(AmbientEnviroment env) {
+		if (night != null)
+			env.night = night;
 		
-		public abstract boolean is(World world);
+		if (rain != null)
+			env.raining = rain;
 		
-		public abstract void manipulateSituation(AmbientSituation situation);
+		if (storm != null)
+			env.thundering = storm;
 		
-	}
-	
-	public abstract static class AmbientDimensionPropertyParser {
-		
-		public abstract AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException;
-		
-	}
-	
-	public static LinkedHashMap<String, AmbientDimensionPropertyParser> dimensionParser = new LinkedHashMap<>();
-	
-	static {
-		dimensionParser.put("id", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber()) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return world.provider.getDimension() == element.getAsInt();
-						}
-					};
-				} else if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					int[] ids = new int[array.size()];
-					for (int i = 0; i < array.size(); i++) {
-						JsonElement e = array.get(i);
-						if (e.isJsonPrimitive() && ((JsonPrimitive) e).isNumber()) {
-							ids[i] = e.getAsInt();
-						} else
-							throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
-					}
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return ArrayUtils.contains(ids, world.provider.getDimension());
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
-			}
-		});
-		dimensionParser.put("location", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber()) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return world.provider.getDimension() == element.getAsInt();
-						}
-					};
-				} else if ((element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) || element.isJsonArray()) {
-					String[] names;
-					if (element.isJsonPrimitive()) {
-						names = new String[] { element.getAsString() };
-					} else {
-						JsonArray array = element.getAsJsonArray();
-						names = new String[array.size()];
-						for (int i = 0; i < array.size(); i++) {
-							JsonElement e = array.get(i);
-							if (e.isJsonPrimitive() && ((JsonPrimitive) e).isString()) {
-								names[i] = e.getAsString().toLowerCase();
-							} else
-								throw new IllegalArgumentException("Expected a string instead of '" + element + "'!");
-						}
-					}
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							
-						}
-						
-						@Override
-						public boolean is(World world) {
-							for (int j = 0; j < names.length; j++) {
-								if (names[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
-									return true;
-							}
-							return false;
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Expected a string instead of '" + element + "'!");
-			}
-		});
-		dimensionParser.put("rain", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							situation.isRaining = ((JsonPrimitive) element).getAsBoolean();
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return true;
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Expected a boolean instead of '" + element + "'!");
-			}
-		});
-		dimensionParser.put("storm", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							situation.isThundering = ((JsonPrimitive) element).getAsBoolean();
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return true;
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Expected a boolean instead of '" + element + "'!");
-			}
-		});
-		dimensionParser.put("average-height", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isNumber()) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							situation.relativeHeight = ((JsonPrimitive) element).getAsFloat();
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return true;
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Expected a number instead of '" + element + "'!");
-			}
-		});
-		dimensionParser.put("isNight", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							situation.isNight = ((JsonPrimitive) element).getAsBoolean();
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return true;
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Expected a boolean instead of '" + element + "'!");
-			}
-		});
-		dimensionParser.put("biome-selector", new AmbientDimensionPropertyParser() {
-			
-			@Override
-			public AmbientDimensionProperty parseCondition(JsonElement element) throws IllegalArgumentException {
-				AmbientCondition condition = AmbientCondition.parser.parseCondition(element);
-				if (condition != null) {
-					
-					return new AmbientDimensionProperty() {
-						
-						@Override
-						public void manipulateSituation(AmbientSituation situation) {
-							AmbientSoundResult result = new AmbientSoundResult();
-							if (condition.is(situation, result))
-								situation.biomeVolume = result.volume;
-							else
-								situation.biomeVolume = 0;
-						}
-						
-						@Override
-						public boolean is(World world) {
-							return true;
-						}
-					};
-				} else
-					throw new IllegalArgumentException("Missing condition");
-			}
-		});
+		if (biomeSelector != null)
+			env.biomeVolume = biomeSelector.value(env).getEntireVolume();
 	}
 	
 }

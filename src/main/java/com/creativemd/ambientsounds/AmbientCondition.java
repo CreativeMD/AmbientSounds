@@ -1,746 +1,354 @@
 package com.creativemd.ambientsounds;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import java.util.List;
 
-import com.creativemd.ambientsounds.AmbientSituation.BiomeArea;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
+import com.creativemd.creativecore.common.utils.type.Pair;
+import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.MathHelper;
 
-public abstract class AmbientCondition {
+public class AmbientCondition extends AmbientSoundProperties {
 	
-	public static class AmbientArrayOrCondition extends AmbientCondition {
+	public Boolean always;
+	
+	public double volume = 1.0;
+	@SerializedName(value = "night")
+	public double nightVolume = 1.0;
+	@SerializedName(value = "day")
+	public double dayVolume = 1.0;
+	
+	public String[] biomes;
+	@SerializedName(value = "bad-biomes")
+	public String[] badBiomes;
+	@SerializedName(value = "special-biomes")
+	public AmbientBiomeCondition specialBiome;
+	
+	public Boolean raining;
+	public Boolean storming;
+	
+	public AmbientMinMaxFadeCondition underwater;
+	
+	@SerializedName(value = "relative-height")
+	public AmbientMinMaxFadeCondition relativeHeight;
+	@SerializedName(value = "absolute-height")
+	public AmbientMinMaxFadeCondition absoluteHeight;
+	
+	public AmbientMinMaxFadeCondition light;
+	
+	public AmbientMaterialCondition blocks;
+	
+	public AmbientCondition[] variants;
+	
+	@Override
+	public void init(AmbientEngine engine) {
+		super.init(engine);
 		
-		public final AmbientCondition[] conditions;
+		volume = MathHelper.clamp(volume, 0, 1);
+		nightVolume = MathHelper.clamp(nightVolume, 0, 1);
+		dayVolume = MathHelper.clamp(dayVolume, 0, 1);
 		
-		public AmbientArrayOrCondition(AmbientCondition[] conditions) {
-			this.conditions = conditions;
-		}
+		if (specialBiome != null)
+			specialBiome.init();
 		
-		@Override
-		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-			ArrayList<BiomeArea> previous = situation.selectedBiomes;
-			for (int i = 0; i < conditions.length; i++) {
-				situation.selectedBiomes = new ArrayList<>(previous);
-				if (conditions[i].is(situation, result)) {
-					result.conditions.add(conditions[i]);
-					return true;
-				}
-			}
-			situation.selectedBiomes = previous;
-			return false;
-		}
+		if (blocks != null)
+			blocks.init();
 		
+		if (variants != null)
+			for (int i = 0; i < variants.length; i++)
+				variants[i].init(engine);
 	}
 	
-	public static class AmbientArrayAndCondition extends AmbientCondition {
+	public AmbientSelection value(AmbientEnviroment env) {
 		
-		public final AmbientCondition[] conditions;
+		if (always != null)
+			return always ? new AmbientSelection(this) : null;
 		
-		public AmbientArrayAndCondition(AmbientCondition[] conditions) {
-			this.conditions = conditions;
+		if (volume <= 0)
+			return null;
+		
+		if (env.night ? nightVolume <= 0 : dayVolume <= 0)
+			return null;
+		
+		if (raining != null && env.raining != raining)
+			return null;
+		
+		if (storming != null && env.thundering != storming)
+			return null;
+		
+		AmbientSelection selection = new AmbientSelection(this);
+		
+		selection.volume *= env.night ? nightVolume : dayVolume;
+		
+		if (biomes != null || badBiomes != null || specialBiome != null) {
+			Pair<BiomeArea, Float> highest = null;
+			
+			for (Pair<BiomeArea, Float> pair : env.biomes) {
+				
+				if (biomes != null && !pair.key.checkBiome(biomes))
+					continue;
+				
+				if (badBiomes != null && pair.key.checkBiome(badBiomes))
+					return null;
+				
+				if (specialBiome != null && !specialBiome.is(pair.key))
+					continue;
+				
+				if (highest == null || highest.value < pair.value)
+					highest = pair;
+			}
+			
+			if (highest == null && (biomes != null || specialBiome != null))
+				return null;
+			else if (highest != null)
+				selection.volume *= highest.value;
 		}
 		
-		@Override
-		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-			ArrayList<BiomeArea> previous = situation.selectedBiomes;
-			for (int i = 0; i < conditions.length; i++) {
-				situation.selectedBiomes = new ArrayList<>(previous);
-				if (!conditions[i].is(situation, result))
-					return false;
-				result.conditions.add(conditions[i]);
+		if (underwater != null) {
+			double volume = underwater.volume(env.underwater);
+			if (volume <= 0)
+				return null;
+			
+			selection.volume *= volume;
+		}
+		
+		if (relativeHeight != null) {
+			double volume = relativeHeight.volume(env.relativeHeight);
+			if (volume <= 0)
+				return null;
+			
+			selection.volume *= volume;
+		}
+		
+		if (absoluteHeight != null) {
+			double volume = absoluteHeight.volume(env.player.posY);
+			if (volume <= 0)
+				return null;
+			
+			selection.volume *= volume;
+		}
+		
+		if (light != null) {
+			double volume = light.volume(env.averageLight);
+			if (volume <= 0)
+				return null;
+			
+			selection.volume *= volume;
+		}
+		
+		if (blocks != null) {
+			double volume = blocks.volume(env);
+			if (volume <= 0)
+				return null;
+			
+			selection.volume *= volume;
+		}
+		
+		if (variants != null) {
+			AmbientSelection bestCondition = null;
+			
+			for (AmbientCondition condition : variants) {
+				AmbientSelection subSelection = condition.value(env);
+				if (subSelection != null && (bestCondition == null || bestCondition.volume < subSelection.volume))
+					bestCondition = subSelection;
 			}
+			
+			if (bestCondition == null)
+				return null;
+			
+			selection.subSelection = bestCondition;
+		}
+		
+		return selection;
+	}
+	
+	public static class AmbientBiomeCondition {
+		
+		@SerializedName(value = "top-block")
+		public String[] topBlock;
+		
+		transient List<Block> blocks;
+		
+		public AmbientMinMaxCondition temperature;
+		
+		@SerializedName(value = "trees-per-chunk")
+		public AmbientMinMaxCondition treesPerChunk;
+		@SerializedName(value = "waterlily-per-chunk")
+		public AmbientMinMaxCondition waterlilyPerChunk;
+		@SerializedName(value = "flowers-per-chunk")
+		public AmbientMinMaxCondition flowersPerChunk;
+		@SerializedName(value = "grass-per-chunk")
+		public AmbientMinMaxCondition grassPerChunk;
+		@SerializedName(value = "deadbush-per-chunk")
+		public AmbientMinMaxCondition deadBushPerChunk;
+		@SerializedName(value = "mushrooms-per-chunk")
+		public AmbientMinMaxCondition mushroomsPerChunk;
+		@SerializedName(value = "reeds-per-chunk")
+		public AmbientMinMaxCondition reedsPerChunk;
+		@SerializedName(value = "cacti-per-chunk")
+		public AmbientMinMaxCondition cactiPerChunk;
+		
+		public void init() {
+			if (topBlock != null) {
+				blocks = new ArrayList<>();
+				for (String blockName : topBlock) {
+					Block block = Block.getBlockFromName(blockName);
+					if (block != null && !(block instanceof BlockAir))
+						blocks.add(block);
+				}
+			}
+		}
+		
+		public boolean is(BiomeArea biome) {
+			if (topBlock != null && !biome.checkTopBlock(blocks))
+				return false;
+			
+			if (temperature != null && !temperature.is(biome.biome.getTemperature(biome.pos)))
+				return false;
+			
+			if (treesPerChunk != null && !treesPerChunk.is(biome.biome.decorator.treesPerChunk))
+				return false;
+			
+			if (waterlilyPerChunk != null && !waterlilyPerChunk.is(biome.biome.decorator.waterlilyPerChunk))
+				return false;
+			
+			if (flowersPerChunk != null && !flowersPerChunk.is(biome.biome.decorator.flowersPerChunk))
+				return false;
+			
+			if (grassPerChunk != null && !grassPerChunk.is(biome.biome.decorator.grassPerChunk))
+				return false;
+			
+			if (deadBushPerChunk != null && !deadBushPerChunk.is(biome.biome.decorator.deadBushPerChunk))
+				return false;
+			
+			if (mushroomsPerChunk != null && !mushroomsPerChunk.is(biome.biome.decorator.mushroomsPerChunk))
+				return false;
+			
+			if (reedsPerChunk != null && !reedsPerChunk.is(biome.biome.decorator.reedsPerChunk))
+				return false;
+			
+			if (cactiPerChunk != null && !cactiPerChunk.is(biome.biome.decorator.cactiPerChunk))
+				return false;
+			
 			return true;
 		}
 		
 	}
 	
-	public static class AmbientInvertCondition extends AmbientCondition {
+	public static class AmbientMinMaxCondition {
 		
-		public AmbientCondition condition;
+		public Double min;
+		public Double max;
 		
-		public AmbientInvertCondition(AmbientCondition condition) {
-			this.condition = condition;
+		public boolean is(double value) {
+			if (min == null)
+				return max == null ? true : value <= max;
+			if (max == null)
+				return value >= min;
+			return value >= min && value <= max;
 		}
 		
-		@Override
-		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-			return !condition.is(situation, result);
-		}
-		
-	}
-	
-	public static class AmbientRegionCondition extends AmbientCondition {
-		
-		public String regionName;
-		
-		public AmbientCondition condition;
-		
-		public AmbientRegionCondition(String region) {
-			this.regionName = region;
-		}
-		
-		@Override
-		public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-			if (condition == null) {
-				condition = AmbientSoundLoader.regions.get(regionName);
-				if (condition == null)
-					throw new IllegalArgumentException("Region '" + regionName + "' does not exist!");
-			}
-			return condition.is(situation, result);
-		}
-		
-	}
-	
-	public static abstract class AmbientConditionParser {
-		
-		public abstract AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException;
-		
-	}
-	
-	public static AmbientConditionObjectParser parser = new AmbientConditionObjectParser();
-	
-	public static class AmbientConditionObjectParser extends AmbientConditionParser {
-		
-		@Override
-		public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-			if (element.isJsonArray()) {
-				JsonArray array = element.getAsJsonArray();
-				AmbientCondition[] conditions = new AmbientCondition[array.size()];
-				for (int i = 0; i < array.size(); i++) {
-					try {
-						conditions[i] = parseCondition(array.get(i));
-					} catch (Exception e) {
-						AmbientSounds.logger.error("Could not load condition of '" + element + "'!");
-						e.printStackTrace();
-					}
-				}
-				return new AmbientArrayOrCondition(conditions);
-			} else if (element.isJsonObject()) {
-				JsonObject object = element.getAsJsonObject();
-				ArrayList<AmbientCondition> conditions = new ArrayList<>();
-				HashMap<String, JsonElement> unknown = new HashMap<>();
+		public double randomValue() {
+			if (max == null)
+				if (min == null)
+					return 0;
+				else
+					return min;
 				
-				for (Iterator<Entry<String, JsonElement>> iterator = object.entrySet().iterator(); iterator.hasNext();) {
-					Entry<String, JsonElement> entry = iterator.next();
-					AmbientConditionParser parser = regionSelectors.get(entry.getKey());
-					if (parser != null) {
-						try {
-							conditions.add(parser.parseCondition(entry.getValue()));
-						} catch (Exception e) {
-							AmbientSounds.logger.error("Could not load condition of '" + entry.getKey() + ":" + entry.getValue() + "'!");
-							e.printStackTrace();
-						}
-					} else
-						unknown.put(entry.getKey(), entry.getValue());
+			if (min == null)
+				min = 0D;
+			
+			double distance = max - min;
+			return Math.random() * distance + min;
+		}
+		
+	}
+	
+	public static class AmbientMinMaxFadeCondition extends AmbientMinMaxCondition {
+		
+		public Double fade;
+		
+		public double volume(double value) {
+			if (!is(value))
+				return 0;
+			if (fade == null)
+				return 1;
+			
+			return Math.min(Math.min(Math.abs(value - min), Math.abs(value - max)) / fade, 1);
+		}
+		
+	}
+	
+	public static class AmbientMaterialCondition {
+		
+		public String[] materials;
+		@SerializedName(value = "bad-materials")
+		public String[] badMaterials;
+		
+		transient List<Material> mat;
+		transient List<Material> badMat;
+		
+		public void init() {
+			if (materials != null) {
+				mat = new ArrayList<>();
+				for (String string : materials) {
+					Material material = getMaterial(string);
+					if (material != null)
+						mat.add(material);
 				}
+			}
+			
+			if (badMaterials != null) {
+				badMat = new ArrayList<>();
+				for (String string : badMaterials) {
+					Material material = getMaterial(string);
+					if (material != null)
+						badMat.add(material);
+				}
+			}
+		}
+		
+		public double volume(AmbientEnviroment env) {
+			if (materials == null && badMaterials == null)
+				return 1;
+			
+			boolean found = false;
+			
+			for (Pair<IBlockState, Integer> pair : env.blocks) {
+				if (!found && materials != null && mat.contains(pair.key.getMaterial()))
+					found = true;
 				
-				AmbientCondition condition = new AmbientArrayAndCondition(conditions.toArray(new AmbientCondition[0]));
-				treatUnknownValues(condition, unknown);
-				return condition;
+				if (badMaterials != null && badMat.contains(pair.key.getMaterial()))
+					return 0;
 			}
-			throw new IllegalArgumentException("Expected element to be either an array or an object!");
+			
+			return found ? 1 : 0;
 		}
 		
-		public void treatUnknownValues(AmbientCondition condition, HashMap<String, JsonElement> unknown) {
-			
-		}
-	}
-	
-	public static abstract class AmbientMathConditionParser extends AmbientConditionParser {
+		static Material[] refMaterials = new Material[] { Material.GRASS, Material.GROUND, Material.WOOD, Material.ROCK,
+		        Material.IRON, Material.ANVIL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANTS,
+		        Material.VINE, Material.SPONGE, Material.CLOTH, Material.FIRE, Material.SAND, Material.CIRCUITS,
+		        Material.CARPET, Material.GLASS, Material.REDSTONE_LIGHT, Material.TNT, Material.CORAL, Material.ICE,
+		        Material.PACKED_ICE, Material.SNOW, Material.CRAFTED_SNOW, Material.CACTUS, Material.CLAY,
+		        Material.GOURD, Material.DRAGON_EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON,
+		        Material.BARRIER, Material.STRUCTURE_VOID };
 		
-		public static enum MathOperator {
-			
-			greater_equals(">=") {
-				@Override
-				public boolean is(double base, double value) {
-					return base <= value;
-				}
-			},
-			smaller_equals("<=") {
-				@Override
-				public boolean is(double base, double value) {
-					return base >= value;
-				}
-			},
-			greater(">") {
-				@Override
-				public boolean is(double base, double value) {
-					return base < value;
-				}
-			},
-			smaller("<") {
-				@Override
-				public boolean is(double base, double value) {
-					return base > value;
-				}
-			},
-			equals("=") {
-				@Override
-				public boolean is(double base, double value) {
-					return base == value;
-				}
-			};
-			
-			public final String identifier;
-			
-			private MathOperator(String identifier) {
-				this.identifier = identifier;
-			}
-			
-			public abstract boolean is(double base, double value);
-			
-			public static MathOperator getOperator(String input) throws IllegalArgumentException {
-				for (int i = 0; i < values().length; i++) {
-					if (input.startsWith(values()[i].identifier))
-						return values()[i];
-				}
-				throw new IllegalArgumentException("Missing valid operator: '" + input + "'!");
-			}
-			
+		static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER",
+		        "LAVA", "LEAVES", "PLANTS", "VINE", "SPONGE", "CLOTH", "FIRE", "SAND", "CIRCUITS", "CARPET", "GLASS",
+		        "REDSTONE_LIGHT", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CRAFTED_SNOW", "CACTUS", "CLAY",
+		        "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
+		
+		public static Material getMaterial(String name) {
+			for (int i = 0; i < refMaterialNames.length; i++)
+				if (refMaterialNames[i].equalsIgnoreCase(name))
+					return refMaterials[i];
+			return null;
 		}
 		
-		public abstract double getValue(AmbientSituation situation);
-		
-		public boolean is(MathOperator operator, double value, AmbientSituation situation) {
-			return operator.is(value, getValue(situation));
-		}
-		
-		public abstract boolean requiresBiome();
-		
-		public double[] points;
-		
-		@Override
-		public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-			if (element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) {
-				String[] parts = element.getAsString().split("&");
-				AmbientCondition[] conditions = new AmbientCondition[parts.length];
-				points = new double[parts.length];
-				for (int i = 0; i < parts.length; i++) {
-					MathOperator operator = MathOperator.getOperator(parts[i]);
-					double value = Double.parseDouble(parts[i].replaceFirst(operator.identifier, ""));
-					points[i] = value;
-					conditions[i] = new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							if (AmbientMathConditionParser.this.is(operator, value, situation)) {
-								if (AmbientMathConditionParser.this.requiresBiome())
-									result.takeBiome = true;
-								return true;
-							}
-							return false;
-						}
-					};
-				}
-				return new AmbientArrayAndCondition(conditions);
-			}
-			throw new IllegalArgumentException("Expected a string!");
-		}
 	}
-	
-	public static LinkedHashMap<String, AmbientConditionParser> regionSelectors = new LinkedHashMap<>();
-	
-	static {
-		regionSelectors.put("always", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					if (element.getAsBoolean()) {
-						return new AmbientCondition() {
-							@Override
-							public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-								return true;
-							}
-						};
-					}
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							return false;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a boolean!");
-			}
-		});
-		
-		regionSelectors.put("biomes", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					String[] names = new String[array.size()];
-					for (int i = 0; i < names.length; i++) {
-						names[i] = array.get(i).getAsString();
-					}
-					
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							int i = 0;
-							while (i < situation.selectedBiomes.size()) {
-								BiomeArea area = situation.selectedBiomes.get(i);
-								boolean foundIt = false;
-								for (int j = 0; j < names.length; j++) {
-									if (checkBiome(names[j], area.biome)) {
-										i++;
-										foundIt = true;
-										break;
-									}
-								}
-								if (!foundIt)
-									situation.selectedBiomes.remove(i);
-							}
-							
-							if (!situation.selectedBiomes.isEmpty()) {
-								result.takeBiome = true;
-								return true;
-							}
-							
-							return false;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a string array!");
-			}
-		});
-		
-		regionSelectors.put("bad-biomes", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					String[] names = new String[array.size()];
-					for (int i = 0; i < names.length; i++) {
-						names[i] = array.get(i).getAsString();
-					}
-					
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							int i = 0;
-							while (i < situation.selectedBiomes.size()) {
-								BiomeArea area = situation.selectedBiomes.get(i);
-								for (int j = 0; j < names.length; j++) {
-									if (checkBiome(names[j], area.biome))
-										return false;
-								}
-								i++;
-							}
-							
-							return true;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a string array!");
-			}
-		});
-		
-		regionSelectors.put("temperature", new AmbientMathConditionParser() {
-			
-			@Override
-			public boolean is(MathOperator operator, double value, AmbientSituation situation) {
-				int i = 0;
-				while (i < situation.selectedBiomes.size()) {
-					BiomeArea area = situation.selectedBiomes.get(i);
-					if (operator.is(value, area.biome.getTemperature(area.pos)))
-						i++;
-					else
-						situation.selectedBiomes.remove(i);
-				}
-				return !situation.selectedBiomes.isEmpty();
-			}
-			
-			@Override
-			public double getValue(AmbientSituation situation) {
-				return 0;
-			}
-			
-			@Override
-			public boolean requiresBiome() {
-				return true;
-			}
-		});
-		
-		regionSelectors.put("position", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonObject()) {
-					JsonObject object = element.getAsJsonObject();
-					double fadeValue = 0;
-					if (object.has("fadeValue")) {
-						JsonElement fade = object.get("fadeValue");
-						if (fade.isJsonPrimitive())
-							fadeValue = fade.getAsDouble();
-						else
-							throw new IllegalArgumentException("Expected a number for 'fadeValue'!");
-					}
-					
-					double[] relativePointsTemp = null;
-					AmbientCondition relativePosition = null;
-					if (object.has("relativePosition")) {
-						JsonElement relative = object.get("relativePosition");
-						if (relative.isJsonPrimitive() && ((JsonPrimitive) relative).isString()) {
-							AmbientMathConditionParser parser = new AmbientMathConditionParser() {
-								
-								@Override
-								public double getValue(AmbientSituation situation) {
-									return situation.relativeHeight;
-								}
-								
-								@Override
-								public boolean requiresBiome() {
-									return false;
-								}
-							};
-							relativePosition = parser.parseCondition(relative);
-							relativePointsTemp = parser.points;
-							
-						} else
-							throw new IllegalArgumentException("Expected a string for 'relativePosition'!");
-					}
-					
-					final AmbientCondition relative = relativePosition;
-					
-					double[] absolutePointsTemp = null;
-					AmbientCondition absolutePosition = null;
-					if (object.has("absolutePosition")) {
-						JsonElement absolute = object.get("absolutePosition");
-						if (absolute.isJsonPrimitive() && ((JsonPrimitive) absolute).isString()) {
-							AmbientMathConditionParser parser = new AmbientMathConditionParser() {
-								
-								@Override
-								public double getValue(AmbientSituation situation) {
-									return situation.player.posY;
-								}
-								
-								@Override
-								public boolean requiresBiome() {
-									return false;
-								}
-							};
-							absolutePosition = parser.parseCondition(absolute);
-							absolutePointsTemp = parser.points;
-						} else
-							throw new IllegalArgumentException("Expected a string for 'absolutePosition'!");
-					}
-					
-					final AmbientCondition absolute = absolutePosition;
-					
-					final double fade = fadeValue;
-					final double[] relativePoints = relativePointsTemp;
-					final double[] absolutePoints = absolutePointsTemp;
-					
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							if (relative != null && !relative.is(situation, result))
-								return false;
-							if (absolute != null && !absolute.is(situation, result))
-								return false;
-							
-							double distance = fade;
-							
-							if (relativePoints != null) {
-								for (int i = 0; i < relativePoints.length; i++) {
-									distance = Math.min(distance, Math.abs(situation.relativeHeight - relativePoints[i]));
-								}
-							}
-							
-							if (absolutePoints != null) {
-								for (int i = 0; i < absolutePoints.length; i++) {
-									distance = Math.min(distance, Math.abs(situation.relativeHeight - absolutePoints[i]));
-								}
-							}
-							
-							if (distance < fade)
-								result.volume *= (float) (distance / fade);
-							
-							return true;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected an object!");
-			}
-		});
-		
-		regionSelectors.put("underwater", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							return element.getAsBoolean() == situation.player.isInsideOfMaterial(Material.WATER);
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a boolean!");
-			}
-		});
-		
-		regionSelectors.put("underwater-pitch", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonObject()) {
-					JsonObject object = element.getAsJsonObject();
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							if (situation.player.isInsideOfMaterial(Material.WATER)) {
-								
-								int depth = 0;
-								AxisAlignedBB bb = situation.player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
-								while (situation.world.isMaterialInBB(bb, Material.WATER)) {
-									depth++;
-									bb = bb.offset(new BlockPos(0, 1, 0));
-								}
-								
-								double minPitch = object.has("min") ? object.get("min").getAsDouble() : 0.5;
-								double maxPitch = object.has("max") ? object.get("max").getAsDouble() : 2;
-								double pitchPerBlock = object.has("pitchPerBlock") ? object.get("pitchPerBlock").getAsDouble() : 0.3;
-								
-								result.pitch = (float) Math.max(minPitch, maxPitch - (depth * pitchPerBlock));
-								return true;
-							}
-							return false;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected an object!");
-			}
-		});
-		
-		regionSelectors.put("isRaining", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							return element.getAsBoolean() == situation.isRaining;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a boolean!");
-			}
-		});
-		
-		regionSelectors.put("isStorming", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isBoolean()) {
-					return new AmbientCondition() {
-						
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							return element.getAsBoolean() == situation.isThundering;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a boolean!");
-			}
-		});
-		
-		regionSelectors.put("top-block", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonPrimitive() && ((JsonPrimitive) element).isString()) {
-					String name = element.getAsString();
-					Block block = Block.getBlockFromName(name);
-					
-					if (block == null)
-						throw new IllegalArgumentException("Invalid block name '" + name + "'!");
-					
-					return new AmbientCondition() {
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							int i = 0;
-							while (i < situation.selectedBiomes.size()) {
-								BiomeArea area = situation.selectedBiomes.get(i);
-								if (area.biome.topBlock.getBlock() == block)
-									i++;
-								else
-									situation.selectedBiomes.remove(i);
-							}
-							if (!situation.selectedBiomes.isEmpty()) {
-								result.takeBiome = true;
-								return true;
-							}
-							return false;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a string!");
-			}
-		});
-		
-		regionSelectors.put("treesPerChunk", new AmbientMathConditionParser() {
-			
-			@Override
-			public boolean is(MathOperator operator, double value, AmbientSituation situation) {
-				int i = 0;
-				while (i < situation.selectedBiomes.size()) {
-					BiomeArea area = situation.selectedBiomes.get(i);
-					if (operator.is(value, area.biome.decorator.treesPerChunk))
-						i++;
-					else
-						situation.selectedBiomes.remove(i);
-				}
-				return !situation.selectedBiomes.isEmpty();
-			}
-			
-			@Override
-			public double getValue(AmbientSituation situation) {
-				return 0;
-			}
-			
-			@Override
-			public boolean requiresBiome() {
-				return true;
-			}
-		});
-		
-		regionSelectors.put("regions", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					AmbientCondition[] regions = new AmbientCondition[array.size()];
-					for (int i = 0; i < regions.length; i++) {
-						regions[i] = new AmbientRegionCondition(array.get(i).getAsString());
-					}
-					return new AmbientArrayOrCondition(regions);
-				}
-				throw new IllegalArgumentException("Expected a string array!");
-			}
-		});
-		
-		regionSelectors.put("bad-regions", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					AmbientCondition[] regions = new AmbientCondition[array.size()];
-					for (int i = 0; i < regions.length; i++) {
-						regions[i] = new AmbientInvertCondition(new AmbientRegionCondition(array.get(i).getAsString()));
-					}
-					return new AmbientArrayAndCondition(regions);
-				}
-				throw new IllegalArgumentException("Expected a string array!");
-			}
-		});
-		
-		regionSelectors.put("variants", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				return parser.parseCondition(element);
-			}
-		});
-		
-		regionSelectors.put("dimensions", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					return new AmbientCondition() {
-						
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							for (int i = 0; i < array.size(); i++) {
-								JsonElement element = array.get(i);
-								if (element.getAsJsonPrimitive().isNumber()) {
-									if (situation.world.provider.getDimension() == element.getAsInt())
-										return true;
-								} else if (element.getAsJsonPrimitive().isString()) {
-									if (situation.world.provider.getDimensionType().name().equals(element.getAsString()))
-										return true;
-								} else
-									throw new IllegalArgumentException("Expected a string or a number!");
-							}
-							return false;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a string array!");
-			}
-		});
-		
-		regionSelectors.put("bad-dimensions", new AmbientConditionParser() {
-			
-			@Override
-			public AmbientCondition parseCondition(JsonElement element) throws IllegalArgumentException {
-				if (element.isJsonArray()) {
-					JsonArray array = element.getAsJsonArray();
-					return new AmbientCondition() {
-						
-						@Override
-						public boolean is(AmbientSituation situation, AmbientSoundResult result) {
-							for (int i = 0; i < array.size(); i++) {
-								JsonElement element = array.get(i);
-								if (element.getAsJsonPrimitive().isNumber()) {
-									if (situation.world.provider.getDimension() == element.getAsInt())
-										return false;
-								} else if (element.getAsJsonPrimitive().isString()) {
-									if (situation.world.provider.getDimensionType().name().equals(element.getAsString()))
-										return false;
-								} else
-									throw new IllegalArgumentException("Expected a string or a number!");
-							}
-							return true;
-						}
-					};
-				}
-				throw new IllegalArgumentException("Expected a string array!");
-			}
-		});
-	}
-	
-	public static boolean checkBiome(String name, Biome biome) {
-		String biomename = biome.getBiomeName().toLowerCase().replace("_", " ");
-		return biomename.matches(".*" + name.replace("*", ".*") + ".*"); //THIS WILL NOT WORK!!!!
-		
-	}
-	
-	public HashMap<String, Object> unknownValues;
-	
-	public AmbientCondition() {
-		
-	}
-	
-	public abstract boolean is(AmbientSituation situation, AmbientSoundResult result);
-	
-	/* public abstract boolean requiresBiome();
-	 * 
-	 * public abstract boolean is(AmbientSituation situation);
-	 * 
-	 * public float getVolumeModifier(AmbientSituation situation)
-	 * {
-	 * return 1.0F;
-	 * } */
-	
 }

@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class AmbientSounds {
 	
 	public static final String modid = "ambientsounds";
-	public static final String version = "2.0.0";
+	public static final String version = "3.0";
 	
 	public static final Logger logger = LogManager.getLogger(AmbientSounds.modid);
 	
@@ -35,6 +35,8 @@ public class AmbientSounds {
 	public static boolean debugging;
 	public static int streamingChannels = 11;
 	public static int normalChannels = 21;
+	
+	public static AmbientTickHandler tickHandler;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -45,7 +47,8 @@ public class AmbientSounds {
 		normalChannels = config.getInt("normalChannels", "engine", normalChannels, 1, 32, "Streaming + Normal channels may have to be 32 in total.");
 		config.save();
 		
-		MinecraftForge.EVENT_BUS.register(new TickHandler());
+		tickHandler = new AmbientTickHandler();
+		MinecraftForge.EVENT_BUS.register(tickHandler);
 	}
 	
 	@EventHandler
@@ -64,7 +67,7 @@ public class AmbientSounds {
 			
 			@Override
 			public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-				AmbientSoundLoader.reloadAmbientSounds();
+				tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
 			}
 		});
 		
@@ -73,7 +76,7 @@ public class AmbientSounds {
 		reloadableResourceManager.registerReloadListener(new IResourceManagerReloadListener() {
 			@Override
 			public void onResourceManagerReload(IResourceManager resourceManager) {
-				AmbientSoundLoader.reloadAmbientSounds();
+				tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
 			}
 		});
 	}

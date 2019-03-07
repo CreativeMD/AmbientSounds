@@ -29,11 +29,12 @@ public class AmbientSettings implements IModGuiFactory {
 	@Override
 	public GuiScreen createConfigGui(GuiScreen parentScreen) {
 		List<IConfigElement> elements = new ArrayList<>();
-		for (int i = 0; i < AmbientSoundLoader.sounds.size(); i++) {
-			AmbientSound sound = AmbientSoundLoader.sounds.get(i);
+		List<AmbientRegion> regions = AmbientSounds.tickHandler.engine.allRegions.values();
+		for (int i = 0; i < regions.size(); i++) {
+			AmbientRegion region = regions.get(i);
 			elements.add(new IConfigElement() {
 				
-				double value = sound.volumeSetting;
+				double value = region.volumeSetting;
 				
 				@Override
 				public boolean showInGui() {
@@ -52,9 +53,9 @@ public class AmbientSettings implements IModGuiFactory {
 				
 				@Override
 				public void set(Object value) {
-					sound.volumeSetting = Float.parseFloat((String) value);
+					region.volumeSetting = Float.parseFloat((String) value);
 					AmbientSounds.config.load();
-					AmbientSounds.config.get("volume", sound.name.toString(), 1).set(sound.volumeSetting);
+					AmbientSounds.config.get("volume", region.name.toString(), 1).set(region.volumeSetting);
 					AmbientSounds.config.save();
 					this.value = Float.parseFloat((String) value);
 				}
@@ -111,7 +112,7 @@ public class AmbientSettings implements IModGuiFactory {
 				
 				@Override
 				public String getName() {
-					return sound.name.toString();
+					return region.name.toString();
 				}
 				
 				@Override
@@ -136,7 +137,7 @@ public class AmbientSettings implements IModGuiFactory {
 				
 				@Override
 				public String getLanguageKey() {
-					return sound.name.toString();
+					return region.name.toString();
 				}
 				
 				@Override
@@ -151,7 +152,7 @@ public class AmbientSettings implements IModGuiFactory {
 				
 				@Override
 				public Class<? extends IConfigEntry> getConfigEntryClass() {
-					return GuiConfigEntries.StringEntry.class;
+					return GuiConfigEntries.NumberSliderEntry.class;
 				}
 				
 				@Override
@@ -176,7 +177,7 @@ public class AmbientSettings implements IModGuiFactory {
 			});
 		}
 		
-		return new AmbientConfigGUI(parentScreen, elements);
+		return new AmbientGuiConfig(parentScreen, elements);
 	}
 	
 	@Override

@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.creativemd.ambientsounds.AmbientSound.SoundStream;
+
 import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundManager;
@@ -27,14 +28,15 @@ import paulscode.sound.SoundSystem;
 
 public class AmbientSoundEngine {
 	
-	public SoundManager manager;
-	
-	public GameSettings settings;
-	
-	public List<IEnhancedPositionSound> sounds = new ArrayList<>();
-	
 	private static Field system = ReflectionHelper.findField(SoundManager.class, "sndSystem", "field_148620_e");
 	private static Field loaded = ReflectionHelper.findField(SoundManager.class, "loaded", "field_148617_f");
+	
+	public Library library;
+	
+	public SoundManager manager;
+	public GameSettings settings;
+	
+	public List<SoundStream> sounds = new ArrayList<>();
 	
 	public SoundSystem getSystem() {
 		try {
@@ -48,27 +50,11 @@ public class AmbientSoundEngine {
 	public AmbientSoundEngine(SoundManager manager, GameSettings settings) {
 		this.settings = settings;
 		this.manager = manager;
+		this.library = ReflectionHelper.getPrivateValue(SoundSystem.class, getSystem(), "soundLibrary");
 	}
-	
-	/* public boolean isChannelPlaying(ChannelLWJGLOpenAL channel)
-	 * {
-	 * int state = AL10.alGetSourcei( channel.ALSource.get( 0 ),
-	 * AL10.AL_SOURCE_STATE );
-	 * 
-	 * if(state != AL10.AL_PAUSED && state != AL10.AL_STOPPED)
-	 * return true;
-	 * return false;
-	 * } */
 	
 	public void tick() {
 		
-		SoundSystem system = getSystem();
-		Library library = ReflectionHelper.getPrivateValue(SoundSystem.class, system, "soundLibrary");
-		//system.CommandQueue(null);
-		//system.interruptCommandThread();
-		
-		Iterator<IEnhancedPositionSound> iterator = sounds.iterator();
-		
 		try {
 			if (!loaded.getBoolean(manager))
 				return;
@@ -76,45 +62,40 @@ public class AmbientSoundEngine {
 			e.printStackTrace();
 		}
 		
-		while (iterator.hasNext()) {
-			IEnhancedPositionSound sound = iterator.next();
+		SoundSystem system = getSystem();
+		
+		Double mute = null;
+		for (Iterator iterator = sounds.iterator(); iterator.hasNext();) {
+			SoundStream sound = (SoundStream) iterator.next();
 			
-			/* Source source = null;
-			 * synchronized( SoundSystemConfig.THREAD_SYNC )
-			 * {
-			 * source = library.getSource(sound.systemName);;
-			 * 
-			 * 
-			 * if (source == null || source.channel == null || source.stopped() || (!source.toLoop && !isChannelPlaying((ChannelLWJGLOpenAL) source.channel)))
-			 * { */
 			if (!system.playing(sound.systemName)) {
-				if (sound.hasBeenAdded) {
-					if (sound.repeat && AmbientSounds.debugging) {
-						System.out.println("Unexpected ending sound " + sound.getSoundLocation() + " " + sound.systemName);
-					}
-					sound.playing = false;
-					if (library != null)
-						library.removeSource(sound.systemName);
-					else
-						System.out.println("No library found. Something went wrong!");
-					iterator.remove();
-				}
-			} else {
-				sound.hasBeenAdded = true;
+				sound.onFinished();
+				iterator.remove();
 			}
-			//}
+			
+			double soundMute = sound.mute();
+			if (soundMute > 0 && (mute == null || mute < soundMute))
+				mute = soundMute;
 		}
 		
-		for (IEnhancedPositionSound itickablesound : this.sounds) {
-			itickablesound.update();
-			
-			system.setVolume(itickablesound.systemName, this.getClampedVolume(itickablesound));
-			system.setPitch(itickablesound.systemName, this.getClampedPitch(itickablesound));
-			system.setPosition(itickablesound.systemName, itickablesound.getXPosF(), itickablesound.getYPosF(), itickablesound.getZPosF());
+		for (SoundStream sound : sounds) {
+			system.setPitch(sound.systemName, (float) sound.pitch);
+			if (mute == null || sound.mute() >= mute)
+				system.setVolume(sound.systemName, (float) sound.volume);
+			else
+				system.setVolume(sound.systemName, (float) (sound.volume * (1 - mute)));
 		}
 	}
 	
-	public void play(IEnhancedPositionSound p_sound) {
+	public void stop(SoundStream sound) {
+		SoundSystem system = getSystem();
+		
+		system.stop(sound.systemName);
+		system.removeSource(sound.systemName);
+		sounds.remove(sound);
+	}
+	
+	public void play(int offset, SoundStream stream) {
 		try {
 			if (!loaded.getBoolean(manager))
 				return;
@@ -124,47 +105,37 @@ public class AmbientSoundEngine {
 		
 		SoundSystem system = getSystem();
 		
-		SoundEventAccessor soundeventaccessor = p_sound.createAccessor(manager.sndHandler);
-		ResourceLocation resourcelocation = p_sound.getSoundLocation();
+		ResourceLocation resourcelocation = stream.location;
+		SoundEventAccessor soundeventaccessor = manager.sndHandler.getAccessor(resourcelocation);
+		Sound sound = soundeventaccessor.cloneEntry();
 		
-		Sound sound = p_sound.getSound();
-		float f3 = p_sound.getVolume();
+		SoundCategory soundcategory = SoundCategory.AMBIENT;
 		float f = 16.0F;
-		
-		if (f3 > 1.0F) {
-			f *= f3;
-		}
-		
-		SoundCategory soundcategory = p_sound.getCategory();
-		float f1 = this.getClampedVolume(p_sound);
-		float f2 = this.getClampedPitch(p_sound);
+		float f1 = this.getClampedVolume((float) stream.volume);
+		float f2 = this.getClampedPitch((float) stream.pitch);
 		
 		if (f1 > 0.0F) {
-			boolean flag = p_sound.canRepeat() && p_sound.getRepeatDelay() == 0;
 			String s = MathHelper.getRandomUUID(ThreadLocalRandom.current()).toString();
 			ResourceLocation resourcelocation1 = sound.getSoundAsOggLocation();
 			
-			if (sound.isStreaming()) {
-				system.newStreamingSource(false, s, getURLForSoundResource(resourcelocation1), resourcelocation1.toString(), flag, p_sound.getXPosF(), p_sound.getYPosF(), p_sound.getZPosF(), p_sound.getAttenuationType().getTypeInt(), f);
-				net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(manager, p_sound, s));
-			} else {
-				system.newSource(false, s, getURLForSoundResource(resourcelocation1), resourcelocation1.toString(), flag, p_sound.getXPosF(), p_sound.getYPosF(), p_sound.getZPosF(), p_sound.getAttenuationType().getTypeInt(), f);
-				net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(manager, p_sound, s));
-			}
+			if (sound.isStreaming())
+				system.newStreamingSource(false, s, getURLForSoundResource(resourcelocation1), resourcelocation1.toString(), stream.loop(), 0, 0, 0, 0, f);
+			else
+				system.newSource(false, s, getURLForSoundResource(resourcelocation1), resourcelocation1.toString(), stream.loop(), 0, 0, 0, 0, f);
 			
-			p_sound.systemName = s;
+			stream.systemName = s;
 			system.setPitch(s, f2);
 			system.setVolume(s, f1);
 			system.play(s);
 			
-			p_sound.playing = true;
-			
-			sounds.add(p_sound);
+			stream.finished = false;
+			sounds.add(stream);
 		}
 	}
 	
 	private static URL getURLForSoundResource(final ResourceLocation p_148612_0_) {
-		String s = String.format("%s:%s:%s", new Object[] { "mcsounddomain", p_148612_0_.getResourceDomain(), p_148612_0_.getResourcePath() });
+		String s = String.format("%s:%s:%s", new Object[] { "mcsounddomain", p_148612_0_.getResourceDomain(),
+		        p_148612_0_.getResourcePath() });
 		URLStreamHandler urlstreamhandler = new URLStreamHandler() {
 			protected URLConnection openConnection(final URL p_openConnection_1_) {
 				return new URLConnection(p_openConnection_1_) {
@@ -185,25 +156,16 @@ public class AmbientSoundEngine {
 		}
 	}
 	
-	private float getClampedPitch(ISound soundIn) {
-		return MathHelper.clamp(soundIn.getPitch(), 0.5F, 2.0F);
+	private float getClampedPitch(float pitch) {
+		return MathHelper.clamp(pitch, 0.5F, 2.0F);
 	}
 	
-	private float getClampedVolume(ISound soundIn) {
-		return MathHelper.clamp(soundIn.getVolume() * getVolume(soundIn.getCategory()), 0.0F, 1.0F);
+	private float getClampedVolume(float volume) {
+		return MathHelper.clamp(volume * getVolume(SoundCategory.AMBIENT), 0.0F, 1.0F);
 	}
 	
 	private float getVolume(SoundCategory category) {
 		return category != null && category != SoundCategory.MASTER ? settings.getSoundLevel(category) : 1.0F;
-	}
-	
-	public void stop(IEnhancedPositionSound sound) {
-		SoundSystem system = getSystem();
-		
-		sound.playing = false;
-		system.stop(sound.systemName);
-		system.removeSource(sound.systemName);
-		sounds.remove(sound);
 	}
 	
 }
