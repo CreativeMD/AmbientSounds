@@ -63,4 +63,9 @@ public class AmbientDimension {
 			env.biomeVolume = biomeSelector.value(env).getEntireVolume();
 	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 }

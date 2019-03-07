@@ -1,10 +1,16 @@
 package com.creativemd.ambientsounds;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.creativemd.creativecore.common.utils.type.PairList;
+import com.google.common.base.Strings;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
@@ -18,6 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import paulscode.sound.SoundSystemConfig;
 
 public class AmbientTickHandler {
@@ -28,6 +35,8 @@ public class AmbientTickHandler {
 	public AmbientEnviroment enviroment = null;
 	public AmbientEngine engine;
 	public int timer = 0;
+	
+	public boolean showDebugInfo = false;
 	
 	public void setEngine(AmbientEngine engine) {
 		this.engine = engine;
@@ -56,6 +65,38 @@ public class AmbientTickHandler {
 	public void onSoundSetup(SoundSetupEvent event) {
 		SoundSystemConfig.setNumberStreamingChannels(AmbientSounds.streamingChannels);
 		SoundSystemConfig.setNumberNormalChannels(AmbientSounds.normalChannels);
+	}
+	
+	@SubscribeEvent
+	public void onRender(RenderTickEvent event) {
+		if (showDebugInfo && event.phase == Phase.END && engine != null && mc.inGameHasFocus) {
+			
+			GlStateManager.pushMatrix();
+			List<String> list = new ArrayList<>();
+			
+			AmbientDimension dimension = engine.getDimension(mc.world);
+			list.add("dimension: " + dimension + ", playing: " + engine.soundEngine.sounds.size());
+			for (AmbientRegion region : engine.activeRegions) {
+				list.add("region: " + region + "");
+				for (AmbientSound sound : region.playing) {
+					list.add("-" + sound);
+				}
+			}
+			
+			for (int i = 0; i < list.size(); ++i) {
+				String s = list.get(i);
+				
+				if (!Strings.isNullOrEmpty(s)) {
+					int j = mc.fontRenderer.FONT_HEIGHT;
+					int k = mc.fontRenderer.getStringWidth(s);
+					int l = 2;
+					int i1 = 2 + j * i;
+					Gui.drawRect(1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752);
+					mc.fontRenderer.drawString(s, 2, i1, 14737632);
+				}
+			}
+			GlStateManager.popMatrix();
+		}
 	}
 	
 	@SubscribeEvent

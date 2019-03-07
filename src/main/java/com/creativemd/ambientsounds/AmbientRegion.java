@@ -86,4 +86,9 @@ public class AmbientRegion extends AmbientConditionExtended {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return name + ", playing: " + playing.size();
+	}
+	
 }

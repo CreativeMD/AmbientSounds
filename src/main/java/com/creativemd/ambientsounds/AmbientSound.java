@@ -265,6 +265,21 @@ public class AmbientSound extends AmbientCondition {
 			AmbientSound.this.onSoundFinished();
 		}
 		
+		@Override
+		public String toString() {
+			return location + ", i:" + index + ", p:" + pitch + ", v:" + (Math.round((double) volume * 100) / 100D) + ", t:" + ticksPlayed + ", d:" + duration;
+		}
+		
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(name);
+		if (stream1 != null)
+			builder.append("[" + stream1 + "]");
+		if (stream2 != null)
+			builder.append("[" + stream2 + "]");
+		return builder.toString();
 	}
 	
 }

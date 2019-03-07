@@ -71,6 +71,24 @@ public class AmbientSounds {
 			}
 		});
 		
+		ClientCommandHandler.instance.registerCommand(new CommandBase() {
+			
+			@Override
+			public String getUsage(ICommandSender sender) {
+				return "show ambient engine debug info";
+			}
+			
+			@Override
+			public String getName() {
+				return "ambient-debug";
+			}
+			
+			@Override
+			public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+				tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
+			}
+		});
+		
 		Minecraft minecraft = Minecraft.getMinecraft();
 		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
 		reloadableResourceManager.registerReloadListener(new IResourceManagerReloadListener() {
