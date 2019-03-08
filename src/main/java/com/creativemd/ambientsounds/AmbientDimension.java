@@ -26,6 +26,9 @@ public class AmbientDimension {
 	@SerializedName(value = "dimension-names")
 	public String[] dimensionNames;
 	
+	@SerializedName(value = "average-height")
+	public Integer averageHeight;
+	
 	public void init(AmbientEngine engine) {
 		if (biomeSelector != null)
 			biomeSelector.init(engine);
@@ -61,6 +64,9 @@ public class AmbientDimension {
 		
 		if (biomeSelector != null)
 			env.biomeVolume = biomeSelector.value(env).getEntireVolume();
+		
+		if (averageHeight != null)
+			env.setHeight(averageHeight);
 	}
 	
 	@Override
