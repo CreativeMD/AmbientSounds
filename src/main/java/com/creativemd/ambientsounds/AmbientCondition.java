@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
+import com.creativemd.ambientsounds.AmbientEnviroment.BlockSpot;
 import com.creativemd.creativecore.common.utils.type.Pair;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.MathHelper;
 
 public class AmbientCondition extends AmbientSoundProperties {
@@ -45,6 +45,19 @@ public class AmbientCondition extends AmbientSoundProperties {
 	
 	public AmbientCondition[] variants;
 	
+	public String[] regions;
+	transient List<AmbientRegion> regionList;
+	
+	@SerializedName(value = "bad-regions")
+	public String[] badRegions;
+	transient List<AmbientRegion> badRegionList;
+	
+	public Boolean outside;
+	
+	public String regionName() {
+		return null;
+	}
+	
 	@Override
 	public void init(AmbientEngine engine) {
 		super.init(engine);
@@ -62,6 +75,26 @@ public class AmbientCondition extends AmbientSoundProperties {
 		if (variants != null)
 			for (int i = 0; i < variants.length; i++)
 				variants[i].init(engine);
+			
+		if (regions != null) {
+			regionList = new ArrayList<>();
+			
+			for (String regionName : regions) {
+				AmbientRegion region = engine.getRegion(regionName);
+				if (region != null && !regionName.equals(regionName()))
+					regionList.add(region);
+			}
+		}
+		
+		if (badRegions != null) {
+			badRegionList = new ArrayList<>();
+			
+			for (String regionName : badRegions) {
+				AmbientRegion region = engine.getRegion(regionName);
+				if (region != null && !regionName.equals(regionName()))
+					badRegionList.add(region);
+			}
+		}
 	}
 	
 	public AmbientSelection value(AmbientEnviroment env) {
@@ -81,9 +114,45 @@ public class AmbientCondition extends AmbientSoundProperties {
 		if (storming != null && env.thundering != storming)
 			return null;
 		
+		if (outside != null)
+			if (outside) {
+				if (env.blocks.outsideVolume == 0)
+					return null;
+			} else if (env.blocks.outsideVolume == 1)
+				return null;
+			
 		AmbientSelection selection = new AmbientSelection(this);
 		
 		selection.volume *= env.night ? nightVolume : dayVolume;
+		
+		if (outside != null)
+			if (outside)
+				selection.volume *= env.blocks.outsideVolume;
+			else
+				selection.volume *= 1 - env.blocks.outsideVolume;
+			
+		if (badRegionList != null)
+			for (AmbientRegion region : badRegionList)
+				if (region.isActive())
+					return null;
+				
+		if (regionList != null) {
+			Double highest = null;
+			for (AmbientRegion region : regionList) {
+				AmbientSelection subSelection = region.value(env);
+				
+				if (subSelection != null)
+					if (highest == null)
+						highest = subSelection.volume;
+					else
+						highest = Math.max(subSelection.volume, highest);
+			}
+			
+			if (highest == null)
+				return null;
+			
+			selection.volume *= highest;
+		}
 		
 		if (biomes != null || badBiomes != null || specialBiome != null) {
 			Pair<BiomeArea, Float> highest = null;
@@ -134,7 +203,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (light != null) {
-			double volume = light.volume(env.averageLight);
+			double volume = light.volume(env.blocks.averageLight);
 			if (volume <= 0)
 				return null;
 			
@@ -246,11 +315,11 @@ public class AmbientCondition extends AmbientSoundProperties {
 		public Double max;
 		
 		public boolean is(double value) {
-			if (min == null)
-				return max == null ? true : value <= max;
-			if (max == null)
-				return value >= min;
-			return value >= min && value <= max;
+			if (min != null && value < min)
+				return false;
+			if (max != null && value > max)
+				return false;
+			return true;
 		}
 		
 		public double randomValue() {
@@ -279,7 +348,12 @@ public class AmbientCondition extends AmbientSoundProperties {
 			if (fade == null)
 				return 1;
 			
-			return Math.min(Math.min(Math.abs(value - min), Math.abs(value - max)) / fade, 1);
+			double volume = 1;
+			if (min != null)
+				volume = MathHelper.clamp(Math.abs(value - min) / fade, 0, 1);
+			if (max != null)
+				volume = Math.min(volume, MathHelper.clamp(Math.abs(value - max) / fade, 0, 1));
+			return volume;
 		}
 		
 	}
@@ -319,11 +393,13 @@ public class AmbientCondition extends AmbientSoundProperties {
 			
 			boolean found = false;
 			
-			for (Pair<IBlockState, Integer> pair : env.blocks) {
-				if (!found && materials != null && mat.contains(pair.key.getMaterial()))
+			for (BlockSpot spot : env.blocks.spots) {
+				if (spot == null)
+					continue;
+				if (!found && materials != null && mat.contains(spot.getMaterial()))
 					found = true;
 				
-				if (badMaterials != null && badMat.contains(pair.key.getMaterial()))
+				if (badMaterials != null && badMat.contains(spot.getMaterial()))
 					return 0;
 			}
 			

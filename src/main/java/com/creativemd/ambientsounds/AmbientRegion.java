@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AmbientRegion extends AmbientConditionExtended {
+public class AmbientRegion extends AmbientCondition {
 	
 	public String name;
 	public transient double volumeSetting = 1;
@@ -13,12 +13,14 @@ public class AmbientRegion extends AmbientConditionExtended {
 	public AmbientSound[] sounds;
 	transient List<AmbientSound> playing = new ArrayList<>();
 	
+	public transient AmbientDimension dimension;
+	
 	public AmbientRegion() {
 		
 	}
 	
 	@Override
-	public String name() {
+	public String regionName() {
 		return name;
 	}
 	
@@ -29,6 +31,13 @@ public class AmbientRegion extends AmbientConditionExtended {
 		if (sounds != null)
 			for (AmbientSound sound : sounds)
 				sound.init(engine);
+	}
+	
+	@Override
+	public AmbientSelection value(AmbientEnviroment env) {
+		if (dimension != null && !dimension.is(env.world))
+			return null;
+		return super.value(env);
 	}
 	
 	public boolean fastTick() {
@@ -46,24 +55,24 @@ public class AmbientRegion extends AmbientConditionExtended {
 	}
 	
 	public boolean tick(AmbientEnviroment env) {
+		
+		if (sounds == null)
+			return false;
+		
 		boolean activeBefore = active;
 		
 		AmbientSelection selection = value(env);
-		if (selection != null) {
-			for (AmbientSound sound : sounds) {
-				if (sound.tick(env, selection)) {
-					if (!sound.isActive()) {
-						sound.activate();
-						playing.add(sound);
-					}
-				} else if (sound.isActive()) {
-					sound.deactivate();
-					playing.remove(sound);
+		for (AmbientSound sound : sounds) {
+			if (sound.tick(env, selection)) {
+				if (!sound.isActive()) {
+					sound.activate();
+					playing.add(sound);
 				}
+			} else if (sound.isActive()) {
+				sound.deactivate();
+				playing.remove(sound);
 			}
-			
-		} else
-			fastTick();
+		}
 		
 		return !playing.isEmpty();
 	}

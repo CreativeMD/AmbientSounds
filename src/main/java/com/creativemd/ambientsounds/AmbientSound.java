@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 public class AmbientSound extends AmbientCondition {
 	
@@ -54,13 +55,13 @@ public class AmbientSound extends AmbientCondition {
 	protected int getRandomFile() {
 		if (files.length == 1)
 			return 0;
-		return rand.nextInt(files.length - 1);
+		return rand.nextInt(files.length);
 	}
 	
 	protected int getRandomFileExcept(int i) {
 		if (files.length == 2)
 			return i == 0 ? 1 : 0;
-		int index = rand.nextInt(files.length - 2);
+		int index = rand.nextInt(files.length - 1);
 		if (index >= i)
 			index++;
 		return index;
@@ -76,10 +77,10 @@ public class AmbientSound extends AmbientCondition {
 		if (isPlaying()) {
 			
 			if (inTransition()) { // Two files are played
-				stream1.volume = Math.max(0, Math.min(stream1.volume, currentVolume * (double) transition / transitionTime));
-				stream2.volume = Math.min(currentVolume, currentVolume * (1D - (double) transition / transitionTime));
+				stream1.volume = Math.max(0, Math.min(stream1.volume, currentVolume * (1D - (double) transition / transitionTime)));
+				stream2.volume = Math.min(currentVolume, currentVolume * ((double) transition / transitionTime));
 				
-				if (transition >= currentPropertries.transition) {
+				if (transition >= transitionTime) {
 					engine.soundEngine.stop(stream1);
 					stream1 = stream2;
 					stream2 = null;
@@ -97,12 +98,12 @@ public class AmbientSound extends AmbientCondition {
 				
 				if (currentPropertries.length != null) { // If the sound has a length
 					
-					if (currentPropertries.transition != null && currentPropertries.pause != null && files.length > 1) { // Continuous transition
+					if (currentPropertries.pause == null && files.length > 1) { // Continuous transition
 						if (stream1.remaining() <= 0) {
 							transition = 0;
 							stream2 = play(getRandomFileExcept(stream1.index));
 							stream2.volume = 0;
-							transitionTime = currentPropertries.transition;
+							transitionTime = currentPropertries.transition != null ? currentPropertries.transition : 60;
 						}
 					} else {
 						int fadeOutTime = (int) Math.ceil(aimedVolume / currentPropertries.fadeOutVolume);
@@ -120,20 +121,25 @@ public class AmbientSound extends AmbientCondition {
 			if (stream1 != null) {
 				
 				if (stream1.pitch < aimedPitch)
-					stream1.pitch += Math.min(fadePitch, aimedPitch - stream1.pitch);
+					stream1.pitch += Math.min(currentPropertries.fadeInPitch, aimedPitch - stream1.pitch);
 				else if (stream1.pitch > aimedPitch)
-					stream1.pitch -= Math.min(fadePitch, stream1.pitch - aimedPitch);
+					stream1.pitch -= Math.min(currentPropertries.fadeOutPitch, stream1.pitch - aimedPitch);
 				stream1.ticksPlayed++;
 			}
 			if (stream2 != null) {
 				
 				if (stream2.pitch < aimedPitch)
-					stream2.pitch += Math.min(fadePitch, aimedPitch - stream2.pitch);
+					stream2.pitch += Math.min(currentPropertries.fadeInPitch, aimedPitch - stream2.pitch);
 				else if (stream2.pitch > aimedPitch)
-					stream2.pitch -= Math.min(fadePitch, stream2.pitch - aimedPitch);
+					stream2.pitch -= Math.min(currentPropertries.fadeOutPitch, stream2.pitch - aimedPitch);
 				stream2.ticksPlayed++;
 			}
 		} else {
+			
+			if (stream2 != null) {
+				engine.soundEngine.stop(stream2);
+				stream2 = null;
+			}
 			
 			if (pauseTimer == -1)
 				if (currentPropertries.pause != null)
@@ -159,7 +165,7 @@ public class AmbientSound extends AmbientCondition {
 				currentPropertries = selection.getProperties();
 				last.subSelection = null;
 				
-				aimedPitch = currentPropertries.getPitch(env);
+				aimedPitch = MathHelper.clamp(currentPropertries.getPitch(env), 0.5F, 2.0F);
 			} else
 				aimedVolume = 0;
 		} else
@@ -214,12 +220,8 @@ public class AmbientSound extends AmbientCondition {
 	}
 	
 	public void onSoundFinished() {
-		if (stream1.finished) {
+		if (stream1 != null && stream1.finished) {
 			stream1 = null;
-			if (stream2 != null) {
-				engine.soundEngine.stop(stream2);
-				stream2 = null;
-			}
 			pauseTimer = -1;
 		} else
 			stream2 = null;
@@ -241,7 +243,8 @@ public class AmbientSound extends AmbientCondition {
 		public int duration = -1;
 		public int ticksPlayed = 0;
 		
-		public boolean finished = false;
+		private boolean finished = false;
+		private boolean playedOnce;
 		
 		public SoundStream(int index) {
 			this.index = index;
@@ -261,13 +264,31 @@ public class AmbientSound extends AmbientCondition {
 			return AmbientSound.this.currentPropertries.mute * volume;
 		}
 		
+		public void onStart() {
+			this.finished = false;
+			playedOnce = false;
+		}
+		
 		public void onFinished() {
+			this.finished = true;
 			AmbientSound.this.onSoundFinished();
+		}
+		
+		public boolean hasPlayedOnce() {
+			return playedOnce;
+		}
+		
+		public void setPlayedOnce() {
+			playedOnce = true;
+		}
+		
+		public boolean hasFinished() {
+			return finished;
 		}
 		
 		@Override
 		public String toString() {
-			return location + ", i:" + index + ", p:" + pitch + ", v:" + (Math.round((double) volume * 100) / 100D) + ", t:" + ticksPlayed + ", d:" + duration;
+			return "l" + location + "v:" + (Math.round((double) volume * 100) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
 		}
 		
 	}
@@ -279,6 +300,8 @@ public class AmbientSound extends AmbientCondition {
 			builder.append("[" + stream1 + "]");
 		if (stream2 != null)
 			builder.append("[" + stream2 + "]");
+		if (inTransition())
+			builder.append("t: " + transition + "/" + transitionTime);
 		return builder.toString();
 	}
 	

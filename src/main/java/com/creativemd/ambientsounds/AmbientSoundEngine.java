@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import paulscode.sound.Library;
 import paulscode.sound.SoundSystem;
+import paulscode.sound.SoundSystemConfig;
+import paulscode.sound.Source;
 
 public class AmbientSoundEngine {
 	
@@ -36,7 +39,13 @@ public class AmbientSoundEngine {
 	public SoundManager manager;
 	public GameSettings settings;
 	
-	public List<SoundStream> sounds = new ArrayList<>();
+	private List<SoundStream> sounds = new ArrayList<>();
+	
+	public int playingCount() {
+		synchronized (sounds) {
+			return sounds.size();
+		}
+	}
 	
 	public SoundSystem getSystem() {
 		try {
@@ -66,26 +75,42 @@ public class AmbientSoundEngine {
 		if (library == null)
 			this.library = ReflectionHelper.getPrivateValue(SoundSystem.class, getSystem(), "soundLibrary");
 		
-		Double mute = null;
-		for (Iterator iterator = sounds.iterator(); iterator.hasNext();) {
-			SoundStream sound = (SoundStream) iterator.next();
-			
-			if (!system.playing(sound.systemName)) {
-				sound.onFinished();
-				iterator.remove();
+		synchronized (sounds) {
+			Double mute = null;
+			try {
+				for (SoundStream sound : sounds) {
+					double soundMute = sound.mute();
+					if (soundMute > 0 && (mute == null || mute < soundMute))
+						mute = soundMute;
+				}
+				
+				synchronized (SoundSystemConfig.THREAD_SYNC) {
+					for (Iterator iterator = sounds.iterator(); iterator.hasNext();) {
+						SoundStream sound = (SoundStream) iterator.next();
+						
+						Source source = library.getSource(sound.systemName);
+						boolean playing = source.playing();
+						if (sound.hasPlayedOnce() && !playing) {
+							sound.onFinished();
+							//System.out.println(sound.location + " has stopped! volume=" + sound.volume + ",index=" + sound.index + ",loop=" + sound.loop());
+							source.stop();
+							iterator.remove();
+						} else if (!sound.hasPlayedOnce() && playing)
+							sound.setPlayedOnce();
+						
+						source.setPitch((float) sound.pitch);
+						if (source.toLoop != sound.loop())
+							source.toLoop = sound.loop();
+						if (mute == null || sound.mute() >= mute)
+							source.sourceVolume = (float) sound.volume * getVolume(SoundCategory.AMBIENT);
+						else
+							source.sourceVolume = (float) (sound.volume * (1 - mute)) * getVolume(SoundCategory.AMBIENT);
+					}
+				}
+				
+			} catch (ConcurrentModificationException e) {
+				e.printStackTrace();
 			}
-			
-			double soundMute = sound.mute();
-			if (soundMute > 0 && (mute == null || mute < soundMute))
-				mute = soundMute;
-		}
-		
-		for (SoundStream sound : sounds) {
-			system.setPitch(sound.systemName, (float) sound.pitch);
-			if (mute == null || sound.mute() >= mute)
-				system.setVolume(sound.systemName, (float) sound.volume);
-			else
-				system.setVolume(sound.systemName, (float) (sound.volume * (1 - mute)));
 		}
 	}
 	
@@ -94,7 +119,9 @@ public class AmbientSoundEngine {
 		
 		system.stop(sound.systemName);
 		system.removeSource(sound.systemName);
-		sounds.remove(sound);
+		synchronized (sounds) {
+			sounds.remove(sound);
+		}
 	}
 	
 	public void play(int offset, SoundStream stream) {
@@ -109,6 +136,8 @@ public class AmbientSoundEngine {
 		
 		ResourceLocation resourcelocation = stream.location;
 		SoundEventAccessor soundeventaccessor = manager.sndHandler.getAccessor(resourcelocation);
+		if (soundeventaccessor == null)
+			throw new RuntimeException("Missing accessor for " + resourcelocation);
 		Sound sound = soundeventaccessor.cloneEntry();
 		
 		SoundCategory soundcategory = SoundCategory.AMBIENT;
@@ -130,8 +159,19 @@ public class AmbientSoundEngine {
 			system.setVolume(s, f1);
 			system.play(s);
 			
-			stream.finished = false;
-			sounds.add(stream);
+			stream.onStart();
+			synchronized (sounds) {
+				sounds.add(stream);
+			}
+		}
+	}
+	
+	public void stopAll() {
+		synchronized (sounds) {
+			for (SoundStream sound : sounds) {
+				stop(sound);
+				sound.onFinished();
+			}
 		}
 	}
 	

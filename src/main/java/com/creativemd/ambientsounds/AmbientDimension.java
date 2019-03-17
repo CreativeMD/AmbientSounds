@@ -11,7 +11,7 @@ public class AmbientDimension {
 	public String name;
 	
 	@SerializedName("biome-selector")
-	public AmbientConditionExtended biomeSelector;
+	public AmbientCondition biomeSelector;
 	
 	public AmbientRegion[] regions;
 	
@@ -62,8 +62,13 @@ public class AmbientDimension {
 		if (storm != null)
 			env.thundering = storm;
 		
-		if (biomeSelector != null)
-			env.biomeVolume = biomeSelector.value(env).getEntireVolume();
+		if (biomeSelector != null) {
+			AmbientSelection selection = biomeSelector.value(env);
+			if (selection != null)
+				env.biomeVolume = selection.getEntireVolume();
+			else
+				env.biomeVolume = 0;
+		}
 		
 		if (averageHeight != null)
 			env.setHeight(averageHeight);

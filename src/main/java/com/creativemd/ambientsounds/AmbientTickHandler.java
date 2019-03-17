@@ -1,21 +1,22 @@
 package com.creativemd.ambientsounds;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
+import com.creativemd.creativecore.common.utils.mc.ChatFormatting;
+import com.creativemd.creativecore.common.utils.type.Pair;
 import com.creativemd.creativecore.common.utils.type.PairList;
 import com.google.common.base.Strings;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
@@ -67,19 +68,105 @@ public class AmbientTickHandler {
 		SoundSystemConfig.setNumberNormalChannels(AmbientSounds.normalChannels);
 	}
 	
+	private static DecimalFormat df = new DecimalFormat("0.##");
+	
+	private String format(Object value) {
+		if (value instanceof Double || value instanceof Float)
+			return df.format(value);
+		return value.toString();
+	}
+	
+	private String format(PairList<String, Object> details) {
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for (Pair<String, Object> pair : details) {
+			if (!first)
+				builder.append(",");
+			else
+				first = false;
+			builder.append(ChatFormatting.YELLOW + pair.key + ChatFormatting.RESET + ":" + format(pair.value));
+		}
+		return builder.toString();
+	}
+	
 	@SubscribeEvent
 	public void onRender(RenderTickEvent event) {
-		if (showDebugInfo && event.phase == Phase.END && engine != null && mc.inGameHasFocus) {
+		if (showDebugInfo && event.phase == Phase.END && engine != null && mc.inGameHasFocus && enviroment != null) {
 			
 			GlStateManager.pushMatrix();
 			List<String> list = new ArrayList<>();
 			
 			AmbientDimension dimension = engine.getDimension(mc.world);
-			list.add("dimension: " + dimension + ", playing: " + engine.soundEngine.sounds.size());
+			PairList<String, Object> details = new PairList<>();
+			details.add("night", enviroment.night);
+			details.add("rain", enviroment.raining);
+			details.add("storm", enviroment.thundering);
+			details.add("b-volume", enviroment.biomeVolume);
+			details.add("underwater", enviroment.underwater);
+			
+			list.add(format(details));
+			
+			details.clear();
+			
+			for (Pair<BiomeArea, Float> pair : enviroment.biomes) {
+				details.add(pair.key.biome.getBiomeName(), pair.value);
+			}
+			
+			list.add(format(details));
+			
+			details.clear();
+			
+			details.add("dimension", dimension);
+			details.add("playing", engine.soundEngine.playingCount());
+			details.add("light", enviroment.blocks.averageLight);
+			details.add("outside", enviroment.blocks.outsideVolume);
+			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight));
+			
+			list.add(format(details));
+			
+			details.clear();
+			
 			for (AmbientRegion region : engine.activeRegions) {
-				list.add("region: " + region + "");
+				
+				details.add("region", ChatFormatting.DARK_GREEN + region.name + ChatFormatting.RESET);
+				details.add("playing", region.playing.size());
+				
+				list.add(format(details));
+				
+				details.clear();
 				for (AmbientSound sound : region.playing) {
-					list.add("-" + sound);
+					
+					if (!sound.isPlaying())
+						continue;
+					
+					String text = "";
+					if (sound.stream1 != null) {
+						details.add("n", sound.stream1.location);
+						details.add("v", sound.stream1.volume);
+						details.add("i", sound.stream1.index);
+						details.add("p", sound.stream1.pitch);
+						details.add("t", sound.stream1.ticksPlayed);
+						details.add("d", sound.stream1.duration);
+						
+						text = "[" + format(details) + "]";
+						
+						details.clear();
+					}
+					
+					if (sound.stream2 != null) {
+						details.add("n", sound.stream2.location);
+						details.add("v", sound.stream2.volume);
+						details.add("i", sound.stream2.index);
+						details.add("p", sound.stream2.pitch);
+						details.add("t", sound.stream2.ticksPlayed);
+						details.add("d", sound.stream2.duration);
+						
+						text += "[" + format(details) + "]";
+						
+						details.clear();
+					}
+					
+					list.add(text);
 				}
 			}
 			
@@ -131,38 +218,21 @@ public class AmbientTickHandler {
 					else
 						enviroment.biomes = new PairList<>();
 					
-					int lightspots = 0;
-					enviroment.averageLight = 0;
-					enviroment.blocks = new PairList<>();
-					MutableBlockPos pos = new MutableBlockPos();
-					for (EnumFacing facing : EnumFacing.VALUES) {
-						pos.setPos(player);
-						
-						for (int i = 1; i < engine.blockScanDistance; i++) {
-							pos.offset(facing);
-							IBlockState state = world.getBlockState(pos);
-							if (state.isBlockNormalCube() || state.isFullBlock() || state.isFullCube()) {
-								enviroment.blocks.add(state, i);
-								enviroment.averageLight += world.getLight(pos);
-								lightspots++;
-								break;
-							}
-						}
-					}
-					
-					enviroment.averageLight /= lightspots;
+					enviroment.blocks.updateAllDirections(engine);
 				}
 				
 				if (timer % engine.soundTickTime == 0) {
 					
 					enviroment.setSunAngle((world.getCelestialAngle(mc.getRenderPartialTicks())));
 					enviroment.updateWorld();
-					
 					int depth = 0;
-					AxisAlignedBB bb = player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
-					while (world.isMaterialInBB(bb, Material.WATER)) {
-						depth++;
-						bb = bb.offset(0, 1, 0);
+					if (player.isInsideOfMaterial(Material.WATER)) {
+						AxisAlignedBB bb = player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
+						while (world.isMaterialInBB(bb, Material.WATER)) {
+							depth++;
+							bb = bb.offset(0, 1, 0);
+						}
+						depth--;
 					}
 					enviroment.setUnderwater(depth);
 					
@@ -172,7 +242,8 @@ public class AmbientTickHandler {
 				engine.fastTick();
 				
 				timer++;
-			}
+			} else if (!engine.activeRegions.isEmpty())
+				engine.stopEngine();
 		}
 	}
 }

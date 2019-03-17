@@ -94,9 +94,14 @@ public class AmbientEngine {
 	@SerializedName(value = "enviroment-tick-time")
 	public int enviromentTickTime = 40;
 	@SerializedName(value = "sound-tick-time")
-	public int soundTickTime = 10;
+	public int soundTickTime = 4;
 	@SerializedName(value = "block-scan-distance")
 	public int blockScanDistance = 40;
+	
+	@SerializedName(value = "outside-distance-min")
+	public int outsideDistanceMin = 2;
+	@SerializedName(value = "outside-distance-max")
+	public int outsideDistanceMax = 13;
 	
 	@SerializedName(value = "average-height-scan-distance")
 	public int averageHeightScanDistance = 2;
@@ -144,6 +149,7 @@ public class AmbientEngine {
 			if (dimension.regions != null)
 				for (int j = 0; j < dimension.regions.length; j++) {
 					AmbientRegion region = dimension.regions[j];
+					region.dimension = dimension;
 					if (checkRegion(dimension, j, region))
 						allRegions.add(region.name, region);
 				}
@@ -190,11 +196,10 @@ public class AmbientEngine {
 				activeRegions.remove(region);
 			}
 		}
-		
-		soundEngine.tick();
 	}
 	
 	public void fastTick() {
+		soundEngine.tick();
 		if (!activeRegions.isEmpty()) {
 			for (Iterator iterator = activeRegions.iterator(); iterator.hasNext();) {
 				AmbientRegion region = (AmbientRegion) iterator.next();
@@ -204,6 +209,7 @@ public class AmbientEngine {
 				}
 			}
 		}
+		
 	}
 	
 	public double calculateAverageHeight(World world, EntityPlayer player) {
@@ -228,10 +234,6 @@ public class AmbientEngine {
 	
 	public PairList<BiomeArea, Float> calculateBiomes(World world, EntityPlayer player, double volume) {
 		PairList<BiomeArea, Float> biomes = new PairList<>();
-		
-		if (world.provider.getDimension() == -1 || world.provider.getDimension() == 1)
-			volume = 1F;
-		
 		if (volume > 0.0) {
 			
 			int posX = (int) player.posX;

@@ -67,6 +67,8 @@ public class AmbientSounds {
 			
 			@Override
 			public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+				if (tickHandler.engine != null)
+					tickHandler.engine.stopEngine();
 				tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
 			}
 		});
@@ -94,6 +96,8 @@ public class AmbientSounds {
 		reloadableResourceManager.registerReloadListener(new IResourceManagerReloadListener() {
 			@Override
 			public void onResourceManagerReload(IResourceManager resourceManager) {
+				if (tickHandler.engine != null)
+					tickHandler.engine.stopEngine();
 				tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
 			}
 		});
