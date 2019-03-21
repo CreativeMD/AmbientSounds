@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
-import com.creativemd.creativecore.common.utils.mc.ChatFormatting;
-import com.creativemd.creativecore.common.utils.type.Pair;
-import com.creativemd.creativecore.common.utils.type.PairList;
+import com.creativemd.ambientsounds.utils.Pair;
+import com.creativemd.ambientsounds.utils.PairList;
 import com.google.common.base.Strings;
+import com.mojang.realmsclient.gui.ChatFormatting;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;

@@ -9,8 +9,8 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
-import com.creativemd.creativecore.common.utils.type.Pair;
-import com.creativemd.creativecore.common.utils.type.PairList;
+import com.creativemd.ambientsounds.utils.Pair;
+import com.creativemd.ambientsounds.utils.PairList;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -82,6 +82,9 @@ public class AmbientEngine {
 	protected transient PairList<String, AmbientRegion> allRegions = new PairList<>();
 	protected transient PairList<String, AmbientRegion> generalRegions = new PairList<>();
 	protected transient List<AmbientRegion> activeRegions = new ArrayList<>();
+	
+	protected transient PairList<String, AmbientSound> sounds = new PairList<>();
+	
 	protected transient AmbientSoundEngine soundEngine;
 	
 	public AmbientRegion getRegion(String name) {
@@ -140,7 +143,23 @@ public class AmbientEngine {
 		return true;
 	}
 	
+	protected void addRegion(AmbientRegion region) {
+		allRegions.add(region.name, region);
+		region.volumeSetting = AmbientSounds.config.getFloat(region.name, "volume", 1, 0, 1, "");
+		
+		String prefix = (region.dimension != null ? region.dimension.name + "." : "") + region.name + ".";
+		if (region.sounds != null) {
+			for (AmbientSound sound : region.sounds) {
+				sounds.add(prefix + sound.name, sound);
+				sound.fullName = prefix + sound.name;
+				sound.volumeSetting = AmbientSounds.config.getFloat(sound.fullName, "volume", 1, 0, 1, "");
+			}
+		}
+	}
+	
 	public void init() {
+		AmbientSounds.config.load();
+		
 		for (int i = 0; i < dimensions.length; i++) {
 			AmbientDimension dimension = dimensions[i];
 			if (dimension.name == null || dimension.name.isEmpty())
@@ -151,14 +170,14 @@ public class AmbientEngine {
 					AmbientRegion region = dimension.regions[j];
 					region.dimension = dimension;
 					if (checkRegion(dimension, j, region))
-						allRegions.add(region.name, region);
+						addRegion(region);
 				}
 		}
 		
 		for (int i = 0; i < regions.length; i++) {
 			AmbientRegion region = regions[i];
 			if (checkRegion(null, i, region)) {
-				allRegions.add(region.name, region);
+				addRegion(region);
 				generalRegions.add(region.name, region);
 			}
 		}
@@ -169,6 +188,8 @@ public class AmbientEngine {
 		for (AmbientRegion region : allRegions.values()) {
 			region.init(this);
 		}
+		
+		AmbientSounds.config.save();
 	}
 	
 	public void tick(AmbientEnviroment env) {

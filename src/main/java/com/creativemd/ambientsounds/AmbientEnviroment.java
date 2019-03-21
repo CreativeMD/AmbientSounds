@@ -2,7 +2,7 @@ package com.creativemd.ambientsounds;
 
 import java.util.List;
 
-import com.creativemd.creativecore.common.utils.type.PairList;
+import com.creativemd.ambientsounds.utils.PairList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

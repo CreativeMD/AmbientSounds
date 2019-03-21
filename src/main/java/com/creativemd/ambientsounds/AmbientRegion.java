@@ -37,7 +37,12 @@ public class AmbientRegion extends AmbientCondition {
 	public AmbientSelection value(AmbientEnviroment env) {
 		if (dimension != null && !dimension.is(env.world))
 			return null;
-		return super.value(env);
+		if (volumeSetting == 0)
+			return null;
+		AmbientSelection selection = super.value(env);
+		if (selection != null)
+			selection.volume *= volumeSetting;
+		return selection;
 	}
 	
 	public boolean fastTick() {

@@ -10,7 +10,9 @@ public class AmbientSound extends AmbientCondition {
 	
 	private static Random rand = new Random();
 	
+	public transient double volumeSetting = 1;
 	public String name;
+	public transient String fullName;
 	public ResourceLocation[] files;
 	public double[] chances;
 	
@@ -77,8 +79,8 @@ public class AmbientSound extends AmbientCondition {
 		if (isPlaying()) {
 			
 			if (inTransition()) { // Two files are played
-				stream1.volume = Math.max(0, Math.min(stream1.volume, currentVolume * (1D - (double) transition / transitionTime)));
-				stream2.volume = Math.min(currentVolume, currentVolume * ((double) transition / transitionTime));
+				stream1.volume = Math.max(0, Math.min(stream1.volume, getCombinedVolume() * (1D - (double) transition / transitionTime)));
+				stream2.volume = Math.min(getCombinedVolume(), getCombinedVolume() * ((double) transition / transitionTime));
 				
 				if (transition >= transitionTime) {
 					engine.soundEngine.stop(stream1);
@@ -94,7 +96,7 @@ public class AmbientSound extends AmbientCondition {
 				else if (stream1.duration > 0 && currentPropertries.length == null)
 					stream1.duration = -1;
 				
-				stream1.volume = currentVolume;
+				stream1.volume = getCombinedVolume();
 				
 				if (currentPropertries.length != null) { // If the sound has a length
 					
@@ -113,7 +115,7 @@ public class AmbientSound extends AmbientCondition {
 							stream1 = null;
 							pauseTimer = -1;
 						} else if (fadeOutTime > stream1.remaining()) // about to exceed length -> fade out
-							stream1.volume = currentVolume * stream1.remaining() / fadeOutTime;
+							stream1.volume = getCombinedVolume() * stream1.remaining() / fadeOutTime;
 					}
 				}
 			}
@@ -152,6 +154,13 @@ public class AmbientSound extends AmbientCondition {
 		}
 		
 		return aimedVolume > 0 || currentVolume > 0;
+	}
+	
+	@Override
+	public AmbientSelection value(AmbientEnviroment env) {
+		if (volumeSetting == 0)
+			return null;
+		return super.value(env);
 	}
 	
 	public boolean tick(AmbientEnviroment env, AmbientSelection selection) {
@@ -231,6 +240,10 @@ public class AmbientSound extends AmbientCondition {
 		return currentPropertries.length != null || (currentPropertries.pause == null && files.length == 1);
 	}
 	
+	public double getCombinedVolume() {
+		return currentVolume * volumeSetting;
+	}
+	
 	public class SoundStream {
 		
 		public final int index;
@@ -249,7 +262,7 @@ public class AmbientSound extends AmbientCondition {
 		public SoundStream(int index) {
 			this.index = index;
 			this.location = AmbientSound.this.files[index];
-			this.volume = AmbientSound.this.currentVolume;
+			this.volume = AmbientSound.this.getCombinedVolume();
 		}
 		
 		public boolean loop() {

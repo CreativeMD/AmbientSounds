@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
 import com.creativemd.ambientsounds.AmbientEnviroment.BlockSpot;
-import com.creativemd.creativecore.common.utils.type.Pair;
+import com.creativemd.ambientsounds.utils.Pair;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.block.Block;
