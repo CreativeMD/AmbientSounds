@@ -99,10 +99,10 @@ public class AmbientEnviroment {
 			pos.setY(pos.getY() + 1);
 			
 			for (int i = 1; i < engine.blockScanDistance; i++) {
-				pos.setPos(pos.getX() + facing.getFrontOffsetX() * facing.getAxisDirection().getOffset(), pos.getY() + facing.getFrontOffsetY() * facing.getAxisDirection().getOffset(), pos.getZ() + facing.getFrontOffsetZ() * facing.getAxisDirection().getOffset());
+				pos.setPos(pos.getX() + facing.getFrontOffsetX(), pos.getY() + facing.getFrontOffsetY(), pos.getZ() + facing.getFrontOffsetZ());
 				IBlockState state = world.getBlockState(pos);
 				if (state.isOpaqueCube())
-					return new BlockSpot(state, i, state.getLightValue(world, pos));
+					return new BlockSpot(state, i, world.getLight(pos.offset(facing.getOpposite())));
 			}
 			return null;
 		}
