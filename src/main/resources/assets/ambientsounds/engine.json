@@ -227,7 +227,12 @@
       "sounds": [
         {
           "name": "suspense",
-          "files": [ "ambientsounds:suspense.cave1", "ambientsounds:suspense.cave2" ]
+          "files": [ "ambientsounds:suspense.cave1", "ambientsounds:suspense.cave2" ],
+          "length": {
+            "min": 400,
+            "max": 700
+          },
+          "transition": 200
         }
       ]
     },
@@ -608,7 +613,6 @@
           }
         }
       ]
-
     },
     {
       "name": "swamp",
@@ -682,6 +686,11 @@
         {
           "name": "bird-ambience-jungle-night",
           "files": [ "ambientsounds:animals.bird-ambience-jungle-night", "ambientsounds:animals.bird-ambience-jungle-night2" ],
+          "length": {
+            "min": 1500,
+            "max": 2000
+          },
+          "transition": 200,
           "day": 0,
           "night": 1
         }
