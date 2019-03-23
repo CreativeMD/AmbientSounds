@@ -89,11 +89,19 @@ public class AmbientSoundEngine {
 						SoundStream sound = (SoundStream) iterator.next();
 						
 						Source source = library.getSource(sound.systemName);
-						boolean playing = source.playing();
+						boolean playing;
+						if (source == null)
+							if (sound.hasPlayedOnce())
+								playing = false;
+							else
+								continue;
+						else
+							playing = source.playing();
+						
 						if (sound.hasPlayedOnce() && !playing) {
 							sound.onFinished();
-							//System.out.println(sound.location + " has stopped! volume=" + sound.volume + ",index=" + sound.index + ",loop=" + sound.loop());
-							source.stop();
+							if (source != null)
+								source.stop();
 							iterator.remove();
 						} else if (!sound.hasPlayedOnce() && playing)
 							sound.setPlayedOnce();
