@@ -217,7 +217,6 @@
       "name": "cave-ambience",
       "regions": [ "cave" ],
       "light": {
-        "min": 0,
         "max": 12,
         "fade": 2
       },
