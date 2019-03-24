@@ -103,6 +103,7 @@ public class AmbientSoundEngine {
 							if (source != null)
 								source.stop();
 							iterator.remove();
+							continue;
 						} else if (!sound.hasPlayedOnce() && playing)
 							sound.setPlayedOnce();
 						
