@@ -41,8 +41,8 @@ public class Pair<K, V> implements Entry<K, V> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Pair)
-			return key.equals(((Pair) obj).key);
+		if (obj instanceof Pair<?, ?>)
+			return key.equals(((Pair<?, ?>) obj).key);
 		return false;
 	}
 	

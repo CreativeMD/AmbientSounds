@@ -14,16 +14,18 @@ import java.util.List;
 
 import com.creativemd.ambientsounds.AmbientSound.SoundStream;
 
+import cpw.mods.modlauncher.api.INameMappingService.Domain;
 import io.netty.util.internal.ThreadLocalRandom;
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper.UnableToFindFieldException;
 import paulscode.sound.Library;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
@@ -31,8 +33,22 @@ import paulscode.sound.Source;
 
 public class AmbientSoundEngine {
 	
-	private static Field system = ReflectionHelper.findField(SoundManager.class, "sndSystem", "field_148620_e");
-	private static Field loaded = ReflectionHelper.findField(SoundManager.class, "loaded", "field_148617_f");
+	public static Field findField(Class<?> classToAccess, String fieldName) {
+		try {
+			Field f = classToAccess.getDeclaredField(ObfuscationReflectionHelper.remapName(Domain.FIELD, fieldName));
+			f.setAccessible(true);
+			return f;
+		} catch (UnableToFindFieldException e) {
+			AmbientSounds.LOGGER.error("Unable to locate field {} ({}) on type {}", fieldName, ObfuscationReflectionHelper.remapName(Domain.FIELD, fieldName), classToAccess.getName(), e);
+			AmbientSounds.LOGGER.error("Unable to access field {} ({}) on type {}", fieldName, ObfuscationReflectionHelper.remapName(Domain.FIELD, fieldName), classToAccess.getName(), e);
+			throw new RuntimeException("Unable to access field=" + fieldName, e);
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to find field=" + fieldName, e);
+		}
+	}
+	
+	private static Field system = findField(SoundManager.class, "field_148620_e");
+	private static Field loaded = findField(SoundManager.class, "field_148617_f");
 	
 	public Library library;
 	
@@ -70,10 +86,8 @@ public class AmbientSoundEngine {
 			e.printStackTrace();
 		}
 		
-		SoundSystem system = getSystem();
-		
 		if (library == null)
-			this.library = ReflectionHelper.getPrivateValue(SoundSystem.class, getSystem(), "soundLibrary");
+			this.library = ObfuscationReflectionHelper.getPrivateValue(SoundSystem.class, getSystem(), "soundLibrary");
 		
 		synchronized (sounds) {
 			Double mute = null;
@@ -85,8 +99,8 @@ public class AmbientSoundEngine {
 				}
 				
 				synchronized (SoundSystemConfig.THREAD_SYNC) {
-					for (Iterator iterator = sounds.iterator(); iterator.hasNext();) {
-						SoundStream sound = (SoundStream) iterator.next();
+					for (Iterator<SoundStream> iterator = sounds.iterator(); iterator.hasNext();) {
+						SoundStream sound = iterator.next();
 						
 						Source source = library.getSource(sound.systemName);
 						boolean playing;
@@ -149,7 +163,6 @@ public class AmbientSoundEngine {
 			throw new RuntimeException("Missing accessor for " + resourcelocation);
 		Sound sound = soundeventaccessor.cloneEntry();
 		
-		SoundCategory soundcategory = SoundCategory.AMBIENT;
 		float f = 16.0F;
 		float f1 = this.getClampedVolume((float) stream.volume);
 		float f2 = this.getClampedPitch((float) stream.pitch);
@@ -184,17 +197,21 @@ public class AmbientSoundEngine {
 		}
 	}
 	
+	private static Minecraft mc = Minecraft.getInstance();
+	
 	private static URL getURLForSoundResource(final ResourceLocation p_148612_0_) {
-		String s = String.format("%s:%s:%s", new Object[] { "mcsounddomain", p_148612_0_.getResourceDomain(),
-		        p_148612_0_.getResourcePath() });
+		String s = String.format("%s:%s:%s", new Object[] { "mcsounddomain", p_148612_0_.getNamespace(), p_148612_0_.getPath() });
 		URLStreamHandler urlstreamhandler = new URLStreamHandler() {
+			@Override
 			protected URLConnection openConnection(final URL p_openConnection_1_) {
 				return new URLConnection(p_openConnection_1_) {
+					@Override
 					public void connect() throws IOException {
 					}
 					
+					@Override
 					public InputStream getInputStream() throws IOException {
-						return Minecraft.getMinecraft().getResourceManager().getResource(p_148612_0_).getInputStream();
+						return mc.getResourceManager().getResource(p_148612_0_).getInputStream();
 					}
 				};
 			}

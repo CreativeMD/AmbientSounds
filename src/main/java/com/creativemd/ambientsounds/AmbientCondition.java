@@ -11,9 +11,14 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class AmbientCondition extends AmbientSoundProperties {
+	
+	private static IForgeRegistry<Block> BLOCK_REGISTRY = GameRegistry.findRegistry(Block.class);
 	
 	public Boolean always;
 	
@@ -266,7 +271,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 			if (topBlock != null) {
 				blocks = new ArrayList<>();
 				for (String blockName : topBlock) {
-					Block block = Block.getBlockFromName(blockName);
+					Block block = BLOCK_REGISTRY.getValue(new ResourceLocation(blockName));
 					if (block != null && !(block instanceof BlockAir))
 						blocks.add(block);
 				}
@@ -280,29 +285,43 @@ public class AmbientCondition extends AmbientSoundProperties {
 			if (temperature != null && !temperature.is(biome.biome.getTemperature(biome.pos)))
 				return false;
 			
-			if (treesPerChunk != null && !treesPerChunk.is(biome.biome.decorator.treesPerChunk))
+			if (treesPerChunk != null)
 				return false;
 			
-			if (waterlilyPerChunk != null && !waterlilyPerChunk.is(biome.biome.decorator.waterlilyPerChunk))
-				return false;
-			
-			if (flowersPerChunk != null && !flowersPerChunk.is(biome.biome.decorator.flowersPerChunk))
-				return false;
-			
-			if (grassPerChunk != null && !grassPerChunk.is(biome.biome.decorator.grassPerChunk))
-				return false;
-			
-			if (deadBushPerChunk != null && !deadBushPerChunk.is(biome.biome.decorator.deadBushPerChunk))
-				return false;
-			
-			if (mushroomsPerChunk != null && !mushroomsPerChunk.is(biome.biome.decorator.mushroomsPerChunk))
-				return false;
-			
-			if (reedsPerChunk != null && !reedsPerChunk.is(biome.biome.decorator.reedsPerChunk))
-				return false;
-			
-			if (cactiPerChunk != null && !cactiPerChunk.is(biome.biome.decorator.cactiPerChunk))
-				return false;
+			/* for (CompositeFeature<?, ?> feature : biome.biome.getFeatures(Decoration.VEGETAL_DECORATION)) {
+			 * if (feature.getFeature() instanceof AbstractTreeFeature) {
+			 * System.out.println("Tree!");
+			 * }
+			 * }
+			 * 
+			 * for (CompositeFeature<?, ?> feature : biome.biome.getFeatures(Decoration.VEGETAL_DECORATION)) {
+			 * 
+			 * Feature.BIRCH_TREE
+			 * }
+			 * 
+			 * if (treesPerChunk != null && !treesPerChunk.is(biome.biome.get.decorator.treesPerChunk))
+			 * return false;
+			 * 
+			 * if (waterlilyPerChunk != null && !waterlilyPerChunk.is(biome.biome.decorator.waterlilyPerChunk))
+			 * return false;
+			 * 
+			 * if (flowersPerChunk != null && !flowersPerChunk.is(biome.biome.decorator.flowersPerChunk))
+			 * return false;
+			 * 
+			 * if (grassPerChunk != null && !grassPerChunk.is(biome.biome.decorator.grassPerChunk))
+			 * return false;
+			 * 
+			 * if (deadBushPerChunk != null && !deadBushPerChunk.is(biome.biome.decorator.deadBushPerChunk))
+			 * return false;
+			 * 
+			 * if (mushroomsPerChunk != null && !mushroomsPerChunk.is(biome.biome.decorator.mushroomsPerChunk))
+			 * return false;
+			 * 
+			 * if (reedsPerChunk != null && !reedsPerChunk.is(biome.biome.decorator.reedsPerChunk))
+			 * return false;
+			 * 
+			 * if (cactiPerChunk != null && !cactiPerChunk.is(biome.biome.decorator.cactiPerChunk))
+			 * return false; */
 			
 			return true;
 		}
@@ -406,18 +425,9 @@ public class AmbientCondition extends AmbientSoundProperties {
 			return found ? 1 : 0;
 		}
 		
-		static Material[] refMaterials = new Material[] { Material.GRASS, Material.GROUND, Material.WOOD, Material.ROCK,
-		        Material.IRON, Material.ANVIL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANTS,
-		        Material.VINE, Material.SPONGE, Material.CLOTH, Material.FIRE, Material.SAND, Material.CIRCUITS,
-		        Material.CARPET, Material.GLASS, Material.REDSTONE_LIGHT, Material.TNT, Material.CORAL, Material.ICE,
-		        Material.PACKED_ICE, Material.SNOW, Material.CRAFTED_SNOW, Material.CACTUS, Material.CLAY,
-		        Material.GOURD, Material.DRAGON_EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON,
-		        Material.BARRIER, Material.STRUCTURE_VOID };
+		static Material[] refMaterials = new Material[] { Material.GRASS, Material.GROUND, Material.WOOD, Material.ROCK, Material.IRON, Material.ANVIL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANTS, Material.VINE, Material.SPONGE, Material.CLOTH, Material.FIRE, Material.SAND, Material.CIRCUITS, Material.CARPET, Material.GLASS, Material.REDSTONE_LIGHT, Material.TNT, Material.CORAL, Material.ICE, Material.PACKED_ICE, Material.SNOW, Material.CRAFTED_SNOW, Material.CACTUS, Material.CLAY, Material.GOURD, Material.DRAGON_EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON, Material.BARRIER, Material.STRUCTURE_VOID };
 		
-		static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER",
-		        "LAVA", "LEAVES", "PLANTS", "VINE", "SPONGE", "CLOTH", "FIRE", "SAND", "CIRCUITS", "CARPET", "GLASS",
-		        "REDSTONE_LIGHT", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CRAFTED_SNOW", "CACTUS", "CLAY",
-		        "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
+		static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER", "LAVA", "LEAVES", "PLANTS", "VINE", "SPONGE", "CLOTH", "FIRE", "SAND", "CIRCUITS", "CARPET", "GLASS", "REDSTONE_LIGHT", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CRAFTED_SNOW", "CACTUS", "CLAY", "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
 		
 		public static Material getMaterial(String name) {
 			for (int i = 0; i < refMaterialNames.length; i++)

@@ -64,8 +64,6 @@ public class AmbientRegion extends AmbientCondition {
 		if (sounds == null)
 			return false;
 		
-		boolean activeBefore = active;
-		
 		AmbientSelection selection = value(env);
 		for (AmbientSound sound : sounds) {
 			if (sound.tick(env, selection)) {

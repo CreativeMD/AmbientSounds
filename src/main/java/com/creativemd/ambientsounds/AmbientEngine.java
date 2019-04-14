@@ -25,9 +25,9 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -36,7 +36,7 @@ import net.minecraft.world.biome.Biome;
 
 public class AmbientEngine {
 	
-	public static final ResourceLocation engineLocation = new ResourceLocation(AmbientSounds.modid, "engine.json");
+	public static final ResourceLocation engineLocation = new ResourceLocation("ambientsounds", "engine.json");
 	private static final JsonParser parser = new JsonParser();
 	private static final Gson gson = generateGson();
 	
@@ -55,27 +55,27 @@ public class AmbientEngine {
 	}
 	
 	public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
-		AmbientSounds.config.load();
+		//AmbientSounds.config.load();
 		
 		IResource resource;
 		try {
-			resource = Minecraft.getMinecraft().getResourceManager().getResource(engineLocation);
+			resource = Minecraft.getInstance().getResourceManager().getResource(engineLocation);
 			JsonObject root = parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject();
 			
 			AmbientEngine engine = gson.fromJson(root, AmbientEngine.class);
 			engine.init();
 			
-			AmbientSounds.logger.info("Successfully loaded sound engine. %s dimension(s) and %s region(s)", engine.dimensions.length, engine.allRegions.size());
+			AmbientSounds.LOGGER.info("Successfully loaded sound engine. %s dimension(s) and %s region(s)", engine.dimensions.length, engine.allRegions.size());
 			engine.soundEngine = soundEngine;
 			
 			return engine;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			AmbientSounds.logger.error("Sound engine crashed, no sounds will be played!");
+			AmbientSounds.LOGGER.error("Sound engine crashed, no sounds will be played!");
 		}
 		
-		AmbientSounds.config.save();
+		//AmbientSounds.config.save();
 		return null;
 	}
 	
@@ -135,9 +135,9 @@ public class AmbientEngine {
 	private boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
 		if (region.name == null || region.name.isEmpty()) {
 			if (dimension == null)
-				AmbientSounds.logger.error("Found invalid region at index={0}", i);
+				AmbientSounds.LOGGER.error("Found invalid region at index={0}", i);
 			else
-				AmbientSounds.logger.error("Found invalid region in '{0}' at index={1}", dimension.name, i);
+				AmbientSounds.LOGGER.error("Found invalid region in '{0}' at index={1}", dimension.name, i);
 			return false;
 		}
 		return true;
@@ -145,20 +145,20 @@ public class AmbientEngine {
 	
 	protected void addRegion(AmbientRegion region) {
 		allRegions.add(region.name, region);
-		region.volumeSetting = AmbientSounds.config.getFloat(region.name, "volume", 1, 0, 1, "");
+		region.volumeSetting = 1; //= AmbientSounds.config.getFloat(region.name, "volume", 1, 0, 1, "");
 		
 		String prefix = (region.dimension != null ? region.dimension.name + "." : "") + region.name + ".";
 		if (region.sounds != null) {
 			for (AmbientSound sound : region.sounds) {
 				sounds.add(prefix + sound.name, sound);
 				sound.fullName = prefix + sound.name;
-				sound.volumeSetting = AmbientSounds.config.getFloat(sound.fullName, "volume", 1, 0, 1, "");
+				sound.volumeSetting = 1; // = AmbientSounds.config.getFloat(sound.fullName, "volume", 1, 0, 1, "");
 			}
 		}
 	}
 	
 	public void init() {
-		AmbientSounds.config.load();
+		//AmbientSounds.config.load();
 		
 		for (int i = 0; i < dimensions.length; i++) {
 			AmbientDimension dimension = dimensions[i];
@@ -189,7 +189,7 @@ public class AmbientEngine {
 			region.init(this);
 		}
 		
-		AmbientSounds.config.save();
+		//AmbientSounds.config.save();
 	}
 	
 	public void tick(AmbientEnviroment env) {
@@ -222,8 +222,8 @@ public class AmbientEngine {
 	public void fastTick() {
 		soundEngine.tick();
 		if (!activeRegions.isEmpty()) {
-			for (Iterator iterator = activeRegions.iterator(); iterator.hasNext();) {
-				AmbientRegion region = (AmbientRegion) iterator.next();
+			for (Iterator<AmbientRegion> iterator = activeRegions.iterator(); iterator.hasNext();) {
+				AmbientRegion region = iterator.next();
 				if (!region.fastTick()) {
 					region.deactivate();
 					iterator.remove();
@@ -293,7 +293,7 @@ public class AmbientEngine {
 		for (y = 45; y < 256; ++y) {
 			pos.setY(y);
 			IBlockState state = world.getBlockState(pos);
-			if ((state.isOpaqueCube() && !(state.getBlock() instanceof BlockLeaves)) || state.getBlock() == Blocks.WATER)
+			if ((state.isOpaqueCube(world, pos) && !(state.getBlock() instanceof BlockLeaves)) || state.getBlock() == Blocks.WATER)
 				heighest = y;
 		}
 		

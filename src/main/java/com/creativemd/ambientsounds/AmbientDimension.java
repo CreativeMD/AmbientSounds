@@ -5,6 +5,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 public class AmbientDimension {
 	
@@ -36,15 +37,15 @@ public class AmbientDimension {
 	
 	public boolean is(World world) {
 		
-		if (id != null && world.provider.getDimension() == id)
+		if (id != null && world.dimension.getDimension().getType().getId() == id)
 			return true;
 		
-		if (dimensionIds != null && ArrayUtils.contains(dimensionIds, world.provider.getDimension()))
+		if (dimensionIds != null && ArrayUtils.contains(dimensionIds, world.dimension.getDimension().getType().getId()))
 			return true;
 		
 		if (dimensionNames != null) {
 			for (int j = 0; j < dimensionNames.length; j++) {
-				if (dimensionNames[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
+				if (dimensionNames[j].matches(".*" + DimensionType.func_212678_a(world.dimension.getDimension().getType()).getPath().toLowerCase().replace("*", ".*") + ".*"))
 					return true;
 			}
 		}

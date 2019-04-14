@@ -69,7 +69,7 @@ public class AmbientEnviroment {
 		protected BlockSpot[] spots;
 		
 		public BlockEnviroment() {
-			this.spots = new BlockSpot[EnumFacing.VALUES.length];
+			this.spots = new BlockSpot[EnumFacing.values().length];
 			
 		}
 		
@@ -77,7 +77,7 @@ public class AmbientEnviroment {
 			int lightspots = 0;
 			averageLight = 0;
 			MutableBlockPos pos = new MutableBlockPos();
-			for (EnumFacing facing : EnumFacing.VALUES) {
+			for (EnumFacing facing : EnumFacing.values()) {
 				BlockSpot spot = updateDirection(pos, facing, engine);
 				if (spot != null) {
 					spots[facing.ordinal()] = spot;
@@ -99,9 +99,9 @@ public class AmbientEnviroment {
 			pos.setY(pos.getY() + 1);
 			
 			for (int i = 1; i < engine.blockScanDistance; i++) {
-				pos.setPos(pos.getX() + facing.getFrontOffsetX(), pos.getY() + facing.getFrontOffsetY(), pos.getZ() + facing.getFrontOffsetZ());
+				pos.setPos(pos.getX() + facing.getXOffset(), pos.getY() + facing.getYOffset(), pos.getZ() + facing.getZOffset());
 				IBlockState state = world.getBlockState(pos);
-				if (state.isOpaqueCube())
+				if (state.isOpaqueCube(world, pos))
 					return new BlockSpot(state, i, world.getLight(pos.offset(facing.getOpposite())));
 			}
 			return null;
@@ -177,7 +177,7 @@ public class AmbientEnviroment {
 		
 		public boolean checkBiome(String[] names) {
 			for (String name : names) {
-				String biomename = biome.getBiomeName().toLowerCase().replace("_", " ");
+				String biomename = biome.getTranslationKey().toLowerCase().replace("_", " ");
 				if (biomename.matches(".*" + name.replace("*", ".*") + ".*"))
 					return true;
 			}
@@ -185,7 +185,7 @@ public class AmbientEnviroment {
 		}
 		
 		public boolean checkTopBlock(List<Block> topBlocks) {
-			return topBlocks.contains(biome.topBlock.getBlock());
+			return topBlocks.contains(biome.getSurfaceBuilderConfig().getTop().getBlock());
 		}
 		
 		@Override

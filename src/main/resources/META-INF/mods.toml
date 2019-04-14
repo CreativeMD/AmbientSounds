@@ -1,0 +1,15 @@
+modLoader="javafml"
+loaderVersion="[24,)"
+#issueTrackerURL="https://github.com/CreativeMD/AmbientSounds/issues"
+logoFile="ambientsounds.png"
+
+[[mods]]
+	modId="ambientsounds"
+	version="3.0.3"
+	displayName="Ambient Sounds"
+	side="CLIENT"
+	displayURL="https://minecraft.curseforge.com/projects/ambientsounds"
+	authors="CreativeMD"
+	description='''
+	Expands minecraft's ambient sounds.
+	'''

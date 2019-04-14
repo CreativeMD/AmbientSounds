@@ -15,14 +15,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
@@ -30,7 +31,7 @@ import paulscode.sound.SoundSystemConfig;
 
 public class AmbientTickHandler {
 	
-	private static Minecraft mc = Minecraft.getMinecraft();
+	private static Minecraft mc = Minecraft.getInstance();
 	
 	public AmbientSoundEngine soundEngine;
 	public AmbientEnviroment enviroment = null;
@@ -45,7 +46,7 @@ public class AmbientTickHandler {
 	
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event) {
-		if (!event.getWorld().isRemote)
+		if (!event.getWorld().isRemote())
 			return;
 		
 		if (engine != null)
@@ -91,7 +92,7 @@ public class AmbientTickHandler {
 	
 	@SubscribeEvent
 	public void onRender(RenderTickEvent event) {
-		if (showDebugInfo && event.phase == Phase.END && engine != null && mc.inGameHasFocus && enviroment != null) {
+		if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isGamePaused() && mc.currentScreen == null && enviroment != null) {
 			
 			GlStateManager.pushMatrix();
 			List<String> list = new ArrayList<>();
@@ -109,7 +110,7 @@ public class AmbientTickHandler {
 			details.clear();
 			
 			for (Pair<BiomeArea, Float> pair : enviroment.biomes) {
-				details.add(pair.key.biome.getBiomeName(), pair.value);
+				details.add(pair.key.biome.getTranslationKey(), pair.value);
 			}
 			
 			list.add(format(details));
@@ -176,7 +177,6 @@ public class AmbientTickHandler {
 				if (!Strings.isNullOrEmpty(s)) {
 					int j = mc.fontRenderer.FONT_HEIGHT;
 					int k = mc.fontRenderer.getStringWidth(s);
-					int l = 2;
 					int i1 = 2 + j * i;
 					Gui.drawRect(1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752);
 					mc.fontRenderer.drawString(s, 2, i1, 14737632);
@@ -226,8 +226,8 @@ public class AmbientTickHandler {
 					enviroment.setSunAngle((world.getCelestialAngle(mc.getRenderPartialTicks())));
 					enviroment.updateWorld();
 					int depth = 0;
-					if (player.isInsideOfMaterial(Material.WATER)) {
-						AxisAlignedBB bb = player.getEntityBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
+					if (player.areEyesInFluid(FluidTags.WATER)) {
+						AxisAlignedBB bb = player.getBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
 						while (world.isMaterialInBB(bb, Material.WATER)) {
 							depth++;
 							bb = bb.offset(0, 1, 0);
