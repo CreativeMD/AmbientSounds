@@ -26,6 +26,11 @@ public class AmbientDimension {
 	@SerializedName(value = "dimension-names")
 	public String[] dimensionNames;
 	
+	@SerializedName(value = "bad-dimension-ids")
+	public int[] badDimensionIds;
+	@SerializedName(value = "bad-dimension-names")
+	public String[] badDimensionNames;
+	
 	@SerializedName(value = "average-height")
 	public Integer averageHeight;
 	
@@ -35,6 +40,16 @@ public class AmbientDimension {
 	}
 	
 	public boolean is(World world) {
+		
+		if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.provider.getDimension()))
+			return false;
+		
+		if (badDimensionNames != null) {
+			for (int j = 0; j < badDimensionNames.length; j++) {
+				if (badDimensionNames[j].matches(".*" + world.provider.getDimensionType().getName().toLowerCase().replace("*", ".*") + ".*"))
+					return false;
+			}
+		}
 		
 		if (id != null && world.provider.getDimension() == id)
 			return true;
