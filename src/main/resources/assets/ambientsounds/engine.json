@@ -124,6 +124,32 @@
       }
     },
     {
+      "name": "galacticraft",
+      "dimension-names": [ "moon", "overworld*space*stations", "static*space*stations", "asteroids" ],
+      "biome-selector": {
+        "always": false
+      }
+    },
+    {
+      "name": "galacticraft.planets",
+      "dimension-names": [ "mars", "venus" ],
+      "biome-selector": {
+        "always": false
+      },
+      "regions": [
+        {
+          "name": "planet-wind",
+          "volume": 0.3,
+          "sounds": [
+            {
+              "name": "wind",
+              "files": [ "ambientsounds:wind" ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "surface",
       "biome-selector": {
         "regions": [ "surface" ]
