@@ -27,12 +27,13 @@ public class AmbientEnviroment {
 	public PairList<BiomeArea, Float> biomes;
 	public BlockEnviroment blocks = new BlockEnviroment();
 	
-	public double averageHeight;
-	
 	public EntityPlayer player;
 	
 	public double underwater;
+	public double averageHeight;
 	public double relativeHeight;
+	public int minHeight;
+	public int maxHeight;
 	
 	public double biomeVolume = 1;
 	public AmbientDimension dimension;
@@ -57,9 +58,25 @@ public class AmbientEnviroment {
 			blocks.outsideVolume = 0;
 	}
 	
-	public void setHeight(double averageHeight) {
-		this.averageHeight = averageHeight;
-		this.relativeHeight = player.posY - averageHeight;
+	public void setHeight(TerrainHeight terrain) {
+		this.averageHeight = terrain.averageHeight;
+		this.relativeHeight = player.posY - terrain.averageHeight;
+		this.minHeight = terrain.minHeight;
+		this.maxHeight = terrain.maxHeight;
+	}
+	
+	public static class TerrainHeight {
+		
+		public final double averageHeight;
+		public final int minHeight;
+		public final int maxHeight;
+		
+		public TerrainHeight(double averageHeight, int minHeight, int maxHeight) {
+			this.averageHeight = averageHeight;
+			this.minHeight = minHeight;
+			this.maxHeight = maxHeight;
+		}
+		
 	}
 	
 	public class BlockEnviroment {

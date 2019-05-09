@@ -5,6 +5,9 @@
       "id": -1,
       "rain": false,
       "storm": false,
+      "biome-selector": {
+        "always": false
+      },
       "regions": [
         {
           "name": "nether",
@@ -12,7 +15,7 @@
             {
               "name": "nether",
               "files": [ "ambientsounds:suspense.nether" ],
-              "volume": 0.5
+              "volume": 0.2
             }
           ]
         }
@@ -249,8 +252,12 @@
     {
       "name": "cave-ambience",
       "regions": [ "cave" ],
+      "min-height-relative": {
+        "max": -2,
+        "fade": 2
+      },
       "light": {
-        "max": 12,
+        "max": 8,
         "fade": 2
       },
       "blocks": {
