@@ -103,6 +103,7 @@ public class AmbientTickHandler {
 			details.add("storm", enviroment.thundering);
 			details.add("b-volume", enviroment.biomeVolume);
 			details.add("underwater", enviroment.underwater);
+			details.add("dim-name", mc.world.provider.getDimensionType().getName());
 			
 			list.add(format(details));
 			
@@ -120,7 +121,7 @@ public class AmbientTickHandler {
 			details.add("playing", engine.soundEngine.playingCount());
 			details.add("light", enviroment.blocks.averageLight);
 			details.add("outside", enviroment.blocks.outsideVolume);
-			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight));
+			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.posY - enviroment.minHeight) + "," + df.format(enviroment.player.posY - enviroment.maxHeight));
 			
 			list.add(format(details));
 			

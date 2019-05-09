@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
+import com.creativemd.ambientsounds.AmbientEnviroment.TerrainHeight;
 import com.creativemd.ambientsounds.utils.Pair;
 import com.creativemd.ambientsounds.utils.PairList;
 import com.google.common.base.Charsets;
@@ -233,24 +234,29 @@ public class AmbientEngine {
 		
 	}
 	
-	public double calculateAverageHeight(World world, EntityPlayer player) {
+	public TerrainHeight calculateAverageHeight(World world, EntityPlayer player) {
 		int sum = 0;
 		int count = 0;
 		
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		
 		MutableBlockPos pos = new MutableBlockPos();
+		BlockPos center = new BlockPos(player);
 		
 		for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
 			for (int z = -averageHeightScanCount; z <= averageHeightScanCount; z++) {
 				
-				pos.setPos(player);
-				pos.add(averageHeightScanDistance, 0, averageHeightScanDistance);
+				pos.setPos(center.getX() + averageHeightScanDistance * x, center.getY(), center.getZ() + averageHeightScanDistance * z);
 				int height = getHeightBlock(world, pos);
 				
+				min = Math.min(height, min);
+				max = Math.max(height, max);
 				sum += height;
 				count++;
 			}
 		}
-		return (double) sum / count;
+		return new TerrainHeight((double) sum / count, min, max);
 	}
 	
 	public PairList<BiomeArea, Float> calculateBiomes(World world, EntityPlayer player, double volume) {
