@@ -19,6 +19,8 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -42,6 +44,20 @@ public class AmbientTickHandler {
 	
 	public void setEngine(AmbientEngine engine) {
 		this.engine = engine;
+	}
+	
+	@SubscribeEvent
+	public void onClientChat(ClientChatEvent event) {
+		String message = event.getMessage();
+		if (message.startsWith("/ambient-reload")) {
+			if (engine != null)
+				engine.stopEngine();
+			setEngine(AmbientEngine.loadAmbientEngine(soundEngine));
+			event.setCanceled(true);
+		} else if (message.startsWith("/ambient-debug")) {
+			showDebugInfo = !showDebugInfo;
+			event.setCanceled(true);
+		}
 	}
 	
 	@SubscribeEvent
@@ -104,7 +120,7 @@ public class AmbientTickHandler {
 			details.add("storm", enviroment.thundering);
 			details.add("b-volume", enviroment.biomeVolume);
 			details.add("underwater", enviroment.underwater);
-			details.add("dim-name", mc.world.provider.getDimensionType().getName());
+			details.add("dim-name", DimensionType.func_212678_a(mc.world.dimension.getDimension().getType()).getPath());
 			
 			list.add(format(details));
 			

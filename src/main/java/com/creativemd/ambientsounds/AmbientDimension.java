@@ -51,7 +51,7 @@ public class AmbientDimension {
 	
 	public boolean is(World world) {
 		
-		if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.provider.getDimension()))
+		if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.dimension.getDimension().getType().getId()))
 			return false;
 		
 		String dimensionTypeName = DimensionType.func_212678_a(world.dimension.getDimension().getType()).getPath();
@@ -96,7 +96,7 @@ public class AmbientDimension {
 		}
 		
 		if (averageHeight != null)
-			env.setHeight(new TerrainHeight(averageHeight, (int) averageHeight, (int) averageHeight));
+			env.setHeight(new TerrainHeight(averageHeight, averageHeight, averageHeight));
 	}
 	
 	@Override
