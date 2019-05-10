@@ -38,7 +38,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 	public AmbientMinMaxFadeCondition relativeHeight;
 	@SerializedName(value = "absolute-height")
 	public AmbientMinMaxFadeCondition absoluteHeight;
-	@SerializedName(value = "max-height-relative")
+	@SerializedName(value = "min-height-relative")
 	public AmbientMinMaxFadeCondition minHeightRelative;
 	@SerializedName(value = "max-height-relative")
 	public AmbientMinMaxFadeCondition maxHeightRelative;
