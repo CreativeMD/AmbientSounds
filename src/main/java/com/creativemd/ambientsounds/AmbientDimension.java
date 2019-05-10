@@ -12,6 +12,9 @@ public class AmbientDimension {
 	
 	public String name;
 	
+	@SerializedName("disable-all")
+	public boolean disableAll = false;
+	
 	@SerializedName("biome-selector")
 	public AmbientCondition biomeSelector;
 	
@@ -78,6 +81,8 @@ public class AmbientDimension {
 	}
 	
 	public void manipulateEnviroment(AmbientEnviroment env) {
+		env.soundsDisabled = disableAll;
+		
 		if (night != null)
 			env.night = night;
 		
