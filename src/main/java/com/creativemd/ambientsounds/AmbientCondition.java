@@ -103,6 +103,9 @@ public class AmbientCondition extends AmbientSoundProperties {
 	
 	public AmbientSelection value(AmbientEnviroment env) {
 		
+		if (env.soundsDisabled)
+			return null;
+		
 		if (always != null)
 			return always ? new AmbientSelection(this) : null;
 		

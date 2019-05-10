@@ -19,6 +19,8 @@ public class AmbientEnviroment {
 	
 	public World world;
 	
+	public boolean soundsDisabled = false;
+	
 	public boolean night;
 	
 	public boolean raining;

@@ -128,7 +128,8 @@
     },
     {
       "name": "galacticraft",
-      "dimension-names": [ "moon", "overworld*space*stations", "static*space*stations", "asteroids" ],
+      "dimension-names": [ "moon", "space", "asteroids" ],
+      "disable-all": true,
       "biome-selector": {
         "always": false
       }
@@ -143,10 +144,11 @@
         {
           "name": "planet-wind",
           "volume": 0.3,
+          "bad-regions": [ "cave-ambience" ],
           "sounds": [
             {
               "name": "wind",
-              "files": [ "ambientsounds:wind" ]
+              "files": [ "ambientsounds:wind.wind" ]
             }
           ]
         }
