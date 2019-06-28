@@ -5,10 +5,10 @@ import java.util.List;
 import com.creativemd.ambientsounds.utils.PairList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -29,7 +29,7 @@ public class AmbientEnviroment {
 	public PairList<BiomeArea, Float> biomes;
 	public BlockEnviroment blocks = new BlockEnviroment();
 	
-	public EntityPlayer player;
+	public PlayerEntity player;
 	
 	public double underwater;
 	public double averageHeight;
@@ -40,7 +40,7 @@ public class AmbientEnviroment {
 	public double biomeVolume = 1;
 	public AmbientDimension dimension;
 	
-	public AmbientEnviroment(EntityPlayer player) {
+	public AmbientEnviroment(PlayerEntity player) {
 		this.player = player;
 		this.world = player.world;
 	}
@@ -88,7 +88,7 @@ public class AmbientEnviroment {
 		protected BlockSpot[] spots;
 		
 		public BlockEnviroment() {
-			this.spots = new BlockSpot[EnumFacing.values().length];
+			this.spots = new BlockSpot[Direction.values().length];
 			
 		}
 		
@@ -96,7 +96,7 @@ public class AmbientEnviroment {
 			int lightspots = 0;
 			averageLight = 0;
 			MutableBlockPos pos = new MutableBlockPos();
-			for (EnumFacing facing : EnumFacing.values()) {
+			for (Direction facing : Direction.values()) {
 				BlockSpot spot = updateDirection(pos, facing, engine);
 				if (spot != null) {
 					spots[facing.ordinal()] = spot;
@@ -113,13 +113,13 @@ public class AmbientEnviroment {
 			outsideVolume = calculateOutsideVolume(engine);
 		}
 		
-		protected BlockSpot updateDirection(MutableBlockPos pos, EnumFacing facing, AmbientEngine engine) {
+		protected BlockSpot updateDirection(MutableBlockPos pos, Direction facing, AmbientEngine engine) {
 			pos.setPos(player);
 			pos.setY(pos.getY() + 1);
 			
 			for (int i = 1; i < engine.blockScanDistance; i++) {
 				pos.setPos(pos.getX() + facing.getXOffset(), pos.getY() + facing.getYOffset(), pos.getZ() + facing.getZOffset());
-				IBlockState state = world.getBlockState(pos);
+				BlockState state = world.getBlockState(pos);
 				if (state.isOpaqueCube(world, pos))
 					return new BlockSpot(state, i, world.getLight(pos.offset(facing.getOpposite())));
 			}
@@ -128,28 +128,28 @@ public class AmbientEnviroment {
 		
 		protected double calculateOutsideVolume(AmbientEngine engine) {
 			Integer distanceX;
-			if (spots[EnumFacing.EAST.ordinal()] == null)
+			if (spots[Direction.EAST.ordinal()] == null)
 				distanceX = null;
-			else if (spots[EnumFacing.WEST.ordinal()] == null)
+			else if (spots[Direction.WEST.ordinal()] == null)
 				distanceX = null;
 			else
-				distanceX = spots[EnumFacing.EAST.ordinal()].distance + spots[EnumFacing.WEST.ordinal()].distance;
+				distanceX = spots[Direction.EAST.ordinal()].distance + spots[Direction.WEST.ordinal()].distance;
 			
 			Integer distanceY;
-			if (spots[EnumFacing.UP.ordinal()] == null)
+			if (spots[Direction.UP.ordinal()] == null)
 				distanceY = null;
-			else if (spots[EnumFacing.DOWN.ordinal()] == null)
+			else if (spots[Direction.DOWN.ordinal()] == null)
 				distanceY = null;
 			else
-				distanceY = spots[EnumFacing.UP.ordinal()].distance + spots[EnumFacing.DOWN.ordinal()].distance;
+				distanceY = spots[Direction.UP.ordinal()].distance + spots[Direction.DOWN.ordinal()].distance;
 			
 			Integer distanceZ;
-			if (spots[EnumFacing.SOUTH.ordinal()] == null)
+			if (spots[Direction.SOUTH.ordinal()] == null)
 				distanceZ = null;
-			else if (spots[EnumFacing.NORTH.ordinal()] == null)
+			else if (spots[Direction.NORTH.ordinal()] == null)
 				distanceZ = null;
 			else
-				distanceZ = spots[EnumFacing.SOUTH.ordinal()].distance + spots[EnumFacing.NORTH.ordinal()].distance;
+				distanceZ = spots[Direction.SOUTH.ordinal()].distance + spots[Direction.NORTH.ordinal()].distance;
 			
 			double volumeVertical;
 			if (distanceY == null)
@@ -169,11 +169,11 @@ public class AmbientEnviroment {
 	}
 	
 	public static class BlockSpot {
-		public IBlockState state;
+		public BlockState state;
 		public int distance;
 		public int light;
 		
-		public BlockSpot(IBlockState state, int distance, int light) {
+		public BlockSpot(BlockState state, int distance, int light) {
 			this.state = state;
 			this.distance = distance;
 			this.light = light;

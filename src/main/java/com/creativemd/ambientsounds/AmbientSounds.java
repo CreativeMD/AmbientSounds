@@ -10,8 +10,8 @@ import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
@@ -22,17 +22,8 @@ public class AmbientSounds {
 	public static final Logger LOGGER = LogManager.getLogger();
 	
 	public AmbientSounds() {
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modConfig);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-	}
-	
-	private void modConfig(ModConfigEvent event) {
-		/* config = event.getConfig().getConfigData();
-		 * 
-		 * debugging = config.getBoolean("debugging", "Custom", false, "Useful if you want to modify the engine");
-		 * streamingChannels = config.getInt("streamingChannels", "engine", streamingChannels, 1, 32, "Streaming + Normal channels may have to be 32 in total.");
-		 * normalChannels = config.getInt("normalChannels", "engine", normalChannels, 1, 32, "Streaming + Normal channels may have to be 32 in total."); */
-		
 	}
 	
 	//public static CommentedConfig config;
@@ -42,9 +33,13 @@ public class AmbientSounds {
 	
 	public static AmbientTickHandler tickHandler;
 	
-	private void doClientStuff(final FMLClientSetupEvent event) {
+	private void preInit(final FMLCommonSetupEvent event) {
 		tickHandler = new AmbientTickHandler();
 		MinecraftForge.EVENT_BUS.register(tickHandler);
+	}
+	
+	private void doClientStuff(final FMLClientSetupEvent event) {
+		
 		/* ClientCommandHandler.instance.registerCommand(new CommandBase() {
 		 * 
 		 * @Override

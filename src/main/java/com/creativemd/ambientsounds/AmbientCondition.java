@@ -8,8 +8,8 @@ import com.creativemd.ambientsounds.AmbientEnviroment.BlockSpot;
 import com.creativemd.ambientsounds.utils.Pair;
 import com.google.gson.annotations.SerializedName;
 
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -295,7 +295,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 				blocks = new ArrayList<>();
 				for (String blockName : topBlock) {
 					Block block = BLOCK_REGISTRY.getValue(new ResourceLocation(blockName));
-					if (block != null && !(block instanceof BlockAir))
+					if (block != null && !(block instanceof AirBlock))
 						blocks.add(block);
 				}
 			}
@@ -448,9 +448,9 @@ public class AmbientCondition extends AmbientSoundProperties {
 			return found ? 1 : 0;
 		}
 		
-		static Material[] refMaterials = new Material[] { Material.GRASS, Material.GROUND, Material.WOOD, Material.ROCK, Material.IRON, Material.ANVIL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANTS, Material.VINE, Material.SPONGE, Material.CLOTH, Material.FIRE, Material.SAND, Material.CIRCUITS, Material.CARPET, Material.GLASS, Material.REDSTONE_LIGHT, Material.TNT, Material.CORAL, Material.ICE, Material.PACKED_ICE, Material.SNOW, Material.CRAFTED_SNOW, Material.CACTUS, Material.CLAY, Material.GOURD, Material.DRAGON_EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON, Material.BARRIER, Material.STRUCTURE_VOID };
+		static Material[] refMaterials = new Material[] { Material.ORGANIC, Material.EARTH, Material.WOOD, Material.ROCK, Material.IRON, Material.ANVIL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANTS, Material.TALL_PLANTS, Material.SPONGE, Material.WOOL, Material.FIRE, Material.SAND, Material.MISCELLANEOUS, Material.CARPET, Material.GLASS, Material.REDSTONE_LIGHT, Material.TNT, Material.CORAL, Material.ICE, Material.PACKED_ICE, Material.SNOW, Material.CACTUS, Material.CLAY, Material.GOURD, Material.DRAGON_EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON, Material.BARRIER, Material.STRUCTURE_VOID };
 		
-		static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER", "LAVA", "LEAVES", "PLANTS", "VINE", "SPONGE", "CLOTH", "FIRE", "SAND", "CIRCUITS", "CARPET", "GLASS", "REDSTONE_LIGHT", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CRAFTED_SNOW", "CACTUS", "CLAY", "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
+		static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER", "LAVA", "LEAVES", "PLANTS", "TALL_PLANTS", "SPONGE", "WOOL", "FIRE", "SAND", "MISCELLANEOUS", "CARPET", "GLASS", "REDSTONE_LIGHT", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CACTUS", "CLAY", "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
 		
 		public static Material getMaterial(String name) {
 			for (int i = 0; i < refMaterialNames.length; i++)

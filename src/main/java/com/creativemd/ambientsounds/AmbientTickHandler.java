@@ -8,28 +8,23 @@ import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
 import com.creativemd.ambientsounds.utils.Pair;
 import com.creativemd.ambientsounds.utils.PairList;
 import com.google.common.base.Strings;
-import com.mojang.realmsclient.gui.ChatFormatting;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
-import net.minecraftforge.client.event.sound.SoundSetupEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
-import paulscode.sound.SoundSystemConfig;
 
 public class AmbientTickHandler {
 	
@@ -60,30 +55,17 @@ public class AmbientTickHandler {
 		}
 	}
 	
-	@SubscribeEvent
-	public void onWorldUnload(WorldEvent.Unload event) {
-		if (!event.getWorld().isRemote())
-			return;
-		
-		if (engine != null)
-			engine.stopEngine();
-		
-		enviroment = null;
-		timer = 0;
-	}
-	
-	@SubscribeEvent
-	public void onSoundLoadEvent(SoundLoadEvent event) {
-		soundEngine = new AmbientSoundEngine(event.getManager(), mc.gameSettings);
-		if (engine != null)
-			engine.soundEngine = soundEngine;
-	}
-	
-	@SubscribeEvent(priority = EventPriority.LOW)
-	public void onSoundSetup(SoundSetupEvent event) {
-		SoundSystemConfig.setNumberStreamingChannels(AmbientSounds.streamingChannels);
-		SoundSystemConfig.setNumberNormalChannels(AmbientSounds.normalChannels);
-	}
+	/* @SubscribeEvent
+	 * public void onWorldUnload(WorldEvent.Unload event) {
+	 * if (!event.getWorld().isRemote())
+	 * return;
+	 * 
+	 * if (engine != null)
+	 * engine.stopEngine();
+	 * 
+	 * enviroment = null;
+	 * timer = 0;
+	 * } */
 	
 	private static DecimalFormat df = new DecimalFormat("0.##");
 	
@@ -101,15 +83,14 @@ public class AmbientTickHandler {
 				builder.append(",");
 			else
 				first = false;
-			builder.append(ChatFormatting.YELLOW + pair.key + ChatFormatting.RESET + ":" + format(pair.value));
+			builder.append(TextFormatting.YELLOW + pair.key + TextFormatting.RESET + ":" + format(pair.value));
 		}
 		return builder.toString();
 	}
 	
 	@SubscribeEvent
 	public void onRender(RenderTickEvent event) {
-		if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isGamePaused() && mc.currentScreen == null && enviroment != null) {
-			
+		if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isGamePaused() && enviroment != null && mc.world != null) {
 			GlStateManager.pushMatrix();
 			List<String> list = new ArrayList<>();
 			
@@ -120,7 +101,7 @@ public class AmbientTickHandler {
 			details.add("storm", enviroment.thundering);
 			details.add("b-volume", enviroment.biomeVolume);
 			details.add("underwater", enviroment.underwater);
-			details.add("dim-name", DimensionType.func_212678_a(mc.world.dimension.getDimension().getType()).getPath());
+			details.add("dim-name", DimensionType.getKey(mc.world.dimension.getDimension().getType()).getPath());
 			
 			list.add(format(details));
 			
@@ -146,7 +127,7 @@ public class AmbientTickHandler {
 			
 			for (AmbientRegion region : engine.activeRegions) {
 				
-				details.add("region", ChatFormatting.DARK_GREEN + region.name + ChatFormatting.RESET);
+				details.add("region", TextFormatting.DARK_GREEN + region.name + TextFormatting.RESET);
 				details.add("playing", region.playing.size());
 				
 				list.add(format(details));
@@ -195,7 +176,7 @@ public class AmbientTickHandler {
 					int j = mc.fontRenderer.FONT_HEIGHT;
 					int k = mc.fontRenderer.getStringWidth(s);
 					int i1 = 2 + j * i;
-					Gui.drawRect(1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752);
+					GuiUtils.drawGradientRect(0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
 					mc.fontRenderer.drawString(s, 2, i1, 14737632);
 				}
 			}
@@ -205,10 +186,22 @@ public class AmbientTickHandler {
 	
 	@SubscribeEvent
 	public void onTick(ClientTickEvent event) {
-		if (event.phase == Phase.START && engine != null) {
+		if (event.phase == Phase.START) {
+			
+			if (soundEngine == null) {
+				soundEngine = new AmbientSoundEngine(mc.getSoundHandler(), mc.gameSettings);
+				if (engine != null)
+					engine.soundEngine = soundEngine;
+			}
+			
+			if (engine == null)
+				setEngine(AmbientEngine.loadAmbientEngine(soundEngine));
+			
+			if (engine == null)
+				return;
 			
 			World world = mc.world;
-			EntityPlayer player = mc.player;
+			PlayerEntity player = mc.player;
 			
 			if (world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0) {
 				

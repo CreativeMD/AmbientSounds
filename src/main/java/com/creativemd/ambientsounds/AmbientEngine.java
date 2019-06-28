@@ -23,11 +23,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.block.BlockLeaves;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -234,7 +234,7 @@ public class AmbientEngine {
 		
 	}
 	
-	public TerrainHeight calculateAverageHeight(World world, EntityPlayer player) {
+	public TerrainHeight calculateAverageHeight(World world, PlayerEntity player) {
 		int sum = 0;
 		int count = 0;
 		
@@ -259,7 +259,7 @@ public class AmbientEngine {
 		return new TerrainHeight((double) sum / count, min, max);
 	}
 	
-	public PairList<BiomeArea, Float> calculateBiomes(World world, EntityPlayer player, double volume) {
+	public PairList<BiomeArea, Float> calculateBiomes(World world, PlayerEntity player, double volume) {
 		PairList<BiomeArea, Float> biomes = new PairList<>();
 		if (volume > 0.0) {
 			
@@ -298,8 +298,8 @@ public class AmbientEngine {
 		
 		for (y = 45; y < 256; ++y) {
 			pos.setY(y);
-			IBlockState state = world.getBlockState(pos);
-			if ((state.isOpaqueCube(world, pos) && !(state.getBlock() instanceof BlockLeaves)) || state.getBlock() == Blocks.WATER)
+			BlockState state = world.getBlockState(pos);
+			if ((state.isOpaqueCube(world, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.getBlock() == Blocks.WATER)
 				heighest = y;
 		}
 		

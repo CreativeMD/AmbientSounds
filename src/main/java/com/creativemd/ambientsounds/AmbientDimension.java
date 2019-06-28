@@ -57,7 +57,7 @@ public class AmbientDimension {
 		if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.dimension.getDimension().getType().getId()))
 			return false;
 		
-		String dimensionTypeName = DimensionType.func_212678_a(world.dimension.getDimension().getType()).getPath();
+		String dimensionTypeName = DimensionType.getKey(world.dimension.getDimension().getType()).getPath();
 		
 		if (badDimensionNames != null) {
 			for (int j = 0; j < badDimensionNames.length; j++)

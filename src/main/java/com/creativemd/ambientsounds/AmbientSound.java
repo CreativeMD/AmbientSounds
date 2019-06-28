@@ -3,7 +3,12 @@ package com.creativemd.ambientsounds;
 import java.util.Arrays;
 import java.util.Random;
 
+import net.minecraft.client.audio.ITickableSound;
+import net.minecraft.client.audio.Sound;
+import net.minecraft.client.audio.SoundEventAccessor;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 
 public class AmbientSound extends AmbientCondition {
@@ -189,13 +194,8 @@ public class AmbientSound extends AmbientCondition {
 		if (currentPropertries.length != null)
 			stream.duration = (int) currentPropertries.length.randomValue();
 		
-		engine.soundEngine.play(randomOffset(), stream);
+		engine.soundEngine.play(stream);
 		return stream;
-	}
-	
-	protected int randomOffset() {
-		//return currentPropertries.offset != null ? (int) currentPropertries.offset.randomValue() : 0;
-		return 0;
 	}
 	
 	public boolean isPlaying() {
@@ -244,12 +244,13 @@ public class AmbientSound extends AmbientCondition {
 		return currentVolume * volumeSetting;
 	}
 	
-	public class SoundStream {
+	public class SoundStream implements ITickableSound {
 		
 		public final int index;
 		public final ResourceLocation location;
 		
-		public String systemName;
+		public float generatedVoume;
+		public SoundEventAccessor soundeventaccessor;
 		
 		public double volume;
 		public double pitch;
@@ -263,6 +264,7 @@ public class AmbientSound extends AmbientCondition {
 			this.index = index;
 			this.location = AmbientSound.this.files[index];
 			this.volume = AmbientSound.this.getCombinedVolume();
+			this.generatedVoume = (float) volume;
 		}
 		
 		public boolean loop() {
@@ -301,9 +303,84 @@ public class AmbientSound extends AmbientCondition {
 		
 		@Override
 		public String toString() {
-			return "l" + location + "v:" + (Math.round((double) volume * 100) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
+			return "l" + location + "v:" + (Math.round(volume * 100) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
 		}
 		
+		@Override
+		public boolean canRepeat() {
+			return loop();
+		}
+		
+		@Override
+		public SoundEventAccessor createAccessor(SoundHandler sndHandler) {
+			soundeventaccessor = sndHandler.getAccessor(location);
+			return soundeventaccessor;
+		}
+		
+		@Override
+		public boolean func_217861_m() {
+			return true;
+		}
+		
+		@Override
+		public AttenuationType getAttenuationType() {
+			return AttenuationType.NONE;
+		}
+		
+		@Override
+		public SoundCategory getCategory() {
+			return SoundCategory.AMBIENT;
+		}
+		
+		@Override
+		public float getPitch() {
+			return (float) pitch;
+		}
+		
+		@Override
+		public int getRepeatDelay() {
+			return 0;
+		}
+		
+		@Override
+		public Sound getSound() {
+			return soundeventaccessor.cloneEntry();
+		}
+		
+		@Override
+		public ResourceLocation getSoundLocation() {
+			return location;
+		}
+		
+		@Override
+		public float getVolume() {
+			return generatedVoume;
+		}
+		
+		@Override
+		public float getX() {
+			return 0;
+		}
+		
+		@Override
+		public float getY() {
+			return 0;
+		}
+		
+		@Override
+		public float getZ() {
+			return 0;
+		}
+		
+		@Override
+		public boolean isDonePlaying() {
+			return false;
+		}
+		
+		@Override
+		public void tick() {
+			
+		}
 	}
 	
 	@Override
