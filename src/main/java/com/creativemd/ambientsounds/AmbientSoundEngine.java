@@ -63,15 +63,16 @@ public class AmbientSoundEngine {
 					SoundStream sound = iterator.next();
 					
 					boolean playing;
-					if (!handler.func_215294_c(sound))
+					if (!handler.isPlaying(sound))
 						if (sound.hasPlayedOnce())
 							playing = false;
 						else
 							continue;
 					else
-						playing = handler.func_215294_c(sound);
+						playing = true;
 					
 					if (sound.hasPlayedOnce() && !playing) {
+						System.out.println("Finished " + sound);
 						sound.onFinished();
 						handler.stop(sound);
 						iterator.remove();
@@ -100,6 +101,7 @@ public class AmbientSoundEngine {
 	
 	public void play(SoundStream stream) {
 		handler.play(stream);
+		System.out.println("playing " + stream);
 		stream.onStart();
 		synchronized (sounds) {
 			sounds.add(stream);

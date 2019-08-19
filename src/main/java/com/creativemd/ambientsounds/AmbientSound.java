@@ -303,7 +303,7 @@ public class AmbientSound extends AmbientCondition {
 		
 		@Override
 		public String toString() {
-			return "l" + location + "v:" + (Math.round(volume * 100) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
+			return "l:" + location + ",v:" + (Math.round(volume * 100) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
 		}
 		
 		@Override
@@ -315,11 +315,6 @@ public class AmbientSound extends AmbientCondition {
 		public SoundEventAccessor createAccessor(SoundHandler sndHandler) {
 			soundeventaccessor = sndHandler.getAccessor(location);
 			return soundeventaccessor;
-		}
-		
-		@Override
-		public boolean func_217861_m() {
-			return true;
 		}
 		
 		@Override
@@ -380,6 +375,11 @@ public class AmbientSound extends AmbientCondition {
 		@Override
 		public void tick() {
 			
+		}
+		
+		@Override
+		public boolean isGlobal() {
+			return false;
 		}
 	}
 	

@@ -27,7 +27,6 @@ public class AmbientSounds {
 	}
 	
 	//public static CommentedConfig config;
-	
 	public static int streamingChannels = 11;
 	public static int normalChannels = 21;
 	
@@ -39,7 +38,6 @@ public class AmbientSounds {
 	}
 	
 	private void doClientStuff(final FMLClientSetupEvent event) {
-		
 		/* ClientCommandHandler.instance.registerCommand(new CommandBase() {
 		 * 
 		 * @Override
