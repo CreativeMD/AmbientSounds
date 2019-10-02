@@ -208,7 +208,11 @@ public class AmbientTickHandler {
 				if (enviroment == null)
 					enviroment = new AmbientEnviroment(player);
 				
-				enviroment.dimension = engine.getDimension(world);
+				AmbientDimension newDimension = engine.getDimension(world);
+				if (enviroment.dimension != newDimension) {
+					engine.changeDimension(enviroment, newDimension);
+					enviroment.dimension = newDimension;
+				}
 				
 				if (timer % engine.enviromentTickTime == 0) {
 					enviroment.world = world;

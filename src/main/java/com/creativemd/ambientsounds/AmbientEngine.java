@@ -234,6 +234,18 @@ public class AmbientEngine {
 		
 	}
 	
+	public void changeDimension(AmbientEnviroment env, AmbientDimension newDimension) {
+		if (env.dimension == null)
+			return;
+		
+		for (AmbientRegion region : env.dimension.regions) {
+			if (region.isActive()) {
+				region.deactivate();
+				activeRegions.remove(region);
+			}
+		}
+	}
+	
 	public TerrainHeight calculateAverageHeight(World world, PlayerEntity player) {
 		int sum = 0;
 		int count = 0;
