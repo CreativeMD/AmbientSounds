@@ -308,7 +308,7 @@ public class AmbientSound extends AmbientCondition {
 		
 		@Override
 		public boolean canRepeat() {
-			return loop();
+			return false;
 		}
 		
 		@Override
@@ -379,7 +379,7 @@ public class AmbientSound extends AmbientCondition {
 		
 		@Override
 		public boolean isGlobal() {
-			return false;
+			return true;
 		}
 	}
 	
