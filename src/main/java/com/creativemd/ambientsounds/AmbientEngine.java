@@ -235,7 +235,7 @@ public class AmbientEngine {
 	}
 	
 	public void changeDimension(AmbientEnviroment env, AmbientDimension newDimension) {
-		if (env.dimension == null)
+		if (env.dimension == null || env.dimension.regions == null)
 			return;
 		
 		for (AmbientRegion region : env.dimension.regions) {
