@@ -31,8 +31,8 @@ import paulscode.sound.Source;
 
 public class AmbientSoundEngine {
 	
-	private static Field system = ReflectionHelper.findField(SoundManager.class, "sndSystem", "field_148620_e");
-	private static Field loaded = ReflectionHelper.findField(SoundManager.class, "loaded", "field_148617_f");
+	private static Field system = ReflectionHelper.findField(SoundManager.class, new String[] { "sndSystem", "field_148620_e" });
+	private static Field loaded = ReflectionHelper.findField(SoundManager.class, new String[] { "loaded", "field_148617_f" });
 	
 	public Library library;
 	
@@ -185,14 +185,16 @@ public class AmbientSoundEngine {
 	}
 	
 	private static URL getURLForSoundResource(final ResourceLocation p_148612_0_) {
-		String s = String.format("%s:%s:%s", new Object[] { "mcsounddomain", p_148612_0_.getResourceDomain(),
-		        p_148612_0_.getResourcePath() });
+		String s = String.format("%s:%s:%s", new Object[] { "mcsounddomain", p_148612_0_.getResourceDomain(), p_148612_0_.getResourcePath() });
 		URLStreamHandler urlstreamhandler = new URLStreamHandler() {
+			@Override
 			protected URLConnection openConnection(final URL p_openConnection_1_) {
 				return new URLConnection(p_openConnection_1_) {
+					@Override
 					public void connect() throws IOException {
 					}
 					
+					@Override
 					public InputStream getInputStream() throws IOException {
 						return Minecraft.getMinecraft().getResourceManager().getResource(p_148612_0_).getInputStream();
 					}
