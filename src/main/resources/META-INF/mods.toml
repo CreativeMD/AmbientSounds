@@ -10,6 +10,8 @@ logoFile="ambientsounds.png"
 	side="CLIENT"
 	displayURL="https://minecraft.curseforge.com/projects/ambientsounds"
 	authors="CreativeMD"
+	clientSideOnly="true"
+	acceptableRemoteVersions="*"
 	description='''
 	Expands minecraft's ambient sounds.
 	'''
