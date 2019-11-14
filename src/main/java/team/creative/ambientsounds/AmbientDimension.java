@@ -1,12 +1,12 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.creativemd.ambientsounds.AmbientEnviroment.TerrainHeight;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
 
 public class AmbientDimension {
 	

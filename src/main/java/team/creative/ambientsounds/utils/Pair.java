@@ -1,4 +1,4 @@
-package com.creativemd.ambientsounds.utils;
+package team.creative.ambientsounds.utils;
 
 import java.util.Map.Entry;
 

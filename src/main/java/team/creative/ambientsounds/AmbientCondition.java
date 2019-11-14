@@ -1,11 +1,8 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
-import com.creativemd.ambientsounds.AmbientEnviroment.BlockSpot;
-import com.creativemd.ambientsounds.utils.Pair;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.block.AirBlock;
@@ -15,6 +12,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
+import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
+import team.creative.ambientsounds.AmbientEnviroment.BlockSpot;
+import team.creative.ambientsounds.utils.Pair;
 
 public class AmbientCondition extends AmbientSoundProperties {
 	

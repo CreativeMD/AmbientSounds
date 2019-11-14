@@ -1,12 +1,9 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
-import com.creativemd.ambientsounds.utils.Pair;
-import com.creativemd.ambientsounds.utils.PairList;
 import com.google.common.base.Strings;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -25,6 +22,9 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
+import team.creative.ambientsounds.utils.Pair;
+import team.creative.ambientsounds.utils.PairList;
 
 public class AmbientTickHandler {
 	

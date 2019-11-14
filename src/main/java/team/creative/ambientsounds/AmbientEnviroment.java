@@ -1,8 +1,6 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import java.util.List;
-
-import com.creativemd.ambientsounds.utils.PairList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,6 +12,7 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import team.creative.ambientsounds.utils.PairList;
 
 public class AmbientEnviroment {
 	

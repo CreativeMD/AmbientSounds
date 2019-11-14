@@ -1,9 +1,9 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
-import com.creativemd.ambientsounds.AmbientCondition.AmbientMinMaxCondition;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.util.math.MathHelper;
+import team.creative.ambientsounds.AmbientCondition.AmbientMinMaxCondition;
 
 public class AmbientSoundProperties {
 	

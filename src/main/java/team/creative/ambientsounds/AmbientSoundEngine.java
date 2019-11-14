@@ -1,4 +1,4 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -6,13 +6,12 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
-import com.creativemd.ambientsounds.AmbientSound.SoundStream;
-
 import cpw.mods.modlauncher.api.INameMappingService.Domain;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper.UnableToFindFieldException;
+import team.creative.ambientsounds.AmbientSound.SoundStream;
 
 public class AmbientSoundEngine {
 	

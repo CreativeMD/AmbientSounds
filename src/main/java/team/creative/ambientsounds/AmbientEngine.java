@@ -1,4 +1,4 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -8,10 +8,6 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
-import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
-import com.creativemd.ambientsounds.AmbientEnviroment.TerrainHeight;
-import com.creativemd.ambientsounds.utils.Pair;
-import com.creativemd.ambientsounds.utils.PairList;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +30,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
+import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
+import team.creative.ambientsounds.utils.Pair;
+import team.creative.ambientsounds.utils.PairList;
 
 public class AmbientEngine {
 	

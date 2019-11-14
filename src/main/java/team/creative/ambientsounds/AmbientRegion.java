@@ -1,4 +1,4 @@
-package com.creativemd.ambientsounds;
+package team.creative.ambientsounds;
 
 import java.util.ArrayList;
 import java.util.Iterator;
