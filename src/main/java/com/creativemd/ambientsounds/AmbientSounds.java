@@ -16,10 +16,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
-@Mod(value = "ambientsounds")
+@Mod(value = AmbientSounds.MODID)
 public class AmbientSounds {
 	
-	public static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger(AmbientSounds.MODID);
+	
+	public static final String MODID = "ambientsounds";
 	
 	public AmbientSounds() {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
