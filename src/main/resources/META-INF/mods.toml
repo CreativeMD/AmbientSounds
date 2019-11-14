@@ -12,6 +12,4 @@ logoFile="ambientsounds.png"
 	authors="CreativeMD"
 	clientSideOnly="true"
 	acceptableRemoteVersions="*"
-	description='''
-	Expands minecraft's ambient sounds.
-	'''
+	description='''Expands minecraft's ambient sounds.'''
