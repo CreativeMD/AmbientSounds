@@ -66,7 +66,7 @@ public class AmbientEngine {
 			AmbientEngine engine = gson.fromJson(root, AmbientEngine.class);
 			engine.init();
 			
-			AmbientSounds.LOGGER.info("Successfully loaded sound engine. %s dimension(s) and %s region(s)", engine.dimensions.length, engine.allRegions.size());
+			AmbientSounds.LOGGER.info("Successfully loaded sound engine. {} dimension(s) and {} region(s)", engine.dimensions.length, engine.allRegions.size());
 			engine.soundEngine = soundEngine;
 			
 			return engine;
