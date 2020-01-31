@@ -207,7 +207,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (minHeightRelative != null) {
-			double volume = minHeightRelative.volume(env.player.posY - env.minHeight);
+			double volume = minHeightRelative.volume(env.player.func_226280_cw_() - env.minHeight);
 			if (volume <= 0)
 				return null;
 			
@@ -215,7 +215,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (maxHeightRelative != null) {
-			double volume = maxHeightRelative.volume(env.player.posY - env.maxHeight);
+			double volume = maxHeightRelative.volume(env.player.func_226280_cw_() - env.maxHeight);
 			if (volume <= 0)
 				return null;
 			
@@ -223,7 +223,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (absoluteHeight != null) {
-			double volume = absoluteHeight.volume(env.player.posY);
+			double volume = absoluteHeight.volume(env.player.func_226280_cw_());
 			if (volume <= 0)
 				return null;
 			

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.ambientsounds.utils.Pair;
 import team.creative.ambientsounds.utils.PairList;
@@ -91,7 +91,7 @@ public class AmbientTickHandler {
 	@SubscribeEvent
 	public void onRender(RenderTickEvent event) {
 		if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isGamePaused() && enviroment != null && mc.world != null) {
-			GlStateManager.pushMatrix();
+			RenderSystem.pushMatrix();
 			List<String> list = new ArrayList<>();
 			
 			AmbientDimension dimension = engine.getDimension(mc.world);
@@ -119,7 +119,7 @@ public class AmbientTickHandler {
 			details.add("playing", engine.soundEngine.playingCount());
 			details.add("light", enviroment.blocks.averageLight);
 			details.add("outside", enviroment.blocks.outsideVolume);
-			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.posY - enviroment.minHeight) + "," + df.format(enviroment.player.posY - enviroment.maxHeight));
+			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.func_226280_cw_() - enviroment.minHeight) + "," + df.format(enviroment.player.func_226280_cw_() - enviroment.maxHeight));
 			
 			list.add(format(details));
 			
@@ -180,7 +180,7 @@ public class AmbientTickHandler {
 					mc.fontRenderer.drawString(s, 2, i1, 14737632);
 				}
 			}
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 		}
 	}
 	

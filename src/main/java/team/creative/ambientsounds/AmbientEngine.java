@@ -27,7 +27,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
@@ -253,7 +252,7 @@ public class AmbientEngine {
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
 		
-		MutableBlockPos pos = new MutableBlockPos();
+		BlockPos.Mutable pos = new BlockPos.Mutable();
 		BlockPos center = new BlockPos(player);
 		
 		for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
@@ -275,14 +274,14 @@ public class AmbientEngine {
 		PairList<BiomeArea, Float> biomes = new PairList<>();
 		if (volume > 0.0) {
 			
-			int posX = (int) player.posX;
-			int posZ = (int) player.posZ;
+			int posX = (int) player.func_226277_ct_();
+			int posZ = (int) player.func_226281_cx_();
 			BlockPos center = new BlockPos(posX, 0, posZ);
-			MutableBlockPos pos = new MutableBlockPos();
+			BlockPos.Mutable pos = new BlockPos.Mutable();
 			for (int x = -biomeScanCount; x <= biomeScanCount; x++) {
 				for (int z = -biomeScanCount; z <= biomeScanCount; z++) {
 					pos.setPos(posX + x * biomeScanDistance, 0, posZ + z * biomeScanDistance);
-					Biome biome = world.getBiome(pos);
+					Biome biome = world.func_226691_t_(pos);
 					
 					float biomeVolume = (float) ((1 - Math.sqrt(center.distanceSq(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
 					BiomeArea area = new BiomeArea(biome, pos);
@@ -304,7 +303,7 @@ public class AmbientEngine {
 		return biomes;
 	}
 	
-	public static int getHeightBlock(World world, MutableBlockPos pos) {
+	public static int getHeightBlock(World world, BlockPos.Mutable pos) {
 		int y;
 		int heighest = 2;
 		

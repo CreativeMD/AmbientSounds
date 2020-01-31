@@ -8,7 +8,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -61,7 +60,7 @@ public class AmbientEnviroment {
 	
 	public void setHeight(TerrainHeight terrain) {
 		this.averageHeight = terrain.averageHeight;
-		this.relativeHeight = player.posY - terrain.averageHeight;
+		this.relativeHeight = player.func_226280_cw_() - terrain.averageHeight;
 		this.minHeight = terrain.minHeight;
 		this.maxHeight = terrain.maxHeight;
 	}
@@ -94,7 +93,7 @@ public class AmbientEnviroment {
 		public void updateAllDirections(AmbientEngine engine) {
 			int lightspots = 0;
 			averageLight = 0;
-			MutableBlockPos pos = new MutableBlockPos();
+			BlockPos.Mutable pos = new BlockPos.Mutable();
 			for (Direction facing : Direction.values()) {
 				BlockSpot spot = updateDirection(pos, facing, engine);
 				if (spot != null) {
@@ -112,7 +111,7 @@ public class AmbientEnviroment {
 			outsideVolume = calculateOutsideVolume(engine);
 		}
 		
-		protected BlockSpot updateDirection(MutableBlockPos pos, Direction facing, AmbientEngine engine) {
+		protected BlockSpot updateDirection(BlockPos.Mutable pos, Direction facing, AmbientEngine engine) {
 			pos.setPos(player);
 			pos.setY(pos.getY() + 1);
 			
