@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-@Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds", acceptedMinecraftVersions = "", clientSideOnly = true, guiFactory = "com.creativemd.ambientsounds.AmbientSettings")
+@Mod(modid = AmbientSounds.modid, version = AmbientSounds.version, name = "Ambient Sounds", acceptedMinecraftVersions = "", clientSideOnly = true, dependencies = "required-before:creativecore", guiFactory = "com.creativemd.ambientsounds.AmbientSettings")
 public class AmbientSounds {
 	
 	public static final String modid = "ambientsounds";

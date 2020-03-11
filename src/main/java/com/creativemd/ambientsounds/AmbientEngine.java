@@ -88,6 +88,10 @@ public class AmbientEngine {
 	
 	protected transient AmbientSoundEngine soundEngine;
 	
+	protected transient AmbientDimension silentDimension;
+	
+	protected transient List<String> silentDimensions = new ArrayList<>();
+	
 	public AmbientRegion getRegion(String name) {
 		return allRegions.getValue(name);
 	}
@@ -117,12 +121,22 @@ public class AmbientEngine {
 	@SerializedName(value = "biome-scan-count")
 	public int biomeScanCount = 3;
 	
+	public AmbientEngine() {
+		this.silentDimension = new AmbientDimension();
+		this.silentDimension.name = "silent";
+		this.silentDimension.volumeSetting = 0;
+	}
+	
 	public AmbientDimension getDimension(World world) {
-		for (int i = 0; i < dimensions.length; i++) {
+		String dimensionTypeName = world.provider.getDimensionType().getName();
+		if (silentDimensions.contains(dimensionTypeName))
+			return silentDimension;
+		
+		for (int i = 0; i < dimensions.length; i++)
 			if (dimensions[i].is(world))
 				return dimensions[i];
-		}
-		return null;
+			
+		return silentDimension;
 	}
 	
 	public void stopEngine() {
@@ -220,12 +234,12 @@ public class AmbientEngine {
 		}
 	}
 	
-	public void fastTick() {
+	public void fastTick(AmbientEnviroment env) {
 		soundEngine.tick();
 		if (!activeRegions.isEmpty()) {
 			for (Iterator iterator = activeRegions.iterator(); iterator.hasNext();) {
 				AmbientRegion region = (AmbientRegion) iterator.next();
-				if (!region.fastTick()) {
+				if (!region.fastTick(env)) {
 					region.deactivate();
 					iterator.remove();
 				}

@@ -3,11 +3,15 @@ package com.creativemd.ambientsounds;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.creativemd.ambientsounds.AmbientEnviroment.TerrainHeight;
+import com.creativemd.creativecore.common.config.api.CreativeConfig;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.world.World;
 
 public class AmbientDimension {
+	
+	@CreativeConfig.DecimalRange(min = 0, max = 1)
+	public transient double volumeSetting = 1;
 	
 	public String name;
 	
@@ -100,7 +104,7 @@ public class AmbientDimension {
 		}
 		
 		if (averageHeight != null)
-			env.setHeight(new TerrainHeight(averageHeight, (int) averageHeight, (int) averageHeight));
+			env.setHeight(new TerrainHeight(averageHeight, averageHeight, averageHeight));
 	}
 	
 	@Override

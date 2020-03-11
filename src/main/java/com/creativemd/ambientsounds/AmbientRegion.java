@@ -45,11 +45,11 @@ public class AmbientRegion extends AmbientCondition {
 		return selection;
 	}
 	
-	public boolean fastTick() {
+	public boolean fastTick(AmbientEnviroment env) {
 		if (!playing.isEmpty()) {
 			for (Iterator<AmbientSound> iterator = playing.iterator(); iterator.hasNext();) {
 				AmbientSound sound = iterator.next();
-				if (!sound.fastTick()) {
+				if (!sound.fastTick(env)) {
 					sound.deactivate();
 					iterator.remove();
 				}

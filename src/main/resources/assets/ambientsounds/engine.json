@@ -60,7 +60,7 @@
     },
     {
       "name": "void",
-      "dimension-names": [ "The Void", "???" ],
+      "dimension-names": [ "The Void", "???", "emptiness" ],
       "biome-selector": {
         "always": false
       },
@@ -127,6 +127,14 @@
       }
     },
     {
+      "name": "silent",
+      "dimension-names": [ "Wyvern Lair" ],
+      "disable-all": true,
+      "biome-selector": {
+        "always": false
+      }
+    },
+    {
       "name": "galacticraft",
       "dimension-names": [ "moon", "space", "asteroids" ],
       "disable-all": true,
@@ -153,6 +161,13 @@
           ]
         }
       ]
+    },
+    {
+      "name": "underworldbiomes",
+      "dimension-names": [ "EREBUS" ],
+      "biome-selector": {
+        "always": true
+      }
     },
     {
       "name": "surface",

@@ -1,5 +1,6 @@
 package com.creativemd.ambientsounds;
 
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,10 @@ import java.util.List;
 import com.creativemd.ambientsounds.AmbientEnviroment.BiomeArea;
 import com.creativemd.ambientsounds.utils.Pair;
 import com.creativemd.ambientsounds.utils.PairList;
+import com.creativemd.creativecore.CreativeCore;
+import com.creativemd.creativecore.common.config.holder.ConfigHolderDynamic;
+import com.creativemd.creativecore.common.config.holder.CreativeConfigRegistry;
+import com.creativemd.creativecore.common.config.sync.ConfigSynchronization;
 import com.google.common.base.Strings;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
@@ -26,6 +31,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
 import paulscode.sound.SoundSystemConfig;
 
 public class AmbientTickHandler {
@@ -41,6 +48,29 @@ public class AmbientTickHandler {
 	
 	public void setEngine(AmbientEngine engine) {
 		this.engine = engine;
+		
+		initConfiguration();
+	}
+	
+	public void initConfiguration() {
+		CreativeConfigRegistry.ROOT.removeField(AmbientSounds.modid);
+		ConfigHolderDynamic holder = CreativeConfigRegistry.ROOT.registerFolder(AmbientSounds.modid, ConfigSynchronization.CLIENT);
+		ConfigHolderDynamic sounds = holder.registerFolder("sounds");
+		Field soundField = ReflectionHelper.findField(AmbientSound.class, "volumeSetting");
+		for (Pair<String, AmbientRegion> pair : engine.allRegions)
+			if (pair.value.sounds != null)
+				for (AmbientSound sound : pair.value.sounds)
+					sounds.registerField(pair.key + "." + sound.name, soundField, sound);
+				
+		ConfigHolderDynamic dimensions = holder.registerFolder("dimensions");
+		Field dimensionField = ReflectionHelper.findField(AmbientDimension.class, "volumeSetting");
+		for (AmbientDimension dimension : engine.dimensions)
+			dimensions.registerField(dimension.name, dimensionField, dimension);
+		
+		holder.registerField("silent-dimensions", ReflectionHelper.findField(AmbientEngine.class, "silentDimensions"), engine);
+		
+		CreativeCore.configHandler.load(AmbientSounds.modid, Side.CLIENT);
+		CreativeCore.configHandler.save(AmbientSounds.modid, Side.CLIENT);
 	}
 	
 	@SubscribeEvent
@@ -240,7 +270,7 @@ public class AmbientTickHandler {
 					engine.tick(enviroment);
 				}
 				
-				engine.fastTick();
+				engine.fastTick(enviroment);
 				
 				timer++;
 			} else if (!engine.activeRegions.isEmpty())
