@@ -789,6 +789,7 @@
     {
       "name": "beach",
       "biomes": [ "beach", "shore", "tropics beach" ],
+      "bad-biomes": [ "gravel_beach" ],
       "special-biomes": {
         "temperature": {
           "min": 0
