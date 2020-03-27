@@ -207,7 +207,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (minHeightRelative != null) {
-			double volume = minHeightRelative.volume(env.player.func_226280_cw_() - env.minHeight);
+			double volume = minHeightRelative.volume(env.player.getPosYEye() - env.minHeight);
 			if (volume <= 0)
 				return null;
 			
@@ -215,7 +215,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (maxHeightRelative != null) {
-			double volume = maxHeightRelative.volume(env.player.func_226280_cw_() - env.maxHeight);
+			double volume = maxHeightRelative.volume(env.player.getPosYEye() - env.maxHeight);
 			if (volume <= 0)
 				return null;
 			
@@ -223,7 +223,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		}
 		
 		if (absoluteHeight != null) {
-			double volume = absoluteHeight.volume(env.player.func_226280_cw_());
+			double volume = absoluteHeight.volume(env.player.getPosYEye());
 			if (volume <= 0)
 				return null;
 			
@@ -305,7 +305,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 			if (topBlock != null && !biome.checkTopBlock(blocks))
 				return false;
 			
-			if (temperature != null && !temperature.is(biome.biome.func_225486_c(biome.pos)))
+			if (temperature != null && !temperature.is(biome.biome.getTemperatureRaw(biome.pos)))
 				return false;
 			
 			if (treesPerChunk != null)

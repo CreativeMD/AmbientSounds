@@ -274,14 +274,14 @@ public class AmbientEngine {
 		PairList<BiomeArea, Float> biomes = new PairList<>();
 		if (volume > 0.0) {
 			
-			int posX = (int) player.func_226277_ct_();
-			int posZ = (int) player.func_226281_cx_();
+			int posX = (int) player.getPosX();
+			int posZ = (int) player.getPosZ();
 			BlockPos center = new BlockPos(posX, 0, posZ);
 			BlockPos.Mutable pos = new BlockPos.Mutable();
 			for (int x = -biomeScanCount; x <= biomeScanCount; x++) {
 				for (int z = -biomeScanCount; z <= biomeScanCount; z++) {
 					pos.setPos(posX + x * biomeScanDistance, 0, posZ + z * biomeScanDistance);
-					Biome biome = world.func_226691_t_(pos);
+					Biome biome = world.getBiome(pos);
 					
 					float biomeVolume = (float) ((1 - Math.sqrt(center.distanceSq(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
 					BiomeArea area = new BiomeArea(biome, pos);

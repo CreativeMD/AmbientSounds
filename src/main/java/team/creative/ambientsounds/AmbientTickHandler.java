@@ -119,7 +119,7 @@ public class AmbientTickHandler {
 			details.add("playing", engine.soundEngine.playingCount());
 			details.add("light", enviroment.blocks.averageLight);
 			details.add("outside", enviroment.blocks.outsideVolume);
-			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.func_226280_cw_() - enviroment.minHeight) + "," + df.format(enviroment.player.func_226280_cw_() - enviroment.maxHeight));
+			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.minHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.maxHeight));
 			
 			list.add(format(details));
 			

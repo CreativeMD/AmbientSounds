@@ -60,7 +60,7 @@ public class AmbientEnviroment {
 	
 	public void setHeight(TerrainHeight terrain) {
 		this.averageHeight = terrain.averageHeight;
-		this.relativeHeight = player.func_226280_cw_() - terrain.averageHeight;
+		this.relativeHeight = player.getPosYEye() - terrain.averageHeight;
 		this.minHeight = terrain.minHeight;
 		this.maxHeight = terrain.maxHeight;
 	}
