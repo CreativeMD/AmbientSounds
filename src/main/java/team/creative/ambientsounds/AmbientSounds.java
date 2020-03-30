@@ -41,43 +41,6 @@ public class AmbientSounds {
 		
 		tickHandler = new AmbientTickHandler();
 		MinecraftForge.EVENT_BUS.register(tickHandler);
-		/* ClientCommandHandler.instance.registerCommand(new CommandBase() {
-		 * 
-		 * @Override
-		 * public String getUsage(ICommandSender sender) {
-		 * return "reload ambient sound engine";
-		 * }
-		 * 
-		 * @Override
-		 * public String getName() {
-		 * return "ambient-reload";
-		 * }
-		 * 
-		 * @Override
-		 * public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		 * if (tickHandler.engine != null)
-		 * tickHandler.engine.stopEngine();
-		 * tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
-		 * }
-		 * });
-		 * 
-		 * ClientCommandHandler.instance.registerCommand(new CommandBase() {
-		 * 
-		 * @Override
-		 * public String getUsage(ICommandSender sender) {
-		 * return "show ambient engine debug info";
-		 * }
-		 * 
-		 * @Override
-		 * public String getName() {
-		 * return "ambient-debug";
-		 * }
-		 * 
-		 * @Override
-		 * public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		 * tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
-		 * }
-		 * }); */
 		
 		Minecraft minecraft = Minecraft.getInstance();
 		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
