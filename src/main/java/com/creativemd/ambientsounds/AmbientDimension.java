@@ -56,7 +56,6 @@ public class AmbientDimension {
 	}
 	
 	public boolean is(World world) {
-		
 		if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.provider.getDimension()))
 			return false;
 		
