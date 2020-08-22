@@ -308,7 +308,7 @@ public class AmbientSound extends AmbientCondition {
 		
 		@Override
 		public boolean canRepeat() {
-			return false;
+			return true;
 		}
 		
 		@Override
@@ -353,17 +353,17 @@ public class AmbientSound extends AmbientCondition {
 		}
 		
 		@Override
-		public float getX() {
+		public double getX() {
 			return 0;
 		}
 		
 		@Override
-		public float getY() {
+		public double getY() {
 			return 0;
 		}
 		
 		@Override
-		public float getZ() {
+		public double getZ() {
 			return 0;
 		}
 		

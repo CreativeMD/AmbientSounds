@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[24,)"
 #issueTrackerURL="https://github.com/CreativeMD/AmbientSounds/issues"
 logoFile="ambientsounds.png"
+license="GNU General Public License v3.0"
 
 [[mods]]
 	modId="ambientsounds"

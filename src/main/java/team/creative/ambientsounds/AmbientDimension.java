@@ -1,11 +1,8 @@
 package team.creative.ambientsounds;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
 
 public class AmbientDimension {
@@ -54,10 +51,10 @@ public class AmbientDimension {
 	
 	public boolean is(World world) {
 		
-		if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.dimension.getDimension().getType().getId()))
-			return false;
+		//if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.func_230315_m_().field_235999_c_.getId()))
+		//return false;
 		
-		String dimensionTypeName = DimensionType.getKey(world.dimension.getDimension().getType()).getPath();
+		String dimensionTypeName = world.func_234923_W_().func_240901_a_().toString();
 		
 		if (badDimensionNames != null) {
 			for (int j = 0; j < badDimensionNames.length; j++)
@@ -65,11 +62,11 @@ public class AmbientDimension {
 					return false;
 		}
 		
-		if (id != null && world.dimension.getDimension().getType().getId() == id)
-			return true;
+		//if (id != null && world.dimension.getDimension().getType().getId() == id)
+		//return true;
 		
-		if (dimensionIds != null && ArrayUtils.contains(dimensionIds, world.dimension.getDimension().getType().getId()))
-			return true;
+		//if (dimensionIds != null && ArrayUtils.contains(dimensionIds, world.dimension.getDimension().getType().getId()))
+		//return true;
 		
 		if (dimensionNames != null) {
 			for (int j = 0; j < dimensionNames.length; j++)

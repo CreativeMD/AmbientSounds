@@ -305,7 +305,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 			if (topBlock != null && !biome.checkTopBlock(blocks))
 				return false;
 			
-			if (temperature != null && !temperature.is(biome.biome.getTemperatureRaw(biome.pos)))
+			if (temperature != null && !temperature.is(biome.biome.getTemperature(biome.pos)))
 				return false;
 			
 			if (treesPerChunk != null)

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.block.material.Material;
@@ -12,10 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -101,15 +101,15 @@ public class AmbientTickHandler {
 			details.add("storm", enviroment.thundering);
 			details.add("b-volume", enviroment.biomeVolume);
 			details.add("underwater", enviroment.underwater);
-			details.add("dim-name", DimensionType.getKey(mc.world.dimension.getDimension().getType()).getPath());
+			details.add("dim-name", mc.world.func_234923_W_().func_240901_a_().toString());
+			//details.add("dim-name", mc.world.func_234922_V_().func_240901_a_().toString());
 			
 			list.add(format(details));
 			
 			details.clear();
 			
-			for (Pair<BiomeArea, Float> pair : enviroment.biomes) {
-				details.add(pair.key.biome.getTranslationKey(), pair.value);
-			}
+			for (Pair<BiomeArea, Float> pair : enviroment.biomes)
+				details.add(pair.key.biome.getCategory().getName(), pair.value);
 			
 			list.add(format(details));
 			
@@ -176,8 +176,9 @@ public class AmbientTickHandler {
 					int j = mc.fontRenderer.FONT_HEIGHT;
 					int k = mc.fontRenderer.getStringWidth(s);
 					int i1 = 2 + j * i;
-					GuiUtils.drawGradientRect(0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
-					mc.fontRenderer.drawString(s, 2, i1, 14737632);
+					MatrixStack mat = new MatrixStack();
+					GuiUtils.drawGradientRect(mat.getLast().getMatrix(), 0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
+					mc.fontRenderer.func_238405_a_(mat, s, 2, i1, 14737632);
 				}
 			}
 			RenderSystem.popMatrix();
@@ -237,14 +238,14 @@ public class AmbientTickHandler {
 				
 				if (timer % engine.soundTickTime == 0) {
 					
-					enviroment.setSunAngle((world.getCelestialAngle(mc.getRenderPartialTicks())));
+					enviroment.setSunAngle((float) Math.toDegrees(world.getCelestialAngleRadians(mc.getRenderPartialTicks())));
 					enviroment.updateWorld();
 					int depth = 0;
 					if (player.areEyesInFluid(FluidTags.WATER)) {
-						AxisAlignedBB bb = player.getBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D);
-						while (world.isMaterialInBB(bb, Material.WATER)) {
+						BlockPos blockpos = new BlockPos(player.getPositionVec()).up();
+						while (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
 							depth++;
-							bb = bb.offset(0, 1, 0);
+							blockpos = blockpos.up();
 						}
 						depth--;
 					}

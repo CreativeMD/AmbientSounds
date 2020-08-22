@@ -30,10 +30,6 @@ public class AmbientSounds {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 	}
 	
-	//public static CommentedConfig config;
-	public static int streamingChannels = 11;
-	public static int normalChannels = 21;
-	
 	public static AmbientTickHandler tickHandler;
 	
 	private void doClientStuff(final FMLClientSetupEvent event) {

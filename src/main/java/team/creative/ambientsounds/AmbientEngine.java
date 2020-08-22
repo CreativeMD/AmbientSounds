@@ -253,7 +253,7 @@ public class AmbientEngine {
 		int max = Integer.MIN_VALUE;
 		
 		BlockPos.Mutable pos = new BlockPos.Mutable();
-		BlockPos center = new BlockPos(player);
+		BlockPos center = player.func_233580_cy_();
 		
 		for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
 			for (int z = -averageHeightScanCount; z <= averageHeightScanCount; z++) {

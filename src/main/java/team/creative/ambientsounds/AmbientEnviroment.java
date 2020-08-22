@@ -44,7 +44,7 @@ public class AmbientEnviroment {
 	}
 	
 	public void updateWorld() {
-		this.raining = world.isRainingAt(player.getPosition());
+		this.raining = world.isRainingAt(player.func_233580_cy_());
 		this.thundering = world.isThundering();
 	}
 	
@@ -105,14 +105,14 @@ public class AmbientEnviroment {
 				
 			}
 			if (lightspots == 0)
-				averageLight = world.getLight(pos.setPos(player));
+				averageLight = world.getLight(pos.setPos(player.func_233580_cy_()));
 			else
 				averageLight /= lightspots;
 			outsideVolume = calculateOutsideVolume(engine);
 		}
 		
 		protected BlockSpot updateDirection(BlockPos.Mutable pos, Direction facing, AmbientEngine engine) {
-			pos.setPos(player);
+			pos.setPos(player.func_233580_cy_());
 			pos.setY(pos.getY() + 1);
 			
 			for (int i = 1; i < engine.blockScanDistance; i++) {
@@ -194,7 +194,7 @@ public class AmbientEnviroment {
 		
 		public boolean checkBiome(String[] names) {
 			for (String name : names) {
-				String biomename = biome.getTranslationKey().toLowerCase().replace("_", " ");
+				String biomename = biome.getCategory().getName().toLowerCase().replace("_", " ");
 				if (biomename.matches(".*" + name.replace("*", ".*") + ".*"))
 					return true;
 			}
@@ -202,7 +202,7 @@ public class AmbientEnviroment {
 		}
 		
 		public boolean checkTopBlock(List<Block> topBlocks) {
-			return topBlocks.contains(biome.getSurfaceBuilderConfig().getTop().getBlock());
+			return topBlocks.contains(biome.func_242440_e().func_242502_e().getTop().getBlock());
 		}
 		
 		@Override
