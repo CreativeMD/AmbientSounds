@@ -191,8 +191,7 @@ public class AmbientSoundEngine {
 			protected URLConnection openConnection(final URL p_openConnection_1_) {
 				return new URLConnection(p_openConnection_1_) {
 					@Override
-					public void connect() throws IOException {
-					}
+					public void connect() throws IOException {}
 					
 					@Override
 					public InputStream getInputStream() throws IOException {
