@@ -59,6 +59,26 @@
       ]
     },
     {
+      "name": "atum",
+      "dimension-names": [ "atum" ],
+      "biome-selector": {
+        "always": false
+      },
+      "regions": [
+        {
+          "name": "desert-wind",
+          "outside": true,
+          "volume": 0.5,
+          "sounds": [
+            {
+              "name": "wind",
+              "files": [ "ambientsounds:wind.heavy-wind" ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "void",
       "dimension-names": [ "The Void", "???", "emptiness" ],
       "biome-selector": {
@@ -660,7 +680,7 @@
       ],
       "variants": [
         {
-          "biomes": [ "desert", "quagmire", "petrified forest", "menelaus", "dry scrub" ],
+          "biomes": [ "desert", "petrified forest", "menelaus", "dry scrub" ],
           "bad-biomes": [ "lush desert" ]
         },
         {
@@ -708,6 +728,86 @@
           },
           "day": 0.05,
           "night": 0.15
+        }
+      ]
+    },
+    {
+      "name": "quagmire",
+      "biomes": [ "quagmire" ],
+      "sounds": [
+        {
+          "name": "cricket-swamp",
+          "files": [ "ambientsounds:animals.cricket-swamp" ],
+          "day": 0.3,
+          "night": 0,
+          "rain": false
+        },
+        {
+          "name": "cricket-warm-night",
+          "files": [ "ambientsounds:animals.cricket-warm-night", "ambientsounds:animals.cricket-warm-night2" ],
+          "rain": false,
+          "length": {
+            "min": 1000,
+            "max": 1500
+          },
+          "transition": 100,
+          "day": 0,
+          "night": 0.3
+        },
+        {
+          "name": "frog",
+          "files": [ "ambientsounds:animals.frog1", "ambientsounds:animals.frog2" ],
+          "pause": {
+            "min": 1000,
+            "max": 7500
+          },
+          "day": 0.05,
+          "night": 0.15
+        },
+         {
+          "name": "cicadas",
+          "files": [ "ambientsounds:animals.cicadas" ],
+          "day": 0.15,
+          "night": 0.01,
+          "length": {
+            "min": 100,
+            "max": 300
+          },
+          "pause": {
+            "min": 100,
+            "max": 600
+          }
+        },
+        {
+          "name": "cicadas-desert",
+          "files": [ "ambientsounds:animals.cicadas-desert" ],
+          "special-biomes": {
+            "temperature": {
+              "min": 0.8
+            }
+          },
+          "day": 1,
+          "night": 0,
+          "length": {
+            "min": 400,
+            "max": 900
+          },
+          "pause": {
+            "min": 500,
+            "max": 1000
+          }
+        },
+        {
+          "name": "cricket-warm-night",
+          "files": [ "ambientsounds:animals.cricket-warm-night", "ambientsounds:animals.cricket-warm-night2" ],
+          "rain": false,
+          "length": {
+            "min": 1000,
+            "max": 1500
+          },
+          "transition": 100,
+          "day": 0,
+          "night": 0.3
         }
       ]
     },
