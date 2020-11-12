@@ -14,3 +14,10 @@ license="GNU General Public License v3.0"
 	clientSideOnly="true"
 	acceptableRemoteVersions="*"
 	description='''Expands minecraft's ambient sounds.'''
+	
+[[dependencies.ambientsounds]]
+	modId="creativecore"
+	mandatory=true
+	ordering="NONE"
+	side="BOTH"
+	versionRange="[2.0.0,)"
