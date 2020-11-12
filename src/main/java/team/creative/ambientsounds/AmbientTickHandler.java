@@ -265,9 +265,7 @@ public class AmbientTickHandler {
 				}
 				
 				if (timer % engine.soundTickTime == 0) {
-					
-					//enviroment.setSunAngle((float) Math.toDegrees(world.getCelestialAngleRadians(mc.getRenderPartialTicks())));
-					enviroment.night = world.isNightTime();
+					enviroment.setSunAngle((float) Math.toDegrees(world.getCelestialAngleRadians(mc.getRenderPartialTicks())));
 					enviroment.updateWorld();
 					int depth = 0;
 					if (player.areEyesInFluid(FluidTags.WATER)) {

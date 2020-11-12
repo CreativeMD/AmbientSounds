@@ -49,8 +49,7 @@ public class AmbientEnviroment {
 	}
 	
 	public void setSunAngle(float sunAngle) {
-		System.out.println(sunAngle);
-		this.night = !(sunAngle > 0.75F || sunAngle < 0.25F);
+		this.night = sunAngle > 90 && sunAngle < 270;
 	}
 	
 	public void setUnderwater(double underwater) {
