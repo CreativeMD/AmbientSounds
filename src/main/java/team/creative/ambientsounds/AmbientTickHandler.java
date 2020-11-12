@@ -1,5 +1,6 @@
 package team.creative.ambientsounds;
 
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,15 +17,21 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.ambientsounds.utils.Pair;
 import team.creative.ambientsounds.utils.PairList;
+import team.creative.creativecore.CreativeCore;
+import team.creative.creativecore.common.config.holder.ConfigHolderDynamic;
+import team.creative.creativecore.common.config.holder.CreativeConfigRegistry;
+import team.creative.creativecore.common.config.sync.ConfigSynchronization;
 
 public class AmbientTickHandler {
 	
@@ -39,6 +46,27 @@ public class AmbientTickHandler {
 	
 	public void setEngine(AmbientEngine engine) {
 		this.engine = engine;
+		initConfiguration();
+	}
+	
+	public void initConfiguration() {
+		CreativeConfigRegistry.ROOT.removeField(AmbientSounds.MODID);
+		ConfigHolderDynamic holder = CreativeConfigRegistry.ROOT.registerFolder(AmbientSounds.MODID, ConfigSynchronization.CLIENT);
+		ConfigHolderDynamic sounds = holder.registerFolder("sounds");
+		Field soundField = ObfuscationReflectionHelper.findField(AmbientSound.class, "volumeSetting");
+		for (Pair<String, AmbientRegion> pair : engine.allRegions)
+			if (pair.value.sounds != null)
+				for (AmbientSound sound : pair.value.sounds)
+					sounds.registerField(pair.key + "." + sound.name, soundField, sound);
+				
+		ConfigHolderDynamic dimensions = holder.registerFolder("dimensions");
+		Field dimensionField = ObfuscationReflectionHelper.findField(AmbientDimension.class, "volumeSetting");
+		for (AmbientDimension dimension : engine.dimensions)
+			dimensions.registerField(dimension.name, dimensionField, dimension);
+		
+		holder.registerField("silent-dimensions", ObfuscationReflectionHelper.findField(AmbientEngine.class, "silentDimensions"), engine);
+		
+		CreativeCore.CONFIG_HANDLER.load(AmbientSounds.MODID, Dist.CLIENT);
 	}
 	
 	@SubscribeEvent
@@ -75,7 +103,7 @@ public class AmbientTickHandler {
 		return value.toString();
 	}
 	
-	private String format(PairList<String, Object> details) {
+	private String format(List<Pair<String, Object>> details) {
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
 		for (Pair<String, Object> pair : details) {
@@ -95,13 +123,13 @@ public class AmbientTickHandler {
 			List<String> list = new ArrayList<>();
 			
 			AmbientDimension dimension = engine.getDimension(mc.world);
-			PairList<String, Object> details = new PairList<>();
-			details.add("night", enviroment.night);
-			details.add("rain", enviroment.raining);
-			details.add("storm", enviroment.thundering);
-			details.add("b-volume", enviroment.biomeVolume);
-			details.add("underwater", enviroment.underwater);
-			details.add("dim-name", mc.world.func_234923_W_().func_240901_a_().toString());
+			List<Pair<String, Object>> details = new ArrayList<>();
+			details.add(new Pair<>("night", enviroment.night));
+			details.add(new Pair<>("rain", enviroment.raining));
+			details.add(new Pair<>("storm", enviroment.thundering));
+			details.add(new Pair<>("b-volume", enviroment.biomeVolume));
+			details.add(new Pair<>("underwater", enviroment.underwater));
+			details.add(new Pair<>("dim-name", mc.world.func_234923_W_().func_240901_a_().toString()));
 			//details.add("dim-name", mc.world.func_234922_V_().func_240901_a_().toString());
 			
 			list.add(format(details));
@@ -109,17 +137,17 @@ public class AmbientTickHandler {
 			details.clear();
 			
 			for (Pair<BiomeArea, Float> pair : enviroment.biomes)
-				details.add(pair.key.biome.getCategory().getName(), pair.value);
+				details.add(new Pair<>(pair.key.biome.getCategory().getName(), pair.value));
 			
 			list.add(format(details));
 			
 			details.clear();
 			
-			details.add("dimension", dimension);
-			details.add("playing", engine.soundEngine.playingCount());
-			details.add("light", enviroment.blocks.averageLight);
-			details.add("outside", enviroment.blocks.outsideVolume);
-			details.add("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.minHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.maxHeight));
+			details.add(new Pair<>("dimension", dimension));
+			details.add(new Pair<>("playing", engine.soundEngine.playingCount()));
+			details.add(new Pair<>("light", enviroment.blocks.averageLight));
+			details.add(new Pair<>("outside", enviroment.blocks.outsideVolume));
+			details.add(new Pair<>("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.minHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.maxHeight)));
 			
 			list.add(format(details));
 			
@@ -127,8 +155,8 @@ public class AmbientTickHandler {
 			
 			for (AmbientRegion region : engine.activeRegions) {
 				
-				details.add("region", TextFormatting.DARK_GREEN + region.name + TextFormatting.RESET);
-				details.add("playing", region.playing.size());
+				details.add(new Pair<>("region", TextFormatting.DARK_GREEN + region.name + TextFormatting.RESET));
+				details.add(new Pair<>("playing", region.playing.size()));
 				
 				list.add(format(details));
 				
@@ -140,12 +168,12 @@ public class AmbientTickHandler {
 					
 					String text = "";
 					if (sound.stream1 != null) {
-						details.add("n", sound.stream1.location);
-						details.add("v", sound.stream1.volume);
-						details.add("i", sound.stream1.index);
-						details.add("p", sound.stream1.pitch);
-						details.add("t", sound.stream1.ticksPlayed);
-						details.add("d", sound.stream1.duration);
+						details.add(new Pair<>("n", sound.stream1.location));
+						details.add(new Pair<>("v", sound.stream1.volume));
+						details.add(new Pair<>("i", sound.stream1.index));
+						details.add(new Pair<>("p", sound.stream1.pitch));
+						details.add(new Pair<>("t", sound.stream1.ticksPlayed));
+						details.add(new Pair<>("d", sound.stream1.duration));
 						
 						text = "[" + format(details) + "]";
 						
@@ -153,12 +181,12 @@ public class AmbientTickHandler {
 					}
 					
 					if (sound.stream2 != null) {
-						details.add("n", sound.stream2.location);
-						details.add("v", sound.stream2.volume);
-						details.add("i", sound.stream2.index);
-						details.add("p", sound.stream2.pitch);
-						details.add("t", sound.stream2.ticksPlayed);
-						details.add("d", sound.stream2.duration);
+						details.add(new Pair<>("n", sound.stream2.location));
+						details.add(new Pair<>("v", sound.stream2.volume));
+						details.add(new Pair<>("i", sound.stream2.index));
+						details.add(new Pair<>("p", sound.stream2.pitch));
+						details.add(new Pair<>("t", sound.stream2.ticksPlayed));
+						details.add(new Pair<>("d", sound.stream2.duration));
 						
 						text += "[" + format(details) + "]";
 						
@@ -204,7 +232,7 @@ public class AmbientTickHandler {
 			World world = mc.world;
 			PlayerEntity player = mc.player;
 			
-			if (world != null && player != null && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0) {
+			if (world != null && player != null && !mc.isGamePaused() && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0) {
 				
 				if (enviroment == null)
 					enviroment = new AmbientEnviroment(player);
@@ -238,7 +266,8 @@ public class AmbientTickHandler {
 				
 				if (timer % engine.soundTickTime == 0) {
 					
-					enviroment.setSunAngle((float) Math.toDegrees(world.getCelestialAngleRadians(mc.getRenderPartialTicks())));
+					//enviroment.setSunAngle((float) Math.toDegrees(world.getCelestialAngleRadians(mc.getRenderPartialTicks())));
+					enviroment.night = world.isNightTime();
 					enviroment.updateWorld();
 					int depth = 0;
 					if (player.areEyesInFluid(FluidTags.WATER)) {
@@ -254,7 +283,7 @@ public class AmbientTickHandler {
 					engine.tick(enviroment);
 				}
 				
-				engine.fastTick();
+				engine.fastTick(enviroment);
 				
 				timer++;
 			} else if (!engine.activeRegions.isEmpty())

@@ -10,11 +10,13 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
+import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientSound extends AmbientCondition {
 	
 	private static Random rand = new Random();
 	
+	@CreativeConfig.DecimalRange(min = 0, max = 1)
 	public transient double volumeSetting = 1;
 	public String name;
 	public transient String fullName;
@@ -74,7 +76,7 @@ public class AmbientSound extends AmbientCondition {
 		return index;
 	}
 	
-	public boolean fastTick() {
+	public boolean fastTick(AmbientEnviroment env) {
 		
 		if (currentVolume < aimedVolume)
 			currentVolume += Math.min(currentPropertries.fadeInVolume, aimedVolume - currentVolume);
@@ -84,8 +86,8 @@ public class AmbientSound extends AmbientCondition {
 		if (isPlaying()) {
 			
 			if (inTransition()) { // Two files are played
-				stream1.volume = Math.max(0, Math.min(stream1.volume, getCombinedVolume() * (1D - (double) transition / transitionTime)));
-				stream2.volume = Math.min(getCombinedVolume(), getCombinedVolume() * ((double) transition / transitionTime));
+				stream1.volume = Math.max(0, Math.min(stream1.volume, getCombinedVolume(env) * (1D - (double) transition / transitionTime)));
+				stream2.volume = Math.min(getCombinedVolume(env), getCombinedVolume(env) * ((double) transition / transitionTime));
 				
 				if (transition >= transitionTime) {
 					engine.soundEngine.stop(stream1);
@@ -101,14 +103,14 @@ public class AmbientSound extends AmbientCondition {
 				else if (stream1.duration > 0 && currentPropertries.length == null)
 					stream1.duration = -1;
 				
-				stream1.volume = getCombinedVolume();
+				stream1.volume = getCombinedVolume(env);
 				
 				if (currentPropertries.length != null) { // If the sound has a length
 					
 					if (currentPropertries.pause == null && files.length > 1) { // Continuous transition
 						if (stream1.remaining() <= 0) {
 							transition = 0;
-							stream2 = play(getRandomFileExcept(stream1.index));
+							stream2 = play(getRandomFileExcept(stream1.index), env);
 							stream2.volume = 0;
 							transitionTime = currentPropertries.transition != null ? currentPropertries.transition : 60;
 						}
@@ -120,7 +122,7 @@ public class AmbientSound extends AmbientCondition {
 							stream1 = null;
 							pauseTimer = -1;
 						} else if (fadeOutTime > stream1.remaining()) // about to exceed length -> fade out
-							stream1.volume = getCombinedVolume() * stream1.remaining() / fadeOutTime;
+							stream1.volume = getCombinedVolume(env) * stream1.remaining() / fadeOutTime;
 					}
 				}
 			}
@@ -153,7 +155,7 @@ public class AmbientSound extends AmbientCondition {
 					pauseTimer = (int) currentPropertries.pause.randomValue();
 				
 			if (pauseTimer <= 0)
-				stream1 = play(getRandomFile());
+				stream1 = play(getRandomFile(), env);
 			else
 				pauseTimer--;
 		}
@@ -188,8 +190,8 @@ public class AmbientSound extends AmbientCondition {
 		return aimedVolume > 0 || currentVolume > 0;
 	}
 	
-	protected SoundStream play(int index) {
-		SoundStream stream = new SoundStream(index);
+	protected SoundStream play(int index, AmbientEnviroment env) {
+		SoundStream stream = new SoundStream(index, env);
 		stream.pitch = aimedPitch;
 		if (currentPropertries.length != null)
 			stream.duration = (int) currentPropertries.length.randomValue();
@@ -240,7 +242,7 @@ public class AmbientSound extends AmbientCondition {
 		return currentPropertries.length != null || (currentPropertries.pause == null && files.length == 1);
 	}
 	
-	public double getCombinedVolume() {
+	public double getCombinedVolume(AmbientEnviroment env) {
 		return currentVolume * volumeSetting;
 	}
 	
@@ -260,10 +262,10 @@ public class AmbientSound extends AmbientCondition {
 		private boolean finished = false;
 		private boolean playedOnce;
 		
-		public SoundStream(int index) {
+		public SoundStream(int index, AmbientEnviroment env) {
 			this.index = index;
 			this.location = AmbientSound.this.files[index];
-			this.volume = AmbientSound.this.getCombinedVolume();
+			this.volume = AmbientSound.this.getCombinedVolume(env);
 			this.generatedVoume = (float) volume;
 		}
 		
@@ -303,12 +305,12 @@ public class AmbientSound extends AmbientCondition {
 		
 		@Override
 		public String toString() {
-			return "l:" + location + ",v:" + (Math.round(volume * 100) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
+			return "l:" + location + ",v:" + (Math.round(volume * 100D) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
 		}
 		
 		@Override
 		public boolean canRepeat() {
-			return true;
+			return loop();
 		}
 		
 		@Override

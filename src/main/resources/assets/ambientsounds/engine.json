@@ -792,6 +792,7 @@
         {
           "name": "seagull",
           "files": [ "ambientsounds:animals.seagull" ],
+          "volume": 0.4,
           "pause": {
             "min": 750,
             "max": 1000
@@ -800,6 +801,10 @@
         {
           "name": "seagull-long",
           "files": [ "ambientsounds:animals.seagull-long" ],
+          "length": {
+          	"min": 30,
+          	"max": 600
+          },
           "pause": {
             "min": 750,
             "max": 1000

@@ -4,8 +4,12 @@ import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.world.World;
 import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
+import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientDimension {
+	
+	@CreativeConfig.DecimalRange(min = 0, max = 1)
+	public transient double volumeSetting = 1;
 	
 	public String name;
 	
