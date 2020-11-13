@@ -6,7 +6,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,6 +22,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import team.creative.creativecore.client.command.ClientCommandRegistry;
 
 @Mod(value = AmbientSounds.MODID)
 public class AmbientSounds {
@@ -50,6 +55,16 @@ public class AmbientSounds {
 				tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
 			}
 		});
+		ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-debug").executes(x -> {
+			tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
+			return Command.SINGLE_SUCCESS;
+		}));
+		ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-reload").executes(x -> {
+			if (tickHandler.engine != null)
+				tickHandler.engine.stopEngine();
+			tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+			return Command.SINGLE_SUCCESS;
+		}));
 	}
 	
 }
