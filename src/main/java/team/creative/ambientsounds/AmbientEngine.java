@@ -127,7 +127,7 @@ public class AmbientEngine {
 	}
 	
 	public AmbientDimension getDimension(World world) {
-		String dimensionTypeName = world.func_234923_W_().func_240901_a_().toString();
+		String dimensionTypeName = world.getDimensionKey().getLocation().toString();
 		if (silentDimensions.contains(dimensionTypeName))
 			return silentDimension;
 		
@@ -267,7 +267,7 @@ public class AmbientEngine {
 		int max = Integer.MIN_VALUE;
 		
 		BlockPos.Mutable pos = new BlockPos.Mutable();
-		BlockPos center = player.func_233580_cy_();
+		BlockPos center = player.getPosition();
 		
 		for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
 			for (int z = -averageHeightScanCount; z <= averageHeightScanCount; z++) {

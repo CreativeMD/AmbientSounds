@@ -18,7 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
@@ -69,20 +68,6 @@ public class AmbientTickHandler {
 		CreativeCore.CONFIG_HANDLER.load(AmbientSounds.MODID, Dist.CLIENT);
 	}
 	
-	@SubscribeEvent
-	public void onClientChat(ClientChatEvent event) {
-		String message = event.getMessage();
-		if (message.startsWith("/ambient-reload")) {
-			if (engine != null)
-				engine.stopEngine();
-			setEngine(AmbientEngine.loadAmbientEngine(soundEngine));
-			event.setCanceled(true);
-		} else if (message.startsWith("/ambient-debug")) {
-			showDebugInfo = !showDebugInfo;
-			event.setCanceled(true);
-		}
-	}
-	
 	/* @SubscribeEvent
 	 * public void onWorldUnload(WorldEvent.Unload event) {
 	 * if (!event.getWorld().isRemote())
@@ -129,7 +114,7 @@ public class AmbientTickHandler {
 			details.add(new Pair<>("storm", enviroment.thundering));
 			details.add(new Pair<>("b-volume", enviroment.biomeVolume));
 			details.add(new Pair<>("underwater", enviroment.underwater));
-			details.add(new Pair<>("dim-name", mc.world.func_234923_W_().func_240901_a_().toString()));
+			details.add(new Pair<>("dim-name", mc.world.getDimensionKey().getLocation()));
 			//details.add("dim-name", mc.world.func_234922_V_().func_240901_a_().toString());
 			
 			list.add(format(details));
@@ -206,7 +191,7 @@ public class AmbientTickHandler {
 					int i1 = 2 + j * i;
 					MatrixStack mat = new MatrixStack();
 					GuiUtils.drawGradientRect(mat.getLast().getMatrix(), 0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
-					mc.fontRenderer.func_238405_a_(mat, s, 2, i1, 14737632);
+					mc.fontRenderer.drawStringWithShadow(mat, s, 2, i1, 14737632);
 				}
 			}
 			RenderSystem.popMatrix();
