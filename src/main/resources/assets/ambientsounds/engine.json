@@ -590,6 +590,7 @@
         {
           "name": "cicadas",
           "files": [ "ambientsounds:animals.cicadas" ],
+          "raining": false,
           "day": 0.15,
           "night": 0.01,
           "length": {
@@ -604,6 +605,7 @@
         {
           "name": "cicadas-desert",
           "files": [ "ambientsounds:animals.cicadas-desert" ],
+          "raining": false,
           "special-biomes": {
             "temperature": {
               "min": 0.8
@@ -644,6 +646,7 @@
         {
           "name": "bird-warm",
           "files": [ "ambientsounds:animals.bird-ambience-warm" ],
+          "raining": false,
           "day": 1,
           "night": 0
         }
