@@ -487,7 +487,7 @@
         {
           "name": "cricket",
           "files": [ "ambientsounds:animals.cricket", "ambientsounds:animals.cricket2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -499,7 +499,7 @@
         {
           "name": "cricket-night",
           "files": [ "ambientsounds:animals.cricket-night", "ambientsounds:animals.cricket-night2", "ambientsounds:animals.cricket-night3", "ambientsounds:animals.cricket-night4" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -542,7 +542,7 @@
         {
           "name": "cricket",
           "files": [ "ambientsounds:animals.cricket", "ambientsounds:animals.cricket2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -554,7 +554,7 @@
         {
           "name": "cricket-night",
           "files": [ "ambientsounds:animals.cricket-night", "ambientsounds:animals.cricket-night2", "ambientsounds:animals.cricket-night3", "ambientsounds:animals.cricket-night4" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -578,7 +578,7 @@
         {
           "name": "cricket",
           "files": [ "ambientsounds:animals.cricket", "ambientsounds:animals.cricket2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -623,7 +623,7 @@
         {
           "name": "cricket-warm-night",
           "files": [ "ambientsounds:animals.cricket-warm-night", "ambientsounds:animals.cricket-warm-night2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -705,12 +705,12 @@
           "files": [ "ambientsounds:animals.cricket-swamp" ],
           "day": 0.3,
           "night": 0,
-          "rain": false
+          "raining": false
         },
         {
           "name": "cricket-warm-night",
           "files": [ "ambientsounds:animals.cricket-warm-night", "ambientsounds:animals.cricket-warm-night2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -740,12 +740,12 @@
           "files": [ "ambientsounds:animals.cricket-swamp" ],
           "day": 0.3,
           "night": 0,
-          "rain": false
+          "raining": false
         },
         {
-          "name": "cricket-warm-night",
+          "name": "quagmire-cricket-warm-night",
           "files": [ "ambientsounds:animals.cricket-warm-night", "ambientsounds:animals.cricket-warm-night2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
@@ -798,9 +798,9 @@
           }
         },
         {
-          "name": "cricket-warm-night",
+          "name": "dimension-cricket-warm-night",
           "files": [ "ambientsounds:animals.cricket-warm-night", "ambientsounds:animals.cricket-warm-night2" ],
-          "rain": false,
+          "raining": false,
           "length": {
             "min": 1000,
             "max": 1500
