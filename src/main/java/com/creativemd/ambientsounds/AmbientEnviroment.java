@@ -23,6 +23,7 @@ public class AmbientEnviroment {
 	
 	public boolean night;
 	
+	public boolean overallRaining;
 	public boolean raining;
 	public boolean thundering;
 	
@@ -46,6 +47,7 @@ public class AmbientEnviroment {
 	}
 	
 	public void updateWorld() {
+		this.overallRaining = world.isRaining();
 		this.raining = world.isRainingAt(player.getPosition());
 		this.thundering = world.isThundering();
 	}

@@ -115,7 +115,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 		if (env.night ? nightVolume <= 0 : dayVolume <= 0)
 			return null;
 		
-		if (raining != null && env.raining != raining)
+		if (raining != null && raining ? !env.raining : env.overallRaining)
 			return null;
 		
 		if (storming != null && env.thundering != storming)
