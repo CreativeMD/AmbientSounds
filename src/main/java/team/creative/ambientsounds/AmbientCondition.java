@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -35,6 +36,7 @@ public class AmbientCondition extends AmbientSoundProperties {
 	public AmbientBiomeCondition specialBiome;
 	
 	public Boolean raining;
+	public Boolean overallRaining;
 	public Boolean storming;
 	
 	public AmbientMinMaxFadeCondition underwater;
@@ -120,8 +122,11 @@ public class AmbientCondition extends AmbientSoundProperties {
 		if (env.night ? nightVolume <= 0 : dayVolume <= 0)
 			return null;
 		
-		if (raining != null && raining ? !env.raining : env.overallRaining)
-			return null;
+		if (raining != null && raining != env.raining)
+            return null;
+        
+        if (overallRaining != null && overallRaining != env.overallRaining)
+            return null;
 		
 		if (storming != null && env.thundering != storming)
 			return null;
