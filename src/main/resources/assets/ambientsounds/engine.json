@@ -36,6 +36,7 @@
           "sounds": [
             {
               "name": "suspense",
+              "volume": 0.3,
               "files": [ "ambientsounds:suspense.end" ]
             }
           ]
@@ -302,6 +303,7 @@
         "max": 4000,
         "fade": 20
       },
+      "bad-regions": [ "end" ],
       "sounds": [
         {
           "name": "light-wind",
