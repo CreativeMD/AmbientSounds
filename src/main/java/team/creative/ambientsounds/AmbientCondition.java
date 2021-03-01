@@ -35,6 +35,7 @@ public class AmbientCondition extends AmbientSoundProperties {
     public AmbientBiomeCondition specialBiome;
     
     public Boolean raining;
+    @SerializedName(value = "overall-raining")
     public Boolean overallRaining;
     public Boolean snowing;
     public Boolean storming;
