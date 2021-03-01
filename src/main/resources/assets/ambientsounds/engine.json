@@ -500,7 +500,7 @@
       },
       "variants": [
         {
-          "biomes": [ "plains", "chaparral", "field", "flower", "grass", "oasis", "tundra", "mushroom island", "darklands", "badlands", "pasture", "rocky plateau", "tropics plains" ]
+          "biomes": [ "plains", "chaparral", "field", "flower", "grass", "oasis", "tundra", "mushroom*fields", "darklands", "badlands", "pasture", "rocky plateau", "tropics plains", "mycelium"  ]
         },
         {
           "bad-regions": [ "roofed-forest" ],
