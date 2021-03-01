@@ -120,7 +120,7 @@ public class AmbientEnviroment {
             for (int i = 1; i < engine.blockScanDistance; i++) {
                 pos.setPos(pos.getX() + facing.getXOffset(), pos.getY() + facing.getYOffset(), pos.getZ() + facing.getZOffset());
                 BlockState state = world.getBlockState(pos);
-                if (state.isOpaqueCube(world, pos))
+                if (state.isNormalCube(world, pos))
                     return new BlockSpot(state, i, world.getLight(pos.offset(facing.getOpposite())));
             }
             return null;
