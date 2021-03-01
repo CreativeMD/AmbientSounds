@@ -243,7 +243,7 @@ public class AmbientSound extends AmbientCondition {
     }
     
     public double getCombinedVolume(AmbientEnviroment env) {
-        return currentVolume * volumeSetting;
+        return currentVolume * volumeSetting * env.dimension.volumeSetting;
     }
     
     public class SoundStream implements ITickableSound {
