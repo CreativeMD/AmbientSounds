@@ -26,45 +26,45 @@ import team.creative.creativecore.client.command.ClientCommandRegistry;
 
 @Mod(value = AmbientSounds.MODID)
 public class AmbientSounds {
-	
-	public static final Logger LOGGER = LogManager.getLogger(AmbientSounds.MODID);
-	
-	public static final String MODID = "ambientsounds";
-	
-	public AmbientSounds() {
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-	}
-	
-	public static AmbientTickHandler tickHandler;
-	
-	private void doClientStuff(final FMLClientSetupEvent event) {
-		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
-		
-		tickHandler = new AmbientTickHandler();
-		MinecraftForge.EVENT_BUS.register(tickHandler);
-		
-		Minecraft minecraft = Minecraft.getInstance();
-		IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
-		
-		reloadableResourceManager.addReloadListener(new ISelectiveResourceReloadListener() {
-			
-			@Override
-			public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
-				if (tickHandler.engine != null)
-					tickHandler.engine.stopEngine();
-				tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
-			}
-		});
-		ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-debug").executes(x -> {
-			tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
-			return Command.SINGLE_SUCCESS;
-		}));
-		ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-reload").executes(x -> {
-			if (tickHandler.engine != null)
-				tickHandler.engine.stopEngine();
-			tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
-			return Command.SINGLE_SUCCESS;
-		}));
-	}
-	
+    
+    public static final Logger LOGGER = LogManager.getLogger(AmbientSounds.MODID);
+    
+    public static final String MODID = "ambientsounds";
+    
+    public AmbientSounds() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+    }
+    
+    public static AmbientTickHandler tickHandler;
+    
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        
+        tickHandler = new AmbientTickHandler();
+        MinecraftForge.EVENT_BUS.register(tickHandler);
+        
+        Minecraft minecraft = Minecraft.getInstance();
+        IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
+        
+        reloadableResourceManager.addReloadListener(new ISelectiveResourceReloadListener() {
+            
+            @Override
+            public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
+                if (tickHandler.engine != null)
+                    tickHandler.engine.stopEngine();
+                tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+            }
+        });
+        ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-debug").executes(x -> {
+            tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
+            return Command.SINGLE_SUCCESS;
+        }));
+        ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-reload").executes(x -> {
+            if (tickHandler.engine != null)
+                tickHandler.engine.stopEngine();
+            tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+            return Command.SINGLE_SUCCESS;
+        }));
+    }
+    
 }
