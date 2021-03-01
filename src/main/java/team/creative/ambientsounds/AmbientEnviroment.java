@@ -23,6 +23,7 @@ public class AmbientEnviroment {
     
     public boolean overallRaining;
     public boolean raining;
+    public boolean snowing;
     public boolean thundering;
     
     public PairList<BiomeArea, Float> biomes;
@@ -47,6 +48,8 @@ public class AmbientEnviroment {
     public void updateWorld() {
         this.overallRaining = world.isRaining();
         this.raining = world.isRainingAt(player.getPosition());
+        Biome biome = world.getBiome(player.getPosition());
+        this.snowing = biome.getPrecipitation() == Biome.RainType.SNOW && world.isRaining();
         this.thundering = world.isThundering();
     }
     

@@ -111,11 +111,12 @@ public class AmbientTickHandler {
             List<Pair<String, Object>> details = new ArrayList<>();
             details.add(new Pair<>("night", enviroment.night));
             details.add(new Pair<>("rain", enviroment.raining));
+            details.add(new Pair<>("worldRain", enviroment.overallRaining));
+            details.add(new Pair<>("snow", enviroment.snowing));
             details.add(new Pair<>("storm", enviroment.thundering));
             details.add(new Pair<>("b-volume", enviroment.biomeVolume));
             details.add(new Pair<>("underwater", enviroment.underwater));
             details.add(new Pair<>("dim-name", mc.world.getDimensionKey().getLocation()));
-            //details.add("dim-name", mc.world.func_234922_V_().func_240901_a_().toString());
             
             list.add(format(details));
             

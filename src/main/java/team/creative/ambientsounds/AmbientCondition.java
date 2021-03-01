@@ -35,6 +35,8 @@ public class AmbientCondition extends AmbientSoundProperties {
     public AmbientBiomeCondition specialBiome;
     
     public Boolean raining;
+    public Boolean overallRaining;
+    public Boolean snowing;
     public Boolean storming;
     
     public AmbientMinMaxFadeCondition underwater;
@@ -120,7 +122,13 @@ public class AmbientCondition extends AmbientSoundProperties {
         if (env.night ? nightVolume <= 0 : dayVolume <= 0)
             return null;
         
-        if (raining != null && raining ? !env.raining : env.overallRaining)
+        if (raining != null && raining != env.raining)
+            return null;
+        
+        if (overallRaining != null && overallRaining != env.overallRaining)
+            return null;
+        
+        if (snowing != null && snowing != env.snowing)
             return null;
         
         if (storming != null && env.thundering != storming)
