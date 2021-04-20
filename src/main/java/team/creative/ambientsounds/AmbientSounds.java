@@ -47,7 +47,7 @@ public class AmbientSounds {
         Minecraft minecraft = Minecraft.getInstance();
         IReloadableResourceManager reloadableResourceManager = (IReloadableResourceManager) minecraft.getResourceManager();
         
-        reloadableResourceManager.addReloadListener(new ISelectiveResourceReloadListener() {
+        reloadableResourceManager.registerReloadListener(new ISelectiveResourceReloadListener() {
             
             @Override
             public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {

@@ -309,23 +309,23 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public boolean canRepeat() {
+        public boolean isLooping() {
             return loop();
         }
         
         @Override
-        public SoundEventAccessor createAccessor(SoundHandler sndHandler) {
-            soundeventaccessor = sndHandler.getAccessor(location);
+        public SoundEventAccessor resolve(SoundHandler sndHandler) {
+            soundeventaccessor = sndHandler.getSoundEvent(location);
             return soundeventaccessor;
         }
         
         @Override
-        public AttenuationType getAttenuationType() {
+        public AttenuationType getAttenuation() {
             return AttenuationType.NONE;
         }
         
         @Override
-        public SoundCategory getCategory() {
+        public SoundCategory getSource() {
             return SoundCategory.AMBIENT;
         }
         
@@ -335,17 +335,17 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public int getRepeatDelay() {
+        public int getDelay() {
             return 0;
         }
         
         @Override
         public Sound getSound() {
-            return soundeventaccessor.cloneEntry();
+            return soundeventaccessor.getSound();
         }
         
         @Override
-        public ResourceLocation getSoundLocation() {
+        public ResourceLocation getLocation() {
             return location;
         }
         
@@ -370,7 +370,7 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public boolean isDonePlaying() {
+        public boolean isStopped() {
             return false;
         }
         
@@ -380,7 +380,7 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public boolean isGlobal() {
+        public boolean isRelative() {
             return true;
         }
     }

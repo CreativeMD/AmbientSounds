@@ -42,13 +42,13 @@ public class AmbientEnviroment {
     
     public AmbientEnviroment(PlayerEntity player) {
         this.player = player;
-        this.world = player.world;
+        this.world = player.level;
     }
     
     public void updateWorld() {
         this.overallRaining = world.isRaining();
-        this.raining = world.isRainingAt(player.getPosition());
-        Biome biome = world.getBiome(player.getPosition());
+        this.raining = world.isRainingAt(player.blockPosition());
+        Biome biome = world.getBiome(player.blockPosition());
         this.snowing = biome.getPrecipitation() == Biome.RainType.SNOW && world.isRaining();
         this.thundering = world.isThundering();
     }
@@ -65,7 +65,7 @@ public class AmbientEnviroment {
     
     public void setHeight(TerrainHeight terrain) {
         this.averageHeight = terrain.averageHeight;
-        this.relativeHeight = player.getPosYEye() - terrain.averageHeight;
+        this.relativeHeight = player.getEyeY() - terrain.averageHeight;
         this.minHeight = terrain.minHeight;
         this.maxHeight = terrain.maxHeight;
     }
@@ -110,21 +110,21 @@ public class AmbientEnviroment {
                 
             }
             if (lightspots == 0)
-                averageLight = world.getLight(pos.setPos(player.getPosition()));
+                averageLight = world.getLightEmission(pos.set(player.blockPosition()));
             else
                 averageLight /= lightspots;
             outsideVolume = calculateOutsideVolume(engine);
         }
         
         protected BlockSpot updateDirection(BlockPos.Mutable pos, Direction facing, AmbientEngine engine) {
-            pos.setPos(player.getPosition());
+            pos.set(player.blockPosition());
             pos.setY(pos.getY() + 1);
             
             for (int i = 1; i < engine.blockScanDistance; i++) {
-                pos.setPos(pos.getX() + facing.getXOffset(), pos.getY() + facing.getYOffset(), pos.getZ() + facing.getZOffset());
+                pos.set(pos.getX() + facing.getStepX(), pos.getY() + facing.getStepY(), pos.getZ() + facing.getStepZ());
                 BlockState state = world.getBlockState(pos);
-                if (state.isNormalCube(world, pos))
-                    return new BlockSpot(state, i, world.getLight(pos.offset(facing.getOpposite())));
+                if (state.isCollisionShapeFullBlock(world, pos))
+                    return new BlockSpot(state, i, world.getLightEmission(pos.move(facing.getOpposite())));
             }
             return null;
         }
@@ -200,7 +200,7 @@ public class AmbientEnviroment {
         
         public boolean checkBiome(String[] names) {
             for (String name : names) {
-                String biomename = biome.getCategory().getName().toLowerCase().replace("_", " ");
+                String biomename = biome.getBiomeCategory().getName().toLowerCase().replace("_", " ");
                 if (biomename.matches(".*" + name.replace("*", ".*") + ".*"))
                     return true;
             }
@@ -208,7 +208,7 @@ public class AmbientEnviroment {
         }
         
         public boolean checkTopBlock(List<Block> topBlocks) {
-            return topBlocks.contains(biome.getGenerationSettings().getSurfaceBuilderConfig().getTop().getBlock());
+            return topBlocks.contains(biome.getGenerationSettings().getSurfaceBuilderConfig().getTopMaterial().getBlock());
         }
         
         @Override

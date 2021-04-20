@@ -216,7 +216,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (minHeightRelative != null) {
-            double volume = minHeightRelative.volume(env.player.getPosYEye() - env.minHeight);
+            double volume = minHeightRelative.volume(env.player.getEyeY() - env.minHeight);
             if (volume <= 0)
                 return null;
             
@@ -224,7 +224,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (maxHeightRelative != null) {
-            double volume = maxHeightRelative.volume(env.player.getPosYEye() - env.maxHeight);
+            double volume = maxHeightRelative.volume(env.player.getEyeY() - env.maxHeight);
             if (volume <= 0)
                 return null;
             
@@ -232,7 +232,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (absoluteHeight != null) {
-            double volume = absoluteHeight.volume(env.player.getPosYEye());
+            double volume = absoluteHeight.volume(env.player.getEyeY());
             if (volume <= 0)
                 return null;
             
@@ -457,9 +457,9 @@ public class AmbientCondition extends AmbientSoundProperties {
             return found ? 1 : 0;
         }
         
-        static Material[] refMaterials = new Material[] { Material.ORGANIC, Material.EARTH, Material.WOOD, Material.ROCK, Material.IRON, Material.ANVIL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANTS, Material.TALL_PLANTS, Material.SPONGE, Material.WOOL, Material.FIRE, Material.SAND, Material.MISCELLANEOUS, Material.CARPET, Material.GLASS, Material.REDSTONE_LIGHT, Material.TNT, Material.CORAL, Material.ICE, Material.PACKED_ICE, Material.SNOW, Material.CACTUS, Material.CLAY, Material.GOURD, Material.DRAGON_EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON, Material.BARRIER, Material.STRUCTURE_VOID };
+        static Material[] refMaterials = new Material[] { Material.GRASS, Material.DIRT, Material.WOOD, Material.STONE, Material.METAL, Material.HEAVY_METAL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANT, Material.BAMBOO, Material.SPONGE, Material.WOOL, Material.FIRE, Material.SAND, Material.DECORATION, Material.CLOTH_DECORATION, Material.GLASS, Material.EXPLOSIVE, Material.CORAL, Material.ICE, Material.ICE_SOLID, Material.SNOW, Material.CACTUS, Material.CLAY, Material.VEGETABLE, Material.EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON, Material.BARRIER, Material.STRUCTURAL_AIR };
         
-        static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER", "LAVA", "LEAVES", "PLANTS", "TALL_PLANTS", "SPONGE", "WOOL", "FIRE", "SAND", "MISCELLANEOUS", "CARPET", "GLASS", "REDSTONE_LIGHT", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CACTUS", "CLAY", "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
+        static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER", "LAVA", "LEAVES", "PLANTS", "TALL_PLANTS", "SPONGE", "WOOL", "FIRE", "SAND", "MISCELLANEOUS", "CARPET", "GLASS", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CACTUS", "CLAY", "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
         
         public static Material getMaterial(String name) {
             for (int i = 0; i < refMaterialNames.length; i++)

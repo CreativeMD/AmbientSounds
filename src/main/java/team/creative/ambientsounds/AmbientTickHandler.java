@@ -103,11 +103,11 @@ public class AmbientTickHandler {
     
     @SubscribeEvent
     public void onRender(RenderTickEvent event) {
-        if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isGamePaused() && enviroment != null && mc.world != null) {
+        if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isPaused() && enviroment != null && mc.level != null) {
             RenderSystem.pushMatrix();
             List<String> list = new ArrayList<>();
             
-            AmbientDimension dimension = engine.getDimension(mc.world);
+            AmbientDimension dimension = engine.getDimension(mc.level);
             List<Pair<String, Object>> details = new ArrayList<>();
             details.add(new Pair<>("night", enviroment.night));
             details.add(new Pair<>("rain", enviroment.raining));
@@ -116,14 +116,14 @@ public class AmbientTickHandler {
             details.add(new Pair<>("storm", enviroment.thundering));
             details.add(new Pair<>("b-volume", enviroment.biomeVolume));
             details.add(new Pair<>("underwater", enviroment.underwater));
-            details.add(new Pair<>("dim-name", mc.world.getDimensionKey().getLocation()));
+            details.add(new Pair<>("dim-name", mc.level.dimension().getRegistryName()));
             
             list.add(format(details));
             
             details.clear();
             
             for (Pair<BiomeArea, Float> pair : enviroment.biomes)
-                details.add(new Pair<>(pair.key.biome.getCategory().getName(), pair.value));
+                details.add(new Pair<>(pair.key.biome.getBiomeCategory().getName(), pair.value));
             
             list.add(format(details));
             
@@ -134,7 +134,7 @@ public class AmbientTickHandler {
             details.add(new Pair<>("light", enviroment.blocks.averageLight));
             details.add(new Pair<>("outside", enviroment.blocks.outsideVolume));
             details.add(new Pair<>("height", df.format(enviroment.relativeHeight) + "," + df.format(enviroment.averageHeight) + "," + df
-                    .format(enviroment.player.getPosYEye() - enviroment.minHeight) + "," + df.format(enviroment.player.getPosYEye() - enviroment.maxHeight)));
+                    .format(enviroment.player.getEyeY() - enviroment.minHeight) + "," + df.format(enviroment.player.getEyeY() - enviroment.maxHeight)));
             
             list.add(format(details));
             
@@ -188,12 +188,12 @@ public class AmbientTickHandler {
                 String s = list.get(i);
                 
                 if (!Strings.isNullOrEmpty(s)) {
-                    int j = mc.fontRenderer.FONT_HEIGHT;
-                    int k = mc.fontRenderer.getStringWidth(s);
+                    int j = mc.font.lineHeight;
+                    int k = mc.font.width(s);
                     int i1 = 2 + j * i;
                     MatrixStack mat = new MatrixStack();
-                    GuiUtils.drawGradientRect(mat.getLast().getMatrix(), 0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
-                    mc.fontRenderer.drawStringWithShadow(mat, s, 2, i1, 14737632);
+                    GuiUtils.drawGradientRect(mat.last().pose(), 0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
+                    mc.font.drawShadow(mat, s, 2, i1, 14737632);
                 }
             }
             RenderSystem.popMatrix();
@@ -205,7 +205,7 @@ public class AmbientTickHandler {
         if (event.phase == Phase.START) {
             
             if (soundEngine == null) {
-                soundEngine = new AmbientSoundEngine(mc.getSoundHandler(), mc.gameSettings);
+                soundEngine = new AmbientSoundEngine(mc.getSoundManager(), mc.options);
                 if (engine != null)
                     engine.soundEngine = soundEngine;
             }
@@ -216,10 +216,10 @@ public class AmbientTickHandler {
             if (engine == null)
                 return;
             
-            World world = mc.world;
+            World world = mc.level;
             PlayerEntity player = mc.player;
             
-            if (world != null && player != null && !mc.isGamePaused() && mc.gameSettings.getSoundLevel(SoundCategory.AMBIENT) > 0) {
+            if (world != null && player != null && !mc.isPaused() && mc.options.getSoundSourceVolume(SoundCategory.AMBIENT) > 0) {
                 
                 if (enviroment == null)
                     enviroment = new AmbientEnviroment(player);
@@ -252,14 +252,14 @@ public class AmbientTickHandler {
                 }
                 
                 if (timer % engine.soundTickTime == 0) {
-                    enviroment.setSunAngle((float) Math.toDegrees(world.getCelestialAngleRadians(mc.getRenderPartialTicks())));
+                    enviroment.setSunAngle((float) Math.toDegrees(world.getSunAngle(mc.getDeltaFrameTime())));
                     enviroment.updateWorld();
                     int depth = 0;
-                    if (player.areEyesInFluid(FluidTags.WATER)) {
-                        BlockPos blockpos = new BlockPos(player.getPositionVec()).up();
+                    if (player.isEyeInFluid(FluidTags.WATER)) {
+                        BlockPos blockpos = new BlockPos(player.blockPosition()).above();
                         while (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
                             depth++;
-                            blockpos = blockpos.up();
+                            blockpos = blockpos.above();
                         }
                         depth--;
                     }

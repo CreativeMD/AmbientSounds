@@ -64,7 +64,7 @@ public class AmbientSoundEngine {
                     SoundStream sound = iterator.next();
                     
                     boolean playing;
-                    if (!handler.isPlaying(sound))
+                    if (!handler.isActive(sound))
                         if (sound.hasPlayedOnce())
                             playing = false;
                         else

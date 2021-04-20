@@ -127,7 +127,7 @@ public class AmbientEngine {
     }
     
     public AmbientDimension getDimension(World world) {
-        String dimensionTypeName = world.getDimensionKey().getLocation().toString();
+        String dimensionTypeName = world.dimension().getRegistryName().toString();
         if (silentDimensions.contains(dimensionTypeName))
             return silentDimension;
         
@@ -267,12 +267,12 @@ public class AmbientEngine {
         int max = Integer.MIN_VALUE;
         
         BlockPos.Mutable pos = new BlockPos.Mutable();
-        BlockPos center = player.getPosition();
+        BlockPos center = player.blockPosition();
         
         for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
             for (int z = -averageHeightScanCount; z <= averageHeightScanCount; z++) {
                 
-                pos.setPos(center.getX() + averageHeightScanDistance * x, center.getY(), center.getZ() + averageHeightScanDistance * z);
+                pos.set(center.getX() + averageHeightScanDistance * x, center.getY(), center.getZ() + averageHeightScanDistance * z);
                 int height = getHeightBlock(world, pos);
                 
                 min = Math.min(height, min);
@@ -288,16 +288,16 @@ public class AmbientEngine {
         PairList<BiomeArea, Float> biomes = new PairList<>();
         if (volume > 0.0) {
             
-            int posX = (int) player.getPosX();
-            int posZ = (int) player.getPosZ();
+            int posX = (int) player.getX();
+            int posZ = (int) player.getZ();
             BlockPos center = new BlockPos(posX, 0, posZ);
             BlockPos.Mutable pos = new BlockPos.Mutable();
             for (int x = -biomeScanCount; x <= biomeScanCount; x++) {
                 for (int z = -biomeScanCount; z <= biomeScanCount; z++) {
-                    pos.setPos(posX + x * biomeScanDistance, 0, posZ + z * biomeScanDistance);
+                    pos.set(posX + x * biomeScanDistance, 0, posZ + z * biomeScanDistance);
                     Biome biome = world.getBiome(pos);
                     
-                    float biomeVolume = (float) ((1 - Math.sqrt(center.distanceSq(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
+                    float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
                     BiomeArea area = new BiomeArea(biome, pos);
                     if (biomes.containsKey(area))
                         biomes.set(area, Math.max(biomes.getValue(area), biomeVolume));
@@ -324,7 +324,7 @@ public class AmbientEngine {
         for (y = 45; y < 256; ++y) {
             pos.setY(y);
             BlockState state = world.getBlockState(pos);
-            if ((state.isOpaqueCube(world, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.getBlock() == Blocks.WATER)
+            if ((state.isSolidRender(world, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.getBlock() == Blocks.WATER)
                 heighest = y;
         }
         
