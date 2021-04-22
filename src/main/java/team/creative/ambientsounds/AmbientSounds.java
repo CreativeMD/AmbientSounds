@@ -56,16 +56,18 @@ public class AmbientSounds {
                 tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
             }
         });
-        ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-debug").executes(x -> {
-            tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
-            return Command.SINGLE_SUCCESS;
-        }));
-        ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-reload").executes(x -> {
-            if (tickHandler.engine != null)
-                tickHandler.engine.stopEngine();
-            tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
-            return Command.SINGLE_SUCCESS;
-        }));
+        event.enqueueWork(() -> {
+            ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-debug").executes(x -> {
+                tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
+                return Command.SINGLE_SUCCESS;
+            }));
+            ClientCommandRegistry.register(LiteralArgumentBuilder.<ISuggestionProvider>literal("ambient-reload").executes(x -> {
+                if (tickHandler.engine != null)
+                    tickHandler.engine.stopEngine();
+                tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+                return Command.SINGLE_SUCCESS;
+            }));
+        });
         
         CreativeCoreClient.registerClientConfig(MODID);
     }
