@@ -116,7 +116,7 @@ public class AmbientTickHandler {
             details.add(new Pair<>("storm", enviroment.thundering));
             details.add(new Pair<>("b-volume", enviroment.biomeVolume));
             details.add(new Pair<>("underwater", enviroment.underwater));
-            details.add(new Pair<>("dim-name", mc.level.dimension().getRegistryName()));
+            details.add(new Pair<>("dim-name", mc.level.dimension().location()));
             
             list.add(format(details));
             

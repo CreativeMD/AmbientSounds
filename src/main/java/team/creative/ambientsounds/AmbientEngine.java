@@ -127,7 +127,7 @@ public class AmbientEngine {
     }
     
     public AmbientDimension getDimension(World world) {
-        String dimensionTypeName = world.dimension().getRegistryName().toString();
+        String dimensionTypeName = world.dimension().location().toString();
         if (silentDimensions.contains(dimensionTypeName))
             return silentDimension;
         
