@@ -25,15 +25,9 @@ public class AmbientDimension {
     public Boolean rain;
     public Boolean storm;
     
-    public Integer id;
-    
-    @SerializedName(value = "dimension-ids")
-    public int[] dimensionIds;
     @SerializedName(value = "dimension-names")
     public String[] dimensionNames;
     
-    @SerializedName(value = "bad-dimension-ids")
-    public int[] badDimensionIds;
     @SerializedName(value = "bad-dimension-names")
     public String[] badDimensionNames;
     
@@ -54,31 +48,19 @@ public class AmbientDimension {
     }
     
     public boolean is(World world) {
-        
-        //if (badDimensionIds != null && ArrayUtils.contains(badDimensionIds, world.func_230315_m_().field_235999_c_.getId()))
-        //return false;
-        
         String dimensionTypeName = world.dimension().location().toString();
         
-        if (badDimensionNames != null) {
+        if (badDimensionNames != null)
             for (int j = 0; j < badDimensionNames.length; j++)
                 if (dimensionTypeName.matches(badDimensionNames[j]))
                     return false;
-        }
-        
-        //if (id != null && world.dimension.getDimension().getType().getId() == id)
-        //return true;
-        
-        //if (dimensionIds != null && ArrayUtils.contains(dimensionIds, world.dimension.getDimension().getType().getId()))
-        //return true;
-        
-        if (dimensionNames != null) {
+                
+        if (dimensionNames != null)
             for (int j = 0; j < dimensionNames.length; j++)
                 if (dimensionTypeName.matches(dimensionNames[j]))
                     return true;
-        }
-        
-        return id == null && dimensionIds == null && dimensionNames == null;
+                
+        return dimensionNames == null;
     }
     
     public void manipulateEnviroment(AmbientEnviroment env) {
