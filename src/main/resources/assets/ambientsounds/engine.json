@@ -2,7 +2,7 @@
   "dimensions": [
     {
       "name": "nether",
-      "id": -1,
+      "dimension-names": [ "nether" ],
       "rain": false,
       "storm": false,
       "biome-selector": {
@@ -23,7 +23,7 @@
     },
     {
       "name": "the end",
-      "id": 1,
+      "dimension-names": [ "the*end" ],
       "rain": false,
       "storm": false,
       "average-height": 0,
@@ -448,7 +448,7 @@
       ]
     },
     {
-      "name": "grass", // All biomes covered with grass (subtle sounds)
+      "name": "grass", 
       "bad-regions": [ "plains", "savanna", "swamp", "ocean", "highland", "jungle" ],
       "bad-biomes": [ "river" ],
       "special-biomes": {
@@ -491,7 +491,7 @@
       ]
     },
     {
-      "name": "plains", // Higher sound volume than "grass"
+      "name": "plains",
       "bad-regions": [ "ocean", "forest", "savanna", "swamp", "highland", "nether" ],
       "special-biomes": {
         "temperature": {
