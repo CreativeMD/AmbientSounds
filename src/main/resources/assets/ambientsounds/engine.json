@@ -83,7 +83,7 @@
     },
     {
       "name": "twilight_forest",
-      "dimension-names": [ "twilight_forest" ],
+      "dimension-names": [ "twilightforest" ],
       "biome-selector": {
         "regions": [ "surface" ]
       },

@@ -68,18 +68,6 @@ public class AmbientTickHandler {
         CreativeCore.CONFIG_HANDLER.load(AmbientSounds.MODID, Dist.CLIENT);
     }
     
-    /* @SubscribeEvent
-     * public void onWorldUnload(WorldEvent.Unload event) {
-     * if (!event.getWorld().isRemote())
-     * return;
-     * 
-     * if (engine != null)
-     * engine.stopEngine();
-     * 
-     * enviroment = null;
-     * timer = 0;
-     * } */
-    
     private static DecimalFormat df = new DecimalFormat("0.##");
     
     private String format(Object value) {
