@@ -2,6 +2,7 @@ package team.creative.ambientsounds;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,15 +11,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.ambientsounds.AmbientEnviroment.BlockSpot;
-import team.creative.ambientsounds.utils.Pair;
 
 public class AmbientCondition extends AmbientSoundProperties {
-    
-    private static IForgeRegistry<Block> BLOCK_REGISTRY = GameRegistry.findRegistry(Block.class);
     
     public Boolean always;
     
@@ -176,27 +173,27 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (biomes != null || badBiomes != null || specialBiome != null) {
-            Pair<BiomeArea, Float> highest = null;
+            Entry<BiomeArea, Float> highest = null;
             
-            for (Pair<BiomeArea, Float> pair : env.biomes) {
+            for (Entry<BiomeArea, Float> pair : env.biomes.entrySet()) {
                 
-                if (biomes != null && !pair.key.checkBiome(biomes))
+                if (biomes != null && !pair.getKey().checkBiome(biomes))
                     continue;
                 
-                if (badBiomes != null && pair.key.checkBiome(badBiomes))
+                if (badBiomes != null && pair.getKey().checkBiome(badBiomes))
                     return null;
                 
-                if (specialBiome != null && !specialBiome.is(pair.key))
+                if (specialBiome != null && !specialBiome.is(pair.getKey()))
                     continue;
                 
-                if (highest == null || highest.value < pair.value)
+                if (highest == null || highest.getValue() < pair.getValue())
                     highest = pair;
             }
             
             if (highest == null && (biomes != null || specialBiome != null))
                 return null;
             else if (highest != null)
-                selection.volume *= highest.value;
+                selection.volume *= highest.getValue();
         }
         
         if (underwater != null) {
@@ -303,7 +300,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (topBlock != null) {
                 blocks = new ArrayList<>();
                 for (String blockName : topBlock) {
-                    Block block = BLOCK_REGISTRY.getValue(new ResourceLocation(blockName));
+                    Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockName));
                     if (block != null && !(block instanceof AirBlock))
                         blocks.add(block);
                 }

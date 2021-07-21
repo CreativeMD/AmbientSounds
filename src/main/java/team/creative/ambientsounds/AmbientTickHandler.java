@@ -3,7 +3,9 @@ package team.creative.ambientsounds;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.google.common.base.Strings;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -25,12 +27,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
-import team.creative.ambientsounds.utils.Pair;
-import team.creative.ambientsounds.utils.PairList;
 import team.creative.creativecore.CreativeCore;
 import team.creative.creativecore.common.config.holder.ConfigHolderDynamic;
 import team.creative.creativecore.common.config.holder.CreativeConfigRegistry;
 import team.creative.creativecore.common.config.sync.ConfigSynchronization;
+import team.creative.creativecore.common.util.type.Pair;
 
 public class AmbientTickHandler {
     
@@ -53,14 +54,14 @@ public class AmbientTickHandler {
         ConfigHolderDynamic holder = CreativeConfigRegistry.ROOT.registerFolder(AmbientSounds.MODID, ConfigSynchronization.CLIENT);
         ConfigHolderDynamic sounds = holder.registerFolder("sounds");
         Field soundField = ObfuscationReflectionHelper.findField(AmbientSound.class, "volumeSetting");
-        for (Pair<String, AmbientRegion> pair : engine.allRegions)
-            if (pair.value.sounds != null)
-                for (AmbientSound sound : pair.value.sounds)
-                    sounds.registerField(pair.key + "." + sound.name, soundField, sound);
+        for (Entry<String, AmbientRegion> pair : engine.allRegions.entrySet())
+            if (pair.getValue().sounds != null)
+                for (AmbientSound sound : pair.getValue().sounds.values())
+                    sounds.registerField(pair.getKey() + "." + sound.name, soundField, sound);
                 
         ConfigHolderDynamic dimensions = holder.registerFolder("dimensions");
         Field dimensionField = ObfuscationReflectionHelper.findField(AmbientDimension.class, "volumeSetting");
-        for (AmbientDimension dimension : engine.dimensions)
+        for (AmbientDimension dimension : engine.dimensions.values())
             dimensions.registerField(dimension.name, dimensionField, dimension);
         
         holder.registerField("silent-dimensions", ObfuscationReflectionHelper.findField(AmbientEngine.class, "silentDimensions"), engine);
@@ -110,8 +111,8 @@ public class AmbientTickHandler {
             
             details.clear();
             
-            for (Pair<BiomeArea, Float> pair : enviroment.biomes)
-                details.add(new Pair<>(pair.key.biome.getBiomeCategory().getName(), pair.value));
+            for (Entry<BiomeArea, Float> pair : enviroment.biomes.entrySet())
+                details.add(new Pair<>(pair.getKey().biome.getBiomeCategory().getName(), pair.getValue()));
             
             list.add(format(details));
             
@@ -234,7 +235,7 @@ public class AmbientTickHandler {
                     else if (enviroment.biomes != null)
                         enviroment.biomes.clear();
                     else
-                        enviroment.biomes = new PairList<>();
+                        enviroment.biomes = new LinkedHashMap<>();
                     
                     enviroment.blocks.updateAllDirections(engine);
                 }

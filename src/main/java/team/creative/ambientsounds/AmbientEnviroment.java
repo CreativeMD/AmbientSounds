@@ -1,5 +1,6 @@
 package team.creative.ambientsounds;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -11,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import team.creative.ambientsounds.utils.PairList;
 
 public class AmbientEnviroment {
     
@@ -26,7 +26,7 @@ public class AmbientEnviroment {
     public boolean snowing;
     public boolean thundering;
     
-    public PairList<BiomeArea, Float> biomes;
+    public LinkedHashMap<BiomeArea, Float> biomes;
     public BlockEnviroment blocks = new BlockEnviroment();
     
     public PlayerEntity player;

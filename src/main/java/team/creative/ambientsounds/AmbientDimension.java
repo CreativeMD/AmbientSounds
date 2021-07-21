@@ -1,7 +1,18 @@
 package team.creative.ambientsounds;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
 import team.creative.creativecore.common.config.api.CreativeConfig;
@@ -10,16 +21,14 @@ public class AmbientDimension {
     
     @CreativeConfig.DecimalRange(min = 0, max = 1)
     public transient double volumeSetting = 1;
+    public transient HashMap<String, AmbientRegion> regions = new HashMap<>();
     
     public String name;
     
-    @SerializedName("disable-all")
-    public boolean disableAll = false;
+    public boolean mute = false;
     
     @SerializedName("biome-selector")
     public AmbientCondition biomeSelector;
-    
-    public AmbientRegion[] regions;
     
     public Boolean night;
     public Boolean rain;
@@ -33,6 +42,18 @@ public class AmbientDimension {
     
     @SerializedName(value = "average-height")
     public Integer averageHeight;
+    
+    public void load(Gson gson, JsonParser parser, IResourceManager manager) throws IOException {
+        for (IResource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "dimensions/" + name + ".json"))) {
+            AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientRegion[].class);
+            for (int j = 0; j < regions.length; j++) {
+                AmbientRegion region = regions[j];
+                region.dimension = this;
+                this.regions.put(region.name, region);
+                region.load(gson, parser, manager);
+            }
+        }
+    }
     
     public void init(AmbientEngine engine) {
         if (biomeSelector != null)
@@ -64,7 +85,7 @@ public class AmbientDimension {
     }
     
     public void manipulateEnviroment(AmbientEnviroment env) {
-        env.soundsDisabled = disableAll;
+        env.soundsDisabled = mute;
         
         if (night != null)
             env.night = night;

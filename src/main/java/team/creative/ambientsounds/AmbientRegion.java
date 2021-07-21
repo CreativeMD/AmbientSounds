@@ -1,22 +1,44 @@
 package team.creative.ambientsounds;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 
 public class AmbientRegion extends AmbientCondition {
     
     public String name;
     public transient double volumeSetting = 1;
     protected transient boolean active;
+    public transient LinkedHashMap<String, AmbientSound> sounds = new LinkedHashMap<>();
     
-    public AmbientSound[] sounds;
     transient List<AmbientSound> playing = new ArrayList<>();
     
     public transient AmbientDimension dimension;
     
     public AmbientRegion() {
         
+    }
+    
+    public void load(Gson gson, JsonParser parser, IResourceManager manager) throws IOException {
+        for (IResource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "regions/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
+            AmbientSound[] sounds = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientSound[].class);
+            for (int j = 0; j < sounds.length; j++) {
+                AmbientSound sound = sounds[j];
+                this.sounds.put(sound.name, sound);
+            }
+        }
     }
     
     @Override
@@ -29,7 +51,7 @@ public class AmbientRegion extends AmbientCondition {
         super.init(engine);
         
         if (sounds != null)
-            for (AmbientSound sound : sounds)
+            for (AmbientSound sound : sounds.values())
                 sound.init(engine);
     }
     
@@ -65,7 +87,7 @@ public class AmbientRegion extends AmbientCondition {
             return false;
         
         AmbientSelection selection = value(env);
-        for (AmbientSound sound : sounds) {
+        for (AmbientSound sound : sounds.values()) {
             if (sound.tick(env, selection)) {
                 if (!sound.isActive()) {
                     sound.activate();

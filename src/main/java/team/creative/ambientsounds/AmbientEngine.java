@@ -2,9 +2,13 @@ package team.creative.ambientsounds;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 
@@ -14,7 +18,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
@@ -25,48 +28,78 @@ import net.minecraft.block.LeavesBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
-import team.creative.ambientsounds.utils.Pair;
-import team.creative.ambientsounds.utils.PairList;
 
 public class AmbientEngine {
     
-    public static final ResourceLocation engineLocation = new ResourceLocation("ambientsounds", "engine.json");
-    private static final JsonParser parser = new JsonParser();
-    private static final Gson gson = generateGson();
+    public static final ResourceLocation ENGINE_LOCATION = new ResourceLocation("ambientsounds", "engine.json");
+    public static final ResourceLocation DIMENSIONS_LOCATION = new ResourceLocation("ambientsounds", "dimensions.json");
+    public static final ResourceLocation REGIONS_LOCATION = new ResourceLocation("ambientsounds", "regions.json");
+    public static final ResourceLocation SOUNDS_LOCATION = new ResourceLocation("ambientsounds", "sounds.json");
     
-    private static Gson generateGson() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
-            
-            @Override
-            public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())
-                    return new ResourceLocation(json.getAsString());
-                return null;
-            }
-        });
-        return builder.create();
-    }
+    private static final JsonParser parser = new JsonParser();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
+        
+        @Override
+        public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())
+                return new ResourceLocation(json.getAsString());
+            return null;
+        }
+    }).create();
     
     public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
-        //AmbientSounds.config.load();
         
-        IResource resource;
         try {
-            resource = Minecraft.getInstance().getResourceManager().getResource(engineLocation);
-            JsonObject root = parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject();
+            IResourceManager manager = Minecraft.getInstance().getResourceManager();
             
-            AmbientEngine engine = gson.fromJson(root, AmbientEngine.class);
+            AmbientEngine engine = gson
+                    .fromJson(parser.parse(IOUtils.toString(manager.getResource(ENGINE_LOCATION).getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientEngine.class);
+            
+            for (IResource resource : manager.getResources(DIMENSIONS_LOCATION)) {
+                AmbientDimension[] dimensions = gson
+                        .fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientDimension[].class);
+                for (int i = 0; i < dimensions.length; i++) {
+                    AmbientDimension dimension = dimensions[i];
+                    if (dimension.name == null || dimension.name.isEmpty())
+                        AmbientSounds.LOGGER.error("Found invalid dimensions at {}", i);
+                    engine.dimensions.put(dimension.name, dimension);
+                    dimension.load(gson, parser, manager);
+                    for (AmbientRegion region : dimension.regions.values())
+                        if (engine.checkRegion(dimension, i, region))
+                            engine.addRegion(region);
+                }
+            }
+            
+            for (IResource resource : manager.getResources(REGIONS_LOCATION)) {
+                AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientRegion[].class);
+                for (int i = 0; i < regions.length; i++) {
+                    AmbientRegion region = regions[i];
+                    if (engine.checkRegion(null, i, region)) {
+                        engine.generalRegions.put(region.name, region);
+                        region.load(gson, parser, manager);
+                        engine.addRegion(region);
+                    }
+                }
+            }
+            
+            engine.silentDim = new AmbientDimension();
+            engine.silentDim.name = "silent";
+            engine.silentDim.volumeSetting = 0;
+            engine.silentDim.mute = true;
+            
             engine.init();
             
-            AmbientSounds.LOGGER.info("Successfully loaded sound engine. {} dimension(s) and {} region(s)", engine.dimensions.length, engine.allRegions.size());
             engine.soundEngine = soundEngine;
+            
+            AmbientSounds.LOGGER.info("Successfully loaded sound engine. {} dimension(s), {} region(s) and {} sound(s)", engine.dimensions.size(), engine.allRegions
+                    .size(), engine.sounds.size());
             
             return engine;
             
@@ -75,28 +108,24 @@ public class AmbientEngine {
             AmbientSounds.LOGGER.error("Sound engine crashed, no sounds will be played!");
         }
         
-        //AmbientSounds.config.save();
         return null;
     }
     
-    protected transient PairList<String, AmbientRegion> allRegions = new PairList<>();
-    protected transient PairList<String, AmbientRegion> generalRegions = new PairList<>();
+    protected transient LinkedHashMap<String, AmbientDimension> dimensions = new LinkedHashMap<>();
+    
+    protected transient LinkedHashMap<String, AmbientRegion> allRegions = new LinkedHashMap<>();
+    protected transient LinkedHashMap<String, AmbientRegion> generalRegions = new LinkedHashMap<>();
     protected transient List<AmbientRegion> activeRegions = new ArrayList<>();
     
-    protected transient PairList<String, AmbientSound> sounds = new PairList<>();
+    protected transient LinkedHashMap<String, AmbientSound> sounds = new LinkedHashMap<>();
     
     protected transient AmbientSoundEngine soundEngine;
     
-    protected transient AmbientDimension silentDimension;
-    
-    protected transient List<String> silentDimensions = new ArrayList<>();
+    protected transient AmbientDimension silentDim;
     
     public AmbientRegion getRegion(String name) {
-        return allRegions.getValue(name);
+        return allRegions.get(name);
     }
-    
-    public AmbientDimension[] dimensions;
-    public AmbientRegion[] regions;
     
     @SerializedName(value = "enviroment-tick-time")
     public int enviromentTickTime = 40;
@@ -120,10 +149,29 @@ public class AmbientEngine {
     @SerializedName(value = "biome-scan-count")
     public int biomeScanCount = 3;
     
-    public AmbientEngine() {
-        this.silentDimension = new AmbientDimension();
-        this.silentDimension.name = "silent";
-        this.silentDimension.volumeSetting = 0;
+    protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
+        if (region.name == null || region.name.isEmpty()) {
+            if (dimension == null)
+                AmbientSounds.LOGGER.error("Found invalid region at {}", i);
+            else
+                AmbientSounds.LOGGER.error("Found invalid region in '{}' at {}", dimension.name, i);
+            return false;
+        }
+        return true;
+    }
+    
+    protected void addRegion(AmbientRegion region) {
+        allRegions.put(region.name, region);
+        region.volumeSetting = 1;
+        
+        String prefix = (region.dimension != null ? region.dimension.name + "." : "") + region.name + ".";
+        if (region.sounds != null) {
+            for (AmbientSound sound : region.sounds.values()) {
+                sounds.put(prefix + sound.name, sound);
+                sound.fullName = prefix + sound.name;
+                sound.volumeSetting = 1;
+            }
+        }
     }
     
     public AmbientDimension getDimension(World world) {
@@ -131,11 +179,11 @@ public class AmbientEngine {
         if (silentDimensions.contains(dimensionTypeName))
             return silentDimension;
         
-        for (int i = 0; i < dimensions.length; i++)
-            if (dimensions[i].is(world))
-                return dimensions[i];
+        for (AmbientDimension dimension : dimensions.values())
+            if (dimension.is(world))
+                return dimension;
             
-        return silentDimension;
+        return silentDim;
     }
     
     public void stopEngine() {
@@ -146,69 +194,17 @@ public class AmbientEngine {
         }
     }
     
-    private boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
-        if (region.name == null || region.name.isEmpty()) {
-            if (dimension == null)
-                AmbientSounds.LOGGER.error("Found invalid region at index={0}", i);
-            else
-                AmbientSounds.LOGGER.error("Found invalid region in '{0}' at index={1}", dimension.name, i);
-            return false;
-        }
-        return true;
-    }
-    
-    protected void addRegion(AmbientRegion region) {
-        allRegions.add(region.name, region);
-        region.volumeSetting = 1; //= AmbientSounds.config.getFloat(region.name, "volume", 1, 0, 1, "");
-        
-        String prefix = (region.dimension != null ? region.dimension.name + "." : "") + region.name + ".";
-        if (region.sounds != null) {
-            for (AmbientSound sound : region.sounds) {
-                sounds.add(prefix + sound.name, sound);
-                sound.fullName = prefix + sound.name;
-                sound.volumeSetting = 1; // = AmbientSounds.config.getFloat(sound.fullName, "volume", 1, 0, 1, "");
-            }
-        }
-    }
-    
     public void init() {
-        //AmbientSounds.config.load();
-        
-        for (int i = 0; i < dimensions.length; i++) {
-            AmbientDimension dimension = dimensions[i];
-            if (dimension.name == null || dimension.name.isEmpty())
-                throw new RuntimeException("Invalid dimension name at index=" + i);
-            
-            if (dimension.regions != null)
-                for (int j = 0; j < dimension.regions.length; j++) {
-                    AmbientRegion region = dimension.regions[j];
-                    region.dimension = dimension;
-                    if (checkRegion(dimension, j, region))
-                        addRegion(region);
-                }
-        }
-        
-        for (int i = 0; i < regions.length; i++) {
-            AmbientRegion region = regions[i];
-            if (checkRegion(null, i, region)) {
-                addRegion(region);
-                generalRegions.add(region.name, region);
-            }
-        }
-        
-        for (AmbientDimension dimension : dimensions)
+        for (AmbientDimension dimension : dimensions.values())
             dimension.init(this);
         
-        for (AmbientRegion region : allRegions.values()) {
+        for (AmbientRegion region : allRegions.values())
             region.init(this);
-        }
-        
-        //AmbientSounds.config.save();
     }
     
     public void tick(AmbientEnviroment env) {
         if (env.dimension.regions != null)
-            for (AmbientRegion region : env.dimension.regions) {
+            for (AmbientRegion region : env.dimension.regions.values()) {
                 if (region.tick(env)) {
                     if (!region.isActive()) {
                         region.activate();
@@ -251,7 +247,7 @@ public class AmbientEngine {
         if (env.dimension == null || env.dimension.regions == null)
             return;
         
-        for (AmbientRegion region : env.dimension.regions) {
+        for (AmbientRegion region : env.dimension.regions.values()) {
             if (region.isActive()) {
                 region.deactivate();
                 activeRegions.remove(region);
@@ -284,8 +280,8 @@ public class AmbientEngine {
         return new TerrainHeight((double) sum / count, min, max);
     }
     
-    public PairList<BiomeArea, Float> calculateBiomes(World world, PlayerEntity player, double volume) {
-        PairList<BiomeArea, Float> biomes = new PairList<>();
+    public LinkedHashMap<BiomeArea, Float> calculateBiomes(World world, PlayerEntity player, double volume) {
+        LinkedHashMap<BiomeArea, Float> biomes = new LinkedHashMap<>();
         if (volume > 0.0) {
             
             int posX = (int) player.getX();
@@ -299,20 +295,20 @@ public class AmbientEngine {
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
                     BiomeArea area = new BiomeArea(biome, pos);
-                    if (biomes.containsKey(area))
-                        biomes.set(area, Math.max(biomes.getValue(area), biomeVolume));
-                    else
-                        biomes.add(area, biomeVolume);
+                    biomes.put(area, Math.max(biomes.get(area), biomeVolume));
                 }
             }
             
-            biomes.sort(new Comparator<Pair<BiomeArea, Float>>() {
-                
+            List<Entry<BiomeArea, Float>> entries = new ArrayList<>(biomes.entrySet());
+            Collections.sort(entries, new Comparator<Entry<BiomeArea, Float>>() {
                 @Override
-                public int compare(Pair<BiomeArea, Float> o1, Pair<BiomeArea, Float> o2) {
-                    return o1.value.compareTo(o2.value);
+                public int compare(Entry<BiomeArea, Float> o1, Entry<BiomeArea, Float> o2) {
+                    return o1.getValue().compareTo(o2.getValue());
                 }
             });
+            biomes = new LinkedHashMap<>();
+            for (Map.Entry<BiomeArea, Float> entry : entries)
+                biomes.put(entry.getKey(), entry.getValue());
         }
         return biomes;
     }
