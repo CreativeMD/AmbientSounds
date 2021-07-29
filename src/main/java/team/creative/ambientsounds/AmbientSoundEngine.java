@@ -1,38 +1,18 @@
 package team.creative.ambientsounds;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
-import cpw.mods.modlauncher.api.INameMappingService.Domain;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper.UnableToFindFieldException;
+import net.minecraft.client.Options;
+import net.minecraft.client.sounds.SoundManager;
 import team.creative.ambientsounds.AmbientSound.SoundStream;
 
 public class AmbientSoundEngine {
     
-    public static Field findField(Class<?> classToAccess, String fieldName) {
-        try {
-            Field f = classToAccess.getDeclaredField(ObfuscationReflectionHelper.remapName(Domain.FIELD, fieldName));
-            f.setAccessible(true);
-            return f;
-        } catch (UnableToFindFieldException e) {
-            AmbientSounds.LOGGER
-                    .error("Unable to locate field {} ({}) on type {}", fieldName, ObfuscationReflectionHelper.remapName(Domain.FIELD, fieldName), classToAccess.getName(), e);
-            AmbientSounds.LOGGER
-                    .error("Unable to access field {} ({}) on type {}", fieldName, ObfuscationReflectionHelper.remapName(Domain.FIELD, fieldName), classToAccess.getName(), e);
-            throw new RuntimeException("Unable to access field=" + fieldName, e);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to find field=" + fieldName, e);
-        }
-    }
-    
-    public SoundHandler handler;
-    public GameSettings settings;
+    public SoundManager manager;
+    public Options options;
     
     private List<SoundStream> sounds = new ArrayList<>();
     
@@ -42,9 +22,9 @@ public class AmbientSoundEngine {
         }
     }
     
-    public AmbientSoundEngine(SoundHandler handler, GameSettings settings) {
-        this.settings = settings;
-        this.handler = handler;
+    public AmbientSoundEngine(SoundManager manager, Options options) {
+        this.options = options;
+        this.manager = manager;
     }
     
     public void tick() {
@@ -64,7 +44,7 @@ public class AmbientSoundEngine {
                     SoundStream sound = iterator.next();
                     
                     boolean playing;
-                    if (!handler.isActive(sound))
+                    if (!manager.isActive(sound))
                         if (sound.hasPlayedOnce())
                             playing = false;
                         else
@@ -74,7 +54,7 @@ public class AmbientSoundEngine {
                     
                     if (sound.hasPlayedOnce() && !playing) {
                         sound.onFinished();
-                        handler.stop(sound);
+                        manager.stop(sound);
                         iterator.remove();
                         continue;
                     } else if (!sound.hasPlayedOnce() && playing)
@@ -93,14 +73,14 @@ public class AmbientSoundEngine {
     }
     
     public void stop(SoundStream sound) {
-        handler.stop(sound);
+        manager.stop(sound);
         synchronized (sounds) {
             sounds.remove(sound);
         }
     }
     
     public void play(SoundStream stream) {
-        handler.play(stream);
+        manager.play(stream);
         stream.onStart();
         synchronized (sounds) {
             sounds.add(stream);

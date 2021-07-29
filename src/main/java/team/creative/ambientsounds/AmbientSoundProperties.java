@@ -2,7 +2,7 @@ package team.creative.ambientsounds;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import team.creative.ambientsounds.AmbientCondition.AmbientMinMaxCondition;
 
 public class AmbientSoundProperties {
@@ -52,7 +52,7 @@ public class AmbientSoundProperties {
         if (mute == null)
             mute = 0D;
         else
-            mute = MathHelper.clamp(mute, 0, 1);
+            mute = Mth.clamp(mute, 0, 1);
     }
     
     public float getPitch(AmbientEnviroment env) {

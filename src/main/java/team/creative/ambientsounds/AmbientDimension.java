@@ -10,10 +10,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
@@ -43,8 +43,8 @@ public class AmbientDimension {
     @SerializedName(value = "average-height")
     public Integer averageHeight;
     
-    public void load(Gson gson, JsonParser parser, IResourceManager manager) throws IOException {
-        for (IResource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "dimensions/" + name + ".json"))) {
+    public void load(Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "dimensions/" + name + ".json"))) {
             AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientRegion[].class);
             for (int j = 0; j < regions.length; j++) {
                 AmbientRegion region = regions[j];
@@ -68,8 +68,8 @@ public class AmbientDimension {
                 dimensionNames[i] = ".*" + dimensionNames[i].toLowerCase().replace("*", ".*").replace("?", "\\?") + ".*";
     }
     
-    public boolean is(World world) {
-        String dimensionTypeName = world.dimension().location().toString();
+    public boolean is(Level level) {
+        String dimensionTypeName = level.dimension().location().toString();
         
         if (badDimensionNames != null)
             for (int j = 0; j < badDimensionNames.length; j++)

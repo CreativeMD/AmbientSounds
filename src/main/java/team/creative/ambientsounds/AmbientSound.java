@@ -3,13 +3,14 @@ package team.creative.ambientsounds;
 import java.util.Arrays;
 import java.util.Random;
 
-import net.minecraft.client.audio.ITickableSound;
-import net.minecraft.client.audio.Sound;
-import net.minecraft.client.audio.SoundEventAccessor;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.client.sounds.WeighedSoundEvents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientSound extends AmbientCondition {
@@ -181,7 +182,7 @@ public class AmbientSound extends AmbientCondition {
                 currentPropertries = selection.getProperties();
                 last.subSelection = null;
                 
-                aimedPitch = MathHelper.clamp(currentPropertries.getPitch(env), 0.5F, 2.0F);
+                aimedPitch = Mth.clamp(currentPropertries.getPitch(env), 0.5F, 2.0F);
             } else
                 aimedVolume = 0;
         } else
@@ -246,13 +247,13 @@ public class AmbientSound extends AmbientCondition {
         return currentVolume * volumeSetting * env.dimension.volumeSetting;
     }
     
-    public class SoundStream implements ITickableSound {
+    public class SoundStream implements TickableSoundInstance {
         
         public final int index;
         public final ResourceLocation location;
         
         public float generatedVoume;
-        public SoundEventAccessor soundeventaccessor;
+        public WeighedSoundEvents soundeventaccessor;
         
         public double volume;
         public double pitch;
@@ -314,19 +315,19 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public SoundEventAccessor resolve(SoundHandler sndHandler) {
+        public WeighedSoundEvents resolve(SoundManager sndHandler) {
             soundeventaccessor = sndHandler.getSoundEvent(location);
             return soundeventaccessor;
         }
         
         @Override
-        public AttenuationType getAttenuation() {
-            return AttenuationType.NONE;
+        public SoundInstance.Attenuation getAttenuation() {
+            return SoundInstance.Attenuation.NONE;
         }
         
         @Override
-        public SoundCategory getSource() {
-            return SoundCategory.AMBIENT;
+        public SoundSource getSource() {
+            return SoundSource.AMBIENT;
         }
         
         @Override

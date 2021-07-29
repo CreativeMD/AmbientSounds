@@ -3,19 +3,20 @@ package team.creative.ambientsounds;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 
 public class AmbientEnviroment {
     
-    public World world;
+    public Level level;
     
     public boolean soundsDisabled = false;
     
@@ -29,7 +30,7 @@ public class AmbientEnviroment {
     public LinkedHashMap<BiomeArea, Float> biomes;
     public BlockEnviroment blocks = new BlockEnviroment();
     
-    public PlayerEntity player;
+    public Player player;
     
     public double underwater;
     public double averageHeight;
@@ -40,17 +41,17 @@ public class AmbientEnviroment {
     public double biomeVolume = 1;
     public AmbientDimension dimension;
     
-    public AmbientEnviroment(PlayerEntity player) {
+    public AmbientEnviroment(Player player) {
         this.player = player;
-        this.world = player.level;
+        this.level = player.level;
     }
     
-    public void updateWorld() {
-        this.overallRaining = world.isRaining();
-        this.raining = world.isRainingAt(player.blockPosition());
-        Biome biome = world.getBiome(player.blockPosition());
-        this.snowing = biome.getPrecipitation() == Biome.RainType.SNOW && world.isRaining();
-        this.thundering = world.isThundering();
+    public void updateLevel() {
+        this.overallRaining = level.isRaining();
+        this.raining = level.isRainingAt(player.blockPosition());
+        Biome biome = level.getBiome(player.blockPosition());
+        this.snowing = biome.getPrecipitation() == Biome.Precipitation.SNOW && level.isRaining();
+        this.thundering = level.isThundering();
     }
     
     public void setSunAngle(float sunAngle) {
@@ -98,7 +99,7 @@ public class AmbientEnviroment {
         public void updateAllDirections(AmbientEngine engine) {
             int lightspots = 0;
             averageLight = 0;
-            BlockPos.Mutable pos = new BlockPos.Mutable();
+            MutableBlockPos pos = new MutableBlockPos();
             for (Direction facing : Direction.values()) {
                 BlockSpot spot = updateDirection(pos, facing, engine);
                 if (spot != null) {
@@ -110,21 +111,21 @@ public class AmbientEnviroment {
                 
             }
             if (lightspots == 0)
-                averageLight = world.getLightEmission(pos.set(player.blockPosition()));
+                averageLight = level.getLightEmission(pos.set(player.blockPosition()));
             else
                 averageLight /= lightspots;
             outsideVolume = calculateOutsideVolume(engine);
         }
         
-        protected BlockSpot updateDirection(BlockPos.Mutable pos, Direction facing, AmbientEngine engine) {
+        protected BlockSpot updateDirection(MutableBlockPos pos, Direction facing, AmbientEngine engine) {
             pos.set(player.blockPosition());
             pos.setY(pos.getY() + 1);
             
             for (int i = 1; i < engine.blockScanDistance; i++) {
                 pos.set(pos.getX() + facing.getStepX(), pos.getY() + facing.getStepY(), pos.getZ() + facing.getStepZ());
-                BlockState state = world.getBlockState(pos);
-                if (state.isCollisionShapeFullBlock(world, pos))
-                    return new BlockSpot(state, i, world.getLightEmission(pos.move(facing.getOpposite())));
+                BlockState state = level.getBlockState(pos);
+                if (state.isCollisionShapeFullBlock(level, pos))
+                    return new BlockSpot(state, i, level.getLightEmission(pos.move(facing.getOpposite())));
             }
             return null;
         }
@@ -158,14 +159,13 @@ public class AmbientEnviroment {
             if (distanceY == null)
                 volumeVertical = 1;
             else
-                volumeVertical = MathHelper.clamp((distanceY - engine.outsideDistanceMin) / (double) (engine.outsideDistanceMax - engine.outsideDistanceMin), 0, 1);
+                volumeVertical = Mth.clamp((distanceY - engine.outsideDistanceMin) / (double) (engine.outsideDistanceMax - engine.outsideDistanceMin), 0, 1);
             
             double volumeHorizontal;
             if (distanceX == null || distanceZ == null)
                 volumeHorizontal = 1;
             else
-                volumeHorizontal = MathHelper
-                        .clamp((Math.max(distanceX, distanceZ) - engine.outsideDistanceMin) / (double) (engine.outsideDistanceMax - engine.outsideDistanceMin), 0, 1);
+                volumeHorizontal = Mth.clamp((Math.max(distanceX, distanceZ) - engine.outsideDistanceMin) / (double) (engine.outsideDistanceMax - engine.outsideDistanceMin), 0, 1);
             
             return volumeHorizontal * volumeVertical;
         }

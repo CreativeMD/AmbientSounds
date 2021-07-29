@@ -22,17 +22,18 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
 
@@ -57,12 +58,12 @@ public class AmbientEngine {
     public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
         
         try {
-            IResourceManager manager = Minecraft.getInstance().getResourceManager();
+            ResourceManager manager = Minecraft.getInstance().getResourceManager();
             
             AmbientEngine engine = gson
                     .fromJson(parser.parse(IOUtils.toString(manager.getResource(ENGINE_LOCATION).getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientEngine.class);
             
-            for (IResource resource : manager.getResources(DIMENSIONS_LOCATION)) {
+            for (Resource resource : manager.getResources(DIMENSIONS_LOCATION)) {
                 AmbientDimension[] dimensions = gson
                         .fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientDimension[].class);
                 for (int i = 0; i < dimensions.length; i++) {
@@ -77,7 +78,7 @@ public class AmbientEngine {
                 }
             }
             
-            for (IResource resource : manager.getResources(REGIONS_LOCATION)) {
+            for (Resource resource : manager.getResources(REGIONS_LOCATION)) {
                 AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientRegion[].class);
                 for (int i = 0; i < regions.length; i++) {
                     AmbientRegion region = regions[i];
@@ -118,6 +119,8 @@ public class AmbientEngine {
     protected transient List<AmbientRegion> activeRegions = new ArrayList<>();
     
     protected transient LinkedHashMap<String, AmbientSound> sounds = new LinkedHashMap<>();
+    
+    protected transient List<String> silentDimensions = new ArrayList<>();
     
     protected transient AmbientSoundEngine soundEngine;
     
@@ -174,13 +177,13 @@ public class AmbientEngine {
         }
     }
     
-    public AmbientDimension getDimension(World world) {
-        String dimensionTypeName = world.dimension().location().toString();
+    public AmbientDimension getDimension(Level level) {
+        String dimensionTypeName = level.dimension().location().toString();
         if (silentDimensions.contains(dimensionTypeName))
-            return silentDimension;
+            return silentDim;
         
         for (AmbientDimension dimension : dimensions.values())
-            if (dimension.is(world))
+            if (dimension.is(level))
                 return dimension;
             
         return silentDim;
@@ -255,21 +258,21 @@ public class AmbientEngine {
         }
     }
     
-    public TerrainHeight calculateAverageHeight(World world, PlayerEntity player) {
+    public TerrainHeight calculateAverageHeight(Level level, Player player) {
         int sum = 0;
         int count = 0;
         
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
         
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+        MutableBlockPos pos = new MutableBlockPos();
         BlockPos center = player.blockPosition();
         
         for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
             for (int z = -averageHeightScanCount; z <= averageHeightScanCount; z++) {
                 
                 pos.set(center.getX() + averageHeightScanDistance * x, center.getY(), center.getZ() + averageHeightScanDistance * z);
-                int height = getHeightBlock(world, pos);
+                int height = getHeightBlock(level, pos);
                 
                 min = Math.min(height, min);
                 max = Math.max(height, max);
@@ -280,18 +283,18 @@ public class AmbientEngine {
         return new TerrainHeight((double) sum / count, min, max);
     }
     
-    public LinkedHashMap<BiomeArea, Float> calculateBiomes(World world, PlayerEntity player, double volume) {
+    public LinkedHashMap<BiomeArea, Float> calculateBiomes(Level level, Player player, double volume) {
         LinkedHashMap<BiomeArea, Float> biomes = new LinkedHashMap<>();
         if (volume > 0.0) {
             
             int posX = (int) player.getX();
             int posZ = (int) player.getZ();
             BlockPos center = new BlockPos(posX, 0, posZ);
-            BlockPos.Mutable pos = new BlockPos.Mutable();
+            MutableBlockPos pos = new MutableBlockPos();
             for (int x = -biomeScanCount; x <= biomeScanCount; x++) {
                 for (int z = -biomeScanCount; z <= biomeScanCount; z++) {
                     pos.set(posX + x * biomeScanDistance, 0, posZ + z * biomeScanDistance);
-                    Biome biome = world.getBiome(pos);
+                    Biome biome = level.getBiome(pos);
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
                     BiomeArea area = new BiomeArea(biome, pos);
@@ -313,7 +316,7 @@ public class AmbientEngine {
         return biomes;
     }
     
-    public static int getHeightBlock(World world, BlockPos.Mutable pos) {
+    public static int getHeightBlock(Level world, MutableBlockPos pos) {
         int y;
         int heighest = 2;
         

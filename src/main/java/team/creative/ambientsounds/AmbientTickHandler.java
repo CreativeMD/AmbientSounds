@@ -8,24 +8,23 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.google.common.base.Strings;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.fmlclient.gui.GuiUtils;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.creativecore.CreativeCore;
 import team.creative.creativecore.common.config.holder.ConfigHolderDynamic;
@@ -85,7 +84,7 @@ public class AmbientTickHandler {
                 builder.append(",");
             else
                 first = false;
-            builder.append(TextFormatting.YELLOW + pair.key + TextFormatting.RESET + ":" + format(pair.value));
+            builder.append(ChatFormatting.YELLOW + pair.key + ChatFormatting.RESET + ":" + format(pair.value));
         }
         return builder.toString();
     }
@@ -93,7 +92,6 @@ public class AmbientTickHandler {
     @SubscribeEvent
     public void onRender(RenderTickEvent event) {
         if (showDebugInfo && event.phase == Phase.END && engine != null && !mc.isPaused() && enviroment != null && mc.level != null) {
-            RenderSystem.pushMatrix();
             List<String> list = new ArrayList<>();
             
             AmbientDimension dimension = engine.getDimension(mc.level);
@@ -131,7 +129,7 @@ public class AmbientTickHandler {
             
             for (AmbientRegion region : engine.activeRegions) {
                 
-                details.add(new Pair<>("region", TextFormatting.DARK_GREEN + region.name + TextFormatting.RESET));
+                details.add(new Pair<>("region", ChatFormatting.DARK_GREEN + region.name + ChatFormatting.RESET));
                 details.add(new Pair<>("playing", region.playing.size()));
                 
                 list.add(format(details));
@@ -180,12 +178,11 @@ public class AmbientTickHandler {
                     int j = mc.font.lineHeight;
                     int k = mc.font.width(s);
                     int i1 = 2 + j * i;
-                    MatrixStack mat = new MatrixStack();
+                    PoseStack mat = new PoseStack();
                     GuiUtils.drawGradientRect(mat.last().pose(), 0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
                     mc.font.drawShadow(mat, s, 2, i1, 14737632);
                 }
             }
-            RenderSystem.popMatrix();
         }
     }
     
@@ -205,25 +202,25 @@ public class AmbientTickHandler {
             if (engine == null)
                 return;
             
-            World world = mc.level;
-            PlayerEntity player = mc.player;
+            Level level = mc.level;
+            Player player = mc.player;
             
-            if (world != null && player != null && !mc.isPaused() && mc.options.getSoundSourceVolume(SoundCategory.AMBIENT) > 0) {
+            if (level != null && player != null && !mc.isPaused() && mc.options.getSoundSourceVolume(SoundSource.AMBIENT) > 0) {
                 
                 if (enviroment == null)
                     enviroment = new AmbientEnviroment(player);
                 
-                AmbientDimension newDimension = engine.getDimension(world);
+                AmbientDimension newDimension = engine.getDimension(level);
                 if (enviroment.dimension != newDimension) {
                     engine.changeDimension(enviroment, newDimension);
                     enviroment.dimension = newDimension;
                 }
                 
                 if (timer % engine.enviromentTickTime == 0) {
-                    enviroment.world = world;
+                    enviroment.level = level;
                     enviroment.player = player;
                     enviroment.biomeVolume = 1;
-                    enviroment.setHeight(engine.calculateAverageHeight(world, player));
+                    enviroment.setHeight(engine.calculateAverageHeight(level, player));
                     
                     enviroment.biomeVolume = 1.0F;
                     
@@ -231,7 +228,7 @@ public class AmbientTickHandler {
                         enviroment.dimension.manipulateEnviroment(enviroment);
                     
                     if (enviroment.biomeVolume > 0)
-                        enviroment.biomes = engine.calculateBiomes(world, player, enviroment.biomeVolume);
+                        enviroment.biomes = engine.calculateBiomes(level, player, enviroment.biomeVolume);
                     else if (enviroment.biomes != null)
                         enviroment.biomes.clear();
                     else
@@ -241,12 +238,12 @@ public class AmbientTickHandler {
                 }
                 
                 if (timer % engine.soundTickTime == 0) {
-                    enviroment.setSunAngle((float) Math.toDegrees(world.getSunAngle(mc.getDeltaFrameTime())));
-                    enviroment.updateWorld();
+                    enviroment.setSunAngle((float) Math.toDegrees(level.getSunAngle(mc.getDeltaFrameTime())));
+                    enviroment.updateLevel();
                     int depth = 0;
                     if (player.isEyeInFluid(FluidTags.WATER)) {
                         BlockPos blockpos = new BlockPos(player.blockPosition()).above();
-                        while (world.getBlockState(blockpos).getMaterial() == Material.WATER) {
+                        while (level.getBlockState(blockpos).getMaterial() == Material.WATER) {
                             depth++;
                             blockpos = blockpos.above();
                         }

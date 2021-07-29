@@ -12,9 +12,9 @@ import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 public class AmbientRegion extends AmbientCondition {
     
@@ -31,8 +31,8 @@ public class AmbientRegion extends AmbientCondition {
         
     }
     
-    public void load(Gson gson, JsonParser parser, IResourceManager manager) throws IOException {
-        for (IResource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "regions/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
+    public void load(Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "regions/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
             AmbientSound[] sounds = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientSound[].class);
             for (int j = 0; j < sounds.length; j++) {
                 AmbientSound sound = sounds[j];
@@ -57,7 +57,7 @@ public class AmbientRegion extends AmbientCondition {
     
     @Override
     public AmbientSelection value(AmbientEnviroment env) {
-        if (dimension != null && !dimension.is(env.world))
+        if (dimension != null && !dimension.is(env.level))
             return null;
         if (volumeSetting == 0)
             return null;

@@ -6,14 +6,15 @@ import java.util.Map.Entry;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.ForgeRegistries;
 import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
 import team.creative.ambientsounds.AmbientEnviroment.BlockSpot;
+import team.creative.creativecore.common.util.mc.MaterialUtils;
 
 public class AmbientCondition extends AmbientSoundProperties {
     
@@ -71,9 +72,9 @@ public class AmbientCondition extends AmbientSoundProperties {
     public void init(AmbientEngine engine) {
         super.init(engine);
         
-        volume = MathHelper.clamp(volume, 0, 1);
-        nightVolume = MathHelper.clamp(nightVolume, 0, 1);
-        dayVolume = MathHelper.clamp(dayVolume, 0, 1);
+        volume = Mth.clamp(volume, 0, 1);
+        nightVolume = Mth.clamp(nightVolume, 0, 1);
+        dayVolume = Mth.clamp(dayVolume, 0, 1);
         
         if (specialBiome != null)
             specialBiome.init();
@@ -398,9 +399,9 @@ public class AmbientCondition extends AmbientSoundProperties {
             
             double volume = 1;
             if (min != null)
-                volume = MathHelper.clamp(Math.abs(value - min) / fade, 0, 1);
+                volume = Mth.clamp(Math.abs(value - min) / fade, 0, 1);
             if (max != null)
-                volume = Math.min(volume, MathHelper.clamp(Math.abs(value - max) / fade, 0, 1));
+                volume = Math.min(volume, Mth.clamp(Math.abs(value - max) / fade, 0, 1));
             return volume;
         }
         
@@ -419,7 +420,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (materials != null) {
                 mat = new ArrayList<>();
                 for (String string : materials) {
-                    Material material = getMaterial(string);
+                    Material material = MaterialUtils.getMaterial(string);
                     if (material != null)
                         mat.add(material);
                 }
@@ -428,7 +429,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (badMaterials != null) {
                 badMat = new ArrayList<>();
                 for (String string : badMaterials) {
-                    Material material = getMaterial(string);
+                    Material material = MaterialUtils.getMaterial(string);
                     if (material != null)
                         badMat.add(material);
                 }
@@ -452,17 +453,6 @@ public class AmbientCondition extends AmbientSoundProperties {
             }
             
             return found ? 1 : 0;
-        }
-        
-        static Material[] refMaterials = new Material[] { Material.GRASS, Material.DIRT, Material.WOOD, Material.STONE, Material.METAL, Material.HEAVY_METAL, Material.WATER, Material.LAVA, Material.LEAVES, Material.PLANT, Material.BAMBOO, Material.SPONGE, Material.WOOL, Material.FIRE, Material.SAND, Material.DECORATION, Material.CLOTH_DECORATION, Material.GLASS, Material.EXPLOSIVE, Material.CORAL, Material.ICE, Material.ICE_SOLID, Material.SNOW, Material.CACTUS, Material.CLAY, Material.VEGETABLE, Material.EGG, Material.PORTAL, Material.CAKE, Material.WEB, Material.PISTON, Material.BARRIER, Material.STRUCTURAL_AIR };
-        
-        static String[] refMaterialNames = new String[] { "GRASS", "GROUND", "WOOD", "ROCK", "IRON", "ANVIL", "WATER", "LAVA", "LEAVES", "PLANTS", "TALL_PLANTS", "SPONGE", "WOOL", "FIRE", "SAND", "MISCELLANEOUS", "CARPET", "GLASS", "TNT", "CORAL", "ICE", "PACKED_ICE", "SNOW", "CACTUS", "CLAY", "GOURD", "DRAGON_EGG", "PORTAL", "CAKE", "WEB", "PISTON", "BARRIER", "STRUCTURE_VOID" };
-        
-        public static Material getMaterial(String name) {
-            for (int i = 0; i < refMaterialNames.length; i++)
-                if (refMaterialNames[i].equalsIgnoreCase(name))
-                    return refMaterials[i];
-            return null;
         }
         
     }
