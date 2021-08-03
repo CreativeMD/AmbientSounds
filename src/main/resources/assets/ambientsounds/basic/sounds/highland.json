@@ -1,0 +1,10 @@
+[
+	{
+		"name": "heavy-wind",
+		"files": [
+			"ambientsounds:wind.heavy-wind"
+		],
+		"outside": true,
+		"volume": 0.5
+	}
+]

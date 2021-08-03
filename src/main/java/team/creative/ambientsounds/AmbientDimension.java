@@ -43,14 +43,14 @@ public class AmbientDimension {
     @SerializedName(value = "average-height")
     public Integer averageHeight;
     
-    public void load(Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
-        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "dimensions/" + name + ".json"))) {
-            AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientRegion[].class);
+    public void load(AmbientEngine engine, Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/dimension_regions/" + name + ".json"))) {
+            AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
             for (int j = 0; j < regions.length; j++) {
                 AmbientRegion region = regions[j];
                 region.dimension = this;
                 this.regions.put(region.name, region);
-                region.load(gson, parser, manager);
+                region.load(engine, gson, parser, manager);
             }
         }
     }

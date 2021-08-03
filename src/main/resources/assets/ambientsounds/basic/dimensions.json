@@ -1,0 +1,114 @@
+[
+	{
+		"name": "nether",
+		"dimension-names": [
+			"nether"
+		],
+		"rain": false,
+		"storm": false,
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "end",
+		"dimension-names": [
+			"the*end"
+		],
+		"rain": false,
+		"storm": false,
+		"average-height": 0,
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "abyssalcraft",
+		"dimension-names": [
+			"The Abyssal Wasteland",
+			"The Dreadlands",
+			"Omothol",
+			"The Dark Realm"
+		],
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "void",
+		"dimension-names": [
+			"The Void",
+			"???"
+		],
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "twilightforest",
+		"dimension-names": [
+			"twilightforest"
+		],
+		"biome-selector": {
+			"regions": [
+				"surface"
+			]
+		}
+	},
+	{
+		"name": "betweenlands",
+		"dimension-names": [
+			"betweenlands"
+		],
+		"average-height": 0
+	},
+	{
+		"name": "cave",
+		"dimension-names": [
+			"deep_dark",
+			"underground"
+		],
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "midnight",
+		"dimension-names": [
+			"midnight"
+		],
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "galacticraft",
+		"dimension-names": [
+			"moon",
+			"space",
+			"asteroids"
+		],
+		"disable-all": true,
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "galacticraft.planets",
+		"dimension-names": [
+			"mars",
+			"venus"
+		],
+		"biome-selector": {
+			"always": false
+		}
+	},
+	{
+		"name": "surface",
+		"biome-selector": {
+			"regions": [
+				"surface"
+			]
+		}
+	}
+]

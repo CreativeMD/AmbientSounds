@@ -1,0 +1,17 @@
+[
+	{
+		"name": "ocean",
+		"files": [
+			"ambientsounds:water.ocean"
+		],
+		"volume": 0.1
+	},
+	{
+		"name": "light-wind",
+		"files": [
+			"ambientsounds:wind.light-wind"
+		],
+		"outside": true,
+		"volume": 0.4
+	}
+]

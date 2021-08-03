@@ -1,0 +1,9 @@
+[
+	{
+		"name": "wind",
+		"volume": 0.3,
+		"bad-regions": [
+			"cave-ambience"
+		]
+	}
+]

@@ -1,0 +1,15 @@
+[
+	{
+		"name": "light-wind",
+		"files": [
+			"ambientsounds:wind.light-wind",
+			"ambientsounds:wind.wind"
+		],
+		"outside": true,
+		"transition": 200,
+		"length": {
+			"min": 1000,
+			"max": 5000
+		}
+	}
+]

@@ -1,0 +1,14 @@
+[
+	{
+		"name": "suspense",
+		"files": [
+			"ambientsounds:suspense.cave1",
+			"ambientsounds:suspense.cave2"
+		],
+		"length": {
+			"min": 400,
+			"max": 700
+		},
+		"transition": 200
+	}
+]

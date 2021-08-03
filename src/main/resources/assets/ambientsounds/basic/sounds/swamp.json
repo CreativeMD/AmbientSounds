@@ -1,0 +1,39 @@
+[
+	{
+		"name": "cricket-swamp",
+		"files": [
+			"ambientsounds:animals.cricket-swamp"
+		],
+		"day": 0.3,
+		"night": 0,
+		"overall-raining": false
+	},
+	{
+		"name": "cricket-warm-night",
+		"files": [
+			"ambientsounds:animals.cricket-warm-night",
+			"ambientsounds:animals.cricket-warm-night2"
+		],
+		"overall-raining": false,
+		"length": {
+			"min": 1000,
+			"max": 1500
+		},
+		"transition": 100,
+		"day": 0,
+		"night": 0.3
+	},
+	{
+		"name": "frog",
+		"files": [
+			"ambientsounds:animals.frog1",
+			"ambientsounds:animals.frog2"
+		],
+		"pause": {
+			"min": 100,
+			"max": 750
+		},
+		"day": 0.05,
+		"night": 0.15
+	}
+]

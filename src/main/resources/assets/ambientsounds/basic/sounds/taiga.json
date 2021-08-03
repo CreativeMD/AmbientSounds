@@ -1,0 +1,12 @@
+[
+	{
+		"name": "bird-ambience-huge",
+		"files": [
+			"ambientsounds:animals.bird-ambience-huge1",
+			"ambientsounds:animals.bird-ambience-huge2",
+			"ambientsounds:animals.bird-ambience-huge3"
+		],
+		"day": 1,
+		"night": 0.2
+	}
+]

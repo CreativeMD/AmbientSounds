@@ -1,0 +1,13 @@
+{
+	"name": "basic",
+	"version": "1.0.0",
+	"enviroment-tick-time": 40,
+	"sound-tick-time": 4,
+	"block-scan-distance": 40,
+	"outside-distance-min": 2,
+	"outside-distance-max": 13,
+	"average-height-scan-distance": 2,
+	"average-height-scan-count": 5,
+	"biome-scan-distance": 5,
+	"biome-scan-count": 3
+}

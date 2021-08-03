@@ -29,6 +29,8 @@ public class AmbientSounds {
     
     public static final String MODID = "ambientsounds";
     
+    public static final AmbientSoundsConfig CONFIG = new AmbientSoundsConfig();
+    
     public AmbientSounds() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
     }

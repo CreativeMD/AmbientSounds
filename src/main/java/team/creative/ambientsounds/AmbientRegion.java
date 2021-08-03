@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -31,12 +32,17 @@ public class AmbientRegion extends AmbientCondition {
         
     }
     
-    public void load(Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
-        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, "regions/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
-            AmbientSound[] sounds = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientSound[].class);
-            for (int j = 0; j < sounds.length; j++) {
-                AmbientSound sound = sounds[j];
-                this.sounds.put(sound.name, sound);
+    public void load(AmbientEngine engine, Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
+        for (Resource resource : manager
+                .getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
+            try {
+                AmbientSound[] sounds = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientSound[].class);
+                for (int j = 0; j < sounds.length; j++) {
+                    AmbientSound sound = sounds[j];
+                    this.sounds.put(sound.name, sound);
+                }
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
             }
         }
     }

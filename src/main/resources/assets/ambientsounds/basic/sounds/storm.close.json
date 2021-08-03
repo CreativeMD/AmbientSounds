@@ -1,0 +1,17 @@
+[
+	{
+		"name": "storm-close",
+		"files": [
+			"ambientsounds:weather.storm-close"
+		]
+	},
+	{
+		"name": "wind",
+		"files": [
+			"ambientsounds:wind.wind"
+		],
+		"outside": true,
+		"volume": 0.4,
+		"mute": 0.3
+	}
+]

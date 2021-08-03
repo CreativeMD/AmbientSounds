@@ -1,0 +1,15 @@
+[
+	{
+		"name": "storm-away",
+		"files": [
+			"ambientsounds:weather.storm-away"
+		]
+	},
+	{
+		"name": "howling-wind",
+		"files": [
+			"ambientsounds:wind.howling-wind"
+		],
+		"volume": 0.2
+	}
+]

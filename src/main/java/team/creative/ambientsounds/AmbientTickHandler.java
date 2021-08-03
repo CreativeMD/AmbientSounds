@@ -50,6 +50,10 @@ public class AmbientTickHandler {
     
     public void initConfiguration() {
         CreativeConfigRegistry.ROOT.removeField(AmbientSounds.MODID);
+        
+        if (engine == null)
+            return;
+        
         ConfigHolderDynamic holder = CreativeConfigRegistry.ROOT.registerFolder(AmbientSounds.MODID, ConfigSynchronization.CLIENT);
         ConfigHolderDynamic sounds = holder.registerFolder("sounds");
         Field soundField = ObfuscationReflectionHelper.findField(AmbientSound.class, "volumeSetting");
@@ -64,7 +68,7 @@ public class AmbientTickHandler {
             dimensions.registerField(dimension.name, dimensionField, dimension);
         
         holder.registerField("silent-dimensions", ObfuscationReflectionHelper.findField(AmbientEngine.class, "silentDimensions"), engine);
-        
+        holder.registerValue("general", AmbientSounds.CONFIG);
         CreativeCore.CONFIG_HANDLER.load(AmbientSounds.MODID, Dist.CLIENT);
     }
     
@@ -96,6 +100,7 @@ public class AmbientTickHandler {
             
             AmbientDimension dimension = engine.getDimension(mc.level);
             List<Pair<String, Object>> details = new ArrayList<>();
+            details.add(new Pair<>("", engine.name + " v" + engine.version));
             details.add(new Pair<>("night", enviroment.night));
             details.add(new Pair<>("rain", enviroment.raining));
             details.add(new Pair<>("worldRain", enviroment.overallRaining));
@@ -192,12 +197,11 @@ public class AmbientTickHandler {
             
             if (soundEngine == null) {
                 soundEngine = new AmbientSoundEngine(mc.getSoundManager(), mc.options);
+                if (engine == null)
+                    setEngine(AmbientEngine.loadAmbientEngine(soundEngine));
                 if (engine != null)
                     engine.soundEngine = soundEngine;
             }
-            
-            if (engine == null)
-                setEngine(AmbientEngine.loadAmbientEngine(soundEngine));
             
             if (engine == null)
                 return;

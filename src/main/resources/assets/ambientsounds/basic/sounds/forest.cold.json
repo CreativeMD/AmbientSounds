@@ -1,0 +1,14 @@
+[
+	{
+		"name": "crow",
+		"files": [
+			"ambientsounds:animals.crow"
+		],
+		"pause": {
+			"min": 100,
+			"max": 400
+		},
+		"day": 1,
+		"night": 0.5
+	}
+]

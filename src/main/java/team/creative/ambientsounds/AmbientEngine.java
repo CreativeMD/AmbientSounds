@@ -39,10 +39,11 @@ import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
 
 public class AmbientEngine {
     
-    public static final ResourceLocation ENGINE_LOCATION = new ResourceLocation("ambientsounds", "engine.json");
-    public static final ResourceLocation DIMENSIONS_LOCATION = new ResourceLocation("ambientsounds", "dimensions.json");
-    public static final ResourceLocation REGIONS_LOCATION = new ResourceLocation("ambientsounds", "regions.json");
-    public static final ResourceLocation SOUNDS_LOCATION = new ResourceLocation("ambientsounds", "sounds.json");
+    public static final ResourceLocation CONFIG_LOCATION = new ResourceLocation(AmbientSounds.MODID, "config.json");
+    public static final String ENGINE_LOCATION = "engine.json";
+    public static final String DIMENSIONS_LOCATION = "dimensions.json";
+    public static final String REGIONS_LOCATION = "regions.json";
+    public static final String SOUNDS_LOCATION = "sounds.json";
     
     private static final JsonParser parser = new JsonParser();
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
@@ -55,58 +56,80 @@ public class AmbientEngine {
         }
     }).create();
     
-    public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
+    public static AmbientEngine attemptToLoadEngine(AmbientSoundEngine soundEngine, ResourceManager manager, String name) throws Exception {
+        AmbientEngine engine = gson.fromJson(parser
+                .parse(IOUtils.toString(manager.getResource(new ResourceLocation(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).getInputStream(), Charsets.UTF_8))
+                .getAsJsonObject(), AmbientEngine.class);
         
+        if (!engine.name.equals(name))
+            throw new Exception("Invalid engine name");
+        
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION))) {
+            AmbientDimension[] dimensions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientDimension[].class);
+            for (int i = 0; i < dimensions.length; i++) {
+                AmbientDimension dimension = dimensions[i];
+                if (dimension.name == null || dimension.name.isEmpty())
+                    AmbientSounds.LOGGER.error("Found invalid dimensions at {}", i);
+                engine.dimensions.put(dimension.name, dimension);
+                dimension.load(engine, gson, parser, manager);
+                for (AmbientRegion region : dimension.regions.values())
+                    if (engine.checkRegion(dimension, i, region))
+                        engine.addRegion(region);
+            }
+        }
+        
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION))) {
+            AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
+            for (int i = 0; i < regions.length; i++) {
+                AmbientRegion region = regions[i];
+                if (engine.checkRegion(null, i, region)) {
+                    engine.generalRegions.put(region.name, region);
+                    region.load(engine, gson, parser, manager);
+                    engine.addRegion(region);
+                }
+            }
+        }
+        
+        engine.silentDim = new AmbientDimension();
+        engine.silentDim.name = "silent";
+        engine.silentDim.volumeSetting = 0;
+        engine.silentDim.mute = true;
+        
+        engine.init();
+        
+        engine.soundEngine = soundEngine;
+        
+        AmbientSounds.LOGGER.info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} region(s) and {} sound(s)", engine.name, engine.version, engine.dimensions
+                .size(), engine.allRegions.size(), engine.sounds.size());
+        
+        return engine;
+    }
+    
+    public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
         try {
             ResourceManager manager = Minecraft.getInstance().getResourceManager();
             
-            AmbientEngine engine = gson
-                    .fromJson(parser.parse(IOUtils.toString(manager.getResource(ENGINE_LOCATION).getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientEngine.class);
+            AmbientConfig config = gson
+                    .fromJson(parser.parse(IOUtils.toString(manager.getResource(CONFIG_LOCATION).getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientConfig.class);
             
-            for (Resource resource : manager.getResources(DIMENSIONS_LOCATION)) {
-                AmbientDimension[] dimensions = gson
-                        .fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientDimension[].class);
-                for (int i = 0; i < dimensions.length; i++) {
-                    AmbientDimension dimension = dimensions[i];
-                    if (dimension.name == null || dimension.name.isEmpty())
-                        AmbientSounds.LOGGER.error("Found invalid dimensions at {}", i);
-                    engine.dimensions.put(dimension.name, dimension);
-                    dimension.load(gson, parser, manager);
-                    for (AmbientRegion region : dimension.regions.values())
-                        if (engine.checkRegion(dimension, i, region))
-                            engine.addRegion(region);
+            if (!AmbientSounds.CONFIG.engine.equalsIgnoreCase("default"))
+                try {
+                    return attemptToLoadEngine(soundEngine, manager, AmbientSounds.CONFIG.engine);
+                } catch (Exception e) {
+                    AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
+                    e.printStackTrace();
                 }
+            
+            try {
+                return attemptToLoadEngine(soundEngine, manager, config.defaultEngine);
+            } catch (Exception e) {
+                AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
+                e.printStackTrace();
             }
             
-            for (Resource resource : manager.getResources(REGIONS_LOCATION)) {
-                AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientRegion[].class);
-                for (int i = 0; i < regions.length; i++) {
-                    AmbientRegion region = regions[i];
-                    if (engine.checkRegion(null, i, region)) {
-                        engine.generalRegions.put(region.name, region);
-                        region.load(gson, parser, manager);
-                        engine.addRegion(region);
-                    }
-                }
-            }
-            
-            engine.silentDim = new AmbientDimension();
-            engine.silentDim.name = "silent";
-            engine.silentDim.volumeSetting = 0;
-            engine.silentDim.mute = true;
-            
-            engine.init();
-            
-            engine.soundEngine = soundEngine;
-            
-            AmbientSounds.LOGGER.info("Successfully loaded sound engine. {} dimension(s), {} region(s) and {} sound(s)", engine.dimensions.size(), engine.allRegions
-                    .size(), engine.sounds.size());
-            
-            return engine;
-            
+            throw new Exception();
         } catch (Exception e) {
-            e.printStackTrace();
-            AmbientSounds.LOGGER.error("Sound engine crashed, no sounds will be played!");
+            AmbientSounds.LOGGER.error("Not sound engine could be loaded, no sounds will be played!");
         }
         
         return null;
@@ -129,6 +152,10 @@ public class AmbientEngine {
     public AmbientRegion getRegion(String name) {
         return allRegions.get(name);
     }
+    
+    public String name;
+    
+    public String version;
     
     @SerializedName(value = "enviroment-tick-time")
     public int enviromentTickTime = 40;
@@ -298,7 +325,10 @@ public class AmbientEngine {
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
                     BiomeArea area = new BiomeArea(biome, pos);
-                    biomes.put(area, Math.max(biomes.get(area), biomeVolume));
+                    Float before = biomes.get(area);
+                    if (before == null)
+                        before = 0F;
+                    biomes.put(area, Math.max(before, biomeVolume));
                 }
             }
             

@@ -1,0 +1,34 @@
+[
+	{
+		"name": "bird-ambience",
+		"files": [
+			"ambientsounds:animals.bird-ambience1",
+			"ambientsounds:animals.bird-ambience2",
+			"ambientsounds:animals.bird-ambience3",
+			"ambientsounds:animals.bird-ambience4",
+			"ambientsounds:animals.bird-ambience5",
+			"ambientsounds:animals.bird-ambience6",
+			"ambientsounds:animals.bird-ambience7",
+			"ambientsounds:animals.bird-ambience8"
+		],
+		"length": {
+			"min": 2000,
+			"max": 3000
+		},
+		"transition": 400,
+		"day": 1,
+		"night": 0.3
+	},
+	{
+		"name": "owl",
+		"files": [
+			"ambientsounds:animals.owl"
+		],
+		"pause": {
+			"min": 10,
+			"max": 100
+		},
+		"night": 1,
+		"day": 0
+	}
+]

@@ -1,0 +1,42 @@
+[
+	{
+		"name": "cricket",
+		"files": [
+			"ambientsounds:animals.cricket",
+			"ambientsounds:animals.cricket2"
+		],
+		"overall-raining": false,
+		"length": {
+			"min": 1000,
+			"max": 1500
+		},
+		"transition": 100,
+		"day": 0.05,
+		"night": 0
+	},
+	{
+		"name": "cricket-night",
+		"files": [
+			"ambientsounds:animals.cricket-night",
+			"ambientsounds:animals.cricket-night2",
+			"ambientsounds:animals.cricket-night3",
+			"ambientsounds:animals.cricket-night4"
+		],
+		"overall-raining": false,
+		"length": {
+			"min": 1000,
+			"max": 1500
+		},
+		"transition": 100,
+		"day": 0,
+		"night": 0.05
+	},
+	{
+		"name": "cicadas-night",
+		"files": [
+			"ambientsounds:animals.cicadas-night"
+		],
+		"day": 0,
+		"night": 0.05
+	}
+]
