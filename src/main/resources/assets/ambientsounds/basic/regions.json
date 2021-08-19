@@ -65,14 +65,15 @@
 			"fade": 5
 		},
 		"absolute-height": {
-			"min": 0,
+			"min": -10,
 			"fade": 5
 		}
 	},
 	{
 		"name": "cave.ambience",
 		"regions": [
-			"cave"
+			"cave",
+			"underworld"
 		],
 		"min-height-relative": {
 			"max": -2,
