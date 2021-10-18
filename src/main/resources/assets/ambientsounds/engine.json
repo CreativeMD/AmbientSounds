@@ -27,6 +27,9 @@
       "rain": false,
       "storm": false,
       "average-height": 0,
+      "biome-selector": {
+        "always": false
+      },
       "regions": [
         {
           "name": "end",
