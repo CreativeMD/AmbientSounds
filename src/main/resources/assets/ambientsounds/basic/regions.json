@@ -345,7 +345,8 @@
 					"dry scrub"
 				],
 				"bad-biomes": [
-					"lush desert"
+					"lush desert",
+					"ocean"
 				]
 			},
 			{
