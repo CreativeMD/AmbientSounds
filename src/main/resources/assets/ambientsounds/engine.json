@@ -659,7 +659,7 @@
     },
     {
       "name": "desert",
-      "bad-regions": [ "beach" ],
+      "bad-regions": [ "beach", "ocean" ],
       "sounds": [
         {
           "name": "cicadas-desert",
