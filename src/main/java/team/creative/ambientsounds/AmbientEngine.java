@@ -45,7 +45,6 @@ public class AmbientEngine {
     public static final String REGIONS_LOCATION = "regions.json";
     public static final String SOUNDS_LOCATION = "sounds.json";
     
-    private static final JsonParser parser = new JsonParser();
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
         
         @Override
@@ -57,21 +56,21 @@ public class AmbientEngine {
     }).create();
     
     public static AmbientEngine attemptToLoadEngine(AmbientSoundEngine soundEngine, ResourceManager manager, String name) throws Exception {
-        AmbientEngine engine = gson.fromJson(parser
-                .parse(IOUtils.toString(manager.getResource(new ResourceLocation(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).getInputStream(), Charsets.UTF_8))
+        AmbientEngine engine = gson.fromJson(JsonParser
+                .parseString(IOUtils.toString(manager.getResource(new ResourceLocation(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).getInputStream(), Charsets.UTF_8))
                 .getAsJsonObject(), AmbientEngine.class);
         
         if (!engine.name.equals(name))
             throw new Exception("Invalid engine name");
         
         for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION))) {
-            AmbientDimension[] dimensions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientDimension[].class);
+            AmbientDimension[] dimensions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientDimension[].class);
             for (int i = 0; i < dimensions.length; i++) {
                 AmbientDimension dimension = dimensions[i];
                 if (dimension.name == null || dimension.name.isEmpty())
                     AmbientSounds.LOGGER.error("Found invalid dimensions at {}", i);
                 engine.dimensions.put(dimension.name, dimension);
-                dimension.load(engine, gson, parser, manager);
+                dimension.load(engine, gson, manager);
                 for (AmbientRegion region : dimension.regions.values())
                     if (engine.checkRegion(dimension, i, region))
                         engine.addRegion(region);
@@ -79,12 +78,12 @@ public class AmbientEngine {
         }
         
         for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION))) {
-            AmbientRegion[] regions = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
+            AmbientRegion[] regions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
             for (int i = 0; i < regions.length; i++) {
                 AmbientRegion region = regions[i];
                 if (engine.checkRegion(null, i, region)) {
                     engine.generalRegions.put(region.name, region);
-                    region.load(engine, gson, parser, manager);
+                    region.load(engine, gson, manager);
                     engine.addRegion(region);
                 }
             }
@@ -109,8 +108,8 @@ public class AmbientEngine {
         try {
             ResourceManager manager = Minecraft.getInstance().getResourceManager();
             
-            AmbientConfig config = gson
-                    .fromJson(parser.parse(IOUtils.toString(manager.getResource(CONFIG_LOCATION).getInputStream(), Charsets.UTF_8)).getAsJsonObject(), AmbientConfig.class);
+            AmbientConfig config = gson.fromJson(JsonParser.parseString(IOUtils.toString(manager.getResource(CONFIG_LOCATION).getInputStream(), Charsets.UTF_8))
+                    .getAsJsonObject(), AmbientConfig.class);
             
             if (!AmbientSounds.CONFIG.engine.equalsIgnoreCase("default"))
                 try {

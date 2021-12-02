@@ -18,7 +18,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
+import net.minecraftforge.network.NetworkConstants;
 import team.creative.creativecore.client.CreativeCoreClient;
 import team.creative.creativecore.client.command.ClientCommandRegistry;
 
@@ -39,7 +39,7 @@ public class AmbientSounds {
     
     private void doClientStuff(final FMLClientSetupEvent event) {
         ModLoadingContext.get()
-                .registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+                .registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
         
         tickHandler = new AmbientTickHandler();
         MinecraftForge.EVENT_BUS.register(tickHandler);

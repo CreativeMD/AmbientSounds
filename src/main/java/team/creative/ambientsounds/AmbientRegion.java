@@ -32,11 +32,11 @@ public class AmbientRegion extends AmbientCondition {
         
     }
     
-    public void load(AmbientEngine engine, Gson gson, JsonParser parser, ResourceManager manager) throws IOException {
+    public void load(AmbientEngine engine, Gson gson, ResourceManager manager) throws IOException {
         for (Resource resource : manager
                 .getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
             try {
-                AmbientSound[] sounds = gson.fromJson(parser.parse(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientSound[].class);
+                AmbientSound[] sounds = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientSound[].class);
                 for (int j = 0; j < sounds.length; j++) {
                     AmbientSound sound = sounds[j];
                     this.sounds.put(sound.name, sound);
