@@ -6,15 +6,9 @@ import java.util.Map.Entry;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
-import net.minecraftforge.registries.ForgeRegistries;
-import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
-import team.creative.ambientsounds.AmbientEnviroment.BlockSpot;
-import team.creative.creativecore.common.util.mc.MaterialUtils;
+import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
 
 public class AmbientCondition extends AmbientSoundProperties {
     
@@ -29,8 +23,6 @@ public class AmbientCondition extends AmbientSoundProperties {
     public String[] biomes;
     @SerializedName(value = "bad-biomes")
     public String[] badBiomes;
-    @SerializedName(value = "special-biomes")
-    public AmbientBiomeCondition specialBiome;
     
     public Boolean raining;
     @SerializedName(value = "overall-raining")
@@ -51,7 +43,9 @@ public class AmbientCondition extends AmbientSoundProperties {
     
     public AmbientMinMaxFadeCondition light;
     
-    public AmbientMaterialCondition blocks;
+    public String[] blocks;
+    @SerializedName(value = "bad-blocks")
+    public String[] badBlocks;
     
     public AmbientCondition[] variants;
     
@@ -62,7 +56,7 @@ public class AmbientCondition extends AmbientSoundProperties {
     public String[] badRegions;
     transient List<AmbientRegion> badRegionList;
     
-    public Boolean outside;
+    //public Boolean outside;
     
     public String regionName() {
         return null;
@@ -75,12 +69,6 @@ public class AmbientCondition extends AmbientSoundProperties {
         volume = Mth.clamp(volume, 0, 1);
         nightVolume = Mth.clamp(nightVolume, 0, 1);
         dayVolume = Mth.clamp(dayVolume, 0, 1);
-        
-        if (specialBiome != null)
-            specialBiome.init();
-        
-        if (blocks != null)
-            blocks.init();
         
         if (variants != null)
             for (int i = 0; i < variants.length; i++)
@@ -109,7 +97,7 @@ public class AmbientCondition extends AmbientSoundProperties {
     
     public AmbientSelection value(AmbientEnviroment env) {
         
-        if (env.soundsDisabled)
+        if (env.muted)
             return null;
         
         if (always != null)
@@ -133,23 +121,23 @@ public class AmbientCondition extends AmbientSoundProperties {
         if (storming != null && env.thundering != storming)
             return null;
         
-        if (outside != null)
+        /*if (outside != null)
             if (outside) {
                 if (env.blocks.outsideVolume == 0)
                     return null;
             } else if (env.blocks.outsideVolume == 1)
-                return null;
-            
+                return null;*/
+        
         AmbientSelection selection = new AmbientSelection(this);
         
         selection.volume *= env.night ? nightVolume : dayVolume;
         
-        if (outside != null)
+        /*if (outside != null)
             if (outside)
                 selection.volume *= env.blocks.outsideVolume;
             else
-                selection.volume *= 1 - env.blocks.outsideVolume;
-            
+                selection.volume *= 1 - env.blocks.outsideVolume;*/
+        
         if (badRegionList != null)
             for (AmbientRegion region : badRegionList)
                 if (region.isActive())
@@ -173,10 +161,10 @@ public class AmbientCondition extends AmbientSoundProperties {
             selection.volume *= highest;
         }
         
-        if (biomes != null || badBiomes != null || specialBiome != null) {
+        if (biomes != null || badBiomes != null) {
             Entry<BiomeArea, Float> highest = null;
             
-            for (Entry<BiomeArea, Float> pair : env.biomes.entrySet()) {
+            for (Entry<BiomeArea, Float> pair : env.biome.biomes.entrySet()) {
                 
                 if (biomes != null && !pair.getKey().checkBiome(biomes))
                     continue;
@@ -184,14 +172,11 @@ public class AmbientCondition extends AmbientSoundProperties {
                 if (badBiomes != null && pair.getKey().checkBiome(badBiomes))
                     return null;
                 
-                if (specialBiome != null && !specialBiome.is(pair.getKey()))
-                    continue;
-                
                 if (highest == null || highest.getValue() < pair.getValue())
                     highest = pair;
             }
             
-            if (highest == null && (biomes != null || specialBiome != null))
+            if (highest == null && biomes != null)
                 return null;
             else if (highest != null)
                 selection.volume *= highest.getValue();
@@ -214,7 +199,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (minHeightRelative != null) {
-            double volume = minHeightRelative.volume(env.player.getEyeY() - env.minHeight);
+            double volume = minHeightRelative.volume(env.relativeMinHeight);
             if (volume <= 0)
                 return null;
             
@@ -222,7 +207,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (maxHeightRelative != null) {
-            double volume = maxHeightRelative.volume(env.player.getEyeY() - env.maxHeight);
+            double volume = maxHeightRelative.volume(env.relativeMaxHeight);
             if (volume <= 0)
                 return null;
             
@@ -230,7 +215,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (absoluteHeight != null) {
-            double volume = absoluteHeight.volume(env.player.getEyeY());
+            double volume = absoluteHeight.volume(env.absoluteHeight);
             if (volume <= 0)
                 return null;
             
@@ -238,20 +223,18 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (light != null) {
-            double volume = light.volume(env.blocks.averageLight);
+            double volume = light.volume(env.terrain.airPocket.averageLight);
             if (volume <= 0)
                 return null;
             
             selection.volume *= volume;
         }
         
-        if (blocks != null) {
-            double volume = blocks.volume(env);
-            if (volume <= 0)
-                return null;
-            
-            selection.volume *= volume;
-        }
+        if (badBlocks != null && env.terrain.airPocket.contains(badBlocks))
+            return null;
+        
+        if (blocks != null && !env.terrain.airPocket.contains(blocks))
+            return null;
         
         if (variants != null) {
             AmbientSelection bestCondition = null;
@@ -269,93 +252,6 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         return selection;
-    }
-    
-    public static class AmbientBiomeCondition {
-        
-        @SerializedName(value = "top-block")
-        public String[] topBlock;
-        
-        transient List<Block> blocks;
-        
-        public AmbientMinMaxCondition temperature;
-        
-        @SerializedName(value = "trees-per-chunk")
-        public AmbientMinMaxCondition treesPerChunk;
-        @SerializedName(value = "waterlily-per-chunk")
-        public AmbientMinMaxCondition waterlilyPerChunk;
-        @SerializedName(value = "flowers-per-chunk")
-        public AmbientMinMaxCondition flowersPerChunk;
-        @SerializedName(value = "grass-per-chunk")
-        public AmbientMinMaxCondition grassPerChunk;
-        @SerializedName(value = "deadbush-per-chunk")
-        public AmbientMinMaxCondition deadBushPerChunk;
-        @SerializedName(value = "mushrooms-per-chunk")
-        public AmbientMinMaxCondition mushroomsPerChunk;
-        @SerializedName(value = "reeds-per-chunk")
-        public AmbientMinMaxCondition reedsPerChunk;
-        @SerializedName(value = "cacti-per-chunk")
-        public AmbientMinMaxCondition cactiPerChunk;
-        
-        public void init() {
-            if (topBlock != null) {
-                blocks = new ArrayList<>();
-                for (String blockName : topBlock) {
-                    Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockName));
-                    if (block != null && !(block instanceof AirBlock))
-                        blocks.add(block);
-                }
-            }
-        }
-        
-        public boolean is(BiomeArea biome) {
-            if (topBlock != null && !biome.checkTopBlock(blocks))
-                return false;
-            
-            if (temperature != null && !temperature.is(biome.biome.getTemperature(biome.pos)))
-                return false;
-            
-            if (treesPerChunk != null)
-                return false;
-            
-            /* for (CompositeFeature<?, ?> feature : biome.biome.getFeatures(Decoration.VEGETAL_DECORATION)) {
-             * if (feature.getFeature() instanceof AbstractTreeFeature) {
-             * System.out.println("Tree!");
-             * }
-             * }
-             * 
-             * for (CompositeFeature<?, ?> feature : biome.biome.getFeatures(Decoration.VEGETAL_DECORATION)) {
-             * 
-             * Feature.BIRCH_TREE
-             * }
-             * 
-             * if (treesPerChunk != null && !treesPerChunk.is(biome.biome.get.decorator.treesPerChunk))
-             * return false;
-             * 
-             * if (waterlilyPerChunk != null && !waterlilyPerChunk.is(biome.biome.decorator.waterlilyPerChunk))
-             * return false;
-             * 
-             * if (flowersPerChunk != null && !flowersPerChunk.is(biome.biome.decorator.flowersPerChunk))
-             * return false;
-             * 
-             * if (grassPerChunk != null && !grassPerChunk.is(biome.biome.decorator.grassPerChunk))
-             * return false;
-             * 
-             * if (deadBushPerChunk != null && !deadBushPerChunk.is(biome.biome.decorator.deadBushPerChunk))
-             * return false;
-             * 
-             * if (mushroomsPerChunk != null && !mushroomsPerChunk.is(biome.biome.decorator.mushroomsPerChunk))
-             * return false;
-             * 
-             * if (reedsPerChunk != null && !reedsPerChunk.is(biome.biome.decorator.reedsPerChunk))
-             * return false;
-             * 
-             * if (cactiPerChunk != null && !cactiPerChunk.is(biome.biome.decorator.cactiPerChunk))
-             * return false; */
-            
-            return true;
-        }
-        
     }
     
     public static class AmbientMinMaxCondition {
@@ -403,56 +299,6 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (max != null)
                 volume = Math.min(volume, Mth.clamp(Math.abs(value - max) / fade, 0, 1));
             return volume;
-        }
-        
-    }
-    
-    public static class AmbientMaterialCondition {
-        
-        public String[] materials;
-        @SerializedName(value = "bad-materials")
-        public String[] badMaterials;
-        
-        transient List<Material> mat;
-        transient List<Material> badMat;
-        
-        public void init() {
-            if (materials != null) {
-                mat = new ArrayList<>();
-                for (String string : materials) {
-                    Material material = MaterialUtils.getMaterial(string);
-                    if (material != null)
-                        mat.add(material);
-                }
-            }
-            
-            if (badMaterials != null) {
-                badMat = new ArrayList<>();
-                for (String string : badMaterials) {
-                    Material material = MaterialUtils.getMaterial(string);
-                    if (material != null)
-                        badMat.add(material);
-                }
-            }
-        }
-        
-        public double volume(AmbientEnviroment env) {
-            if (materials == null && badMaterials == null)
-                return 1;
-            
-            boolean found = false;
-            
-            for (BlockSpot spot : env.blocks.spots) {
-                if (spot == null)
-                    continue;
-                if (!found && materials != null && mat.contains(spot.getMaterial()))
-                    found = true;
-                
-                if (badMaterials != null && badMat.contains(spot.getMaterial()))
-                    return 0;
-            }
-            
-            return found ? 1 : 0;
         }
         
     }

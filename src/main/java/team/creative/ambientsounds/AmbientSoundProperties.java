@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.util.Mth;
 import team.creative.ambientsounds.AmbientCondition.AmbientMinMaxCondition;
+import team.creative.ambientsounds.env.AmbientEnviroment;
 
 public class AmbientSoundProperties {
     

@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
-import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
+import team.creative.ambientsounds.env.AmbientEnviroment;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientDimension {
@@ -85,7 +85,7 @@ public class AmbientDimension {
     }
     
     public void manipulateEnviroment(AmbientEnviroment env) {
-        env.soundsDisabled = mute;
+        env.muted = mute;
         
         if (night != null)
             env.night = night;
@@ -103,9 +103,6 @@ public class AmbientDimension {
             else
                 env.biomeVolume = 0;
         }
-        
-        if (averageHeight != null)
-            env.setHeight(new TerrainHeight(averageHeight, averageHeight, averageHeight));
     }
     
     @Override

@@ -2,13 +2,10 @@ package team.creative.ambientsounds;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 
@@ -20,22 +17,17 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import team.creative.ambientsounds.AmbientEnviroment.BiomeArea;
-import team.creative.ambientsounds.AmbientEnviroment.TerrainHeight;
+import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.BlockGroup;
+import team.creative.creativecore.common.util.type.Pair;
 
 public class AmbientEngine {
     
@@ -44,6 +36,7 @@ public class AmbientEngine {
     public static final String DIMENSIONS_LOCATION = "dimensions.json";
     public static final String REGIONS_LOCATION = "regions.json";
     public static final String SOUNDS_LOCATION = "sounds.json";
+    public static final String SCANS_LOCATION = "scans.json";
     
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
         
@@ -86,6 +79,23 @@ public class AmbientEngine {
                     region.load(engine, gson, manager);
                     engine.addRegion(region);
                 }
+            }
+        }
+        
+        engine.toScan = new HashMap<>();
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + SCANS_LOCATION))) {
+            String[] scans = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), String[].class);
+            for (int i = 0; i < scans.length; i++) {
+                String group = scans[i];
+                BlockGroup block = new BlockGroup();
+                for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/scans/" + group + ".json"))) {
+                    try {
+                        block.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }
+                engine.toScan.put(group, block);
             }
         }
         
@@ -148,6 +158,8 @@ public class AmbientEngine {
     
     protected transient AmbientDimension silentDim;
     
+    public transient HashMap<String, BlockGroup> toScan = new HashMap<>();
+    
     public AmbientRegion getRegion(String name) {
         return allRegions.get(name);
     }
@@ -177,6 +189,9 @@ public class AmbientEngine {
     public int biomeScanDistance = 5;
     @SerializedName(value = "biome-scan-count")
     public int biomeScanCount = 3;
+    
+    @SerializedName(value = "air-pocket-count")
+    public int airPocketCount = 10000;
     
     protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
         if (region.name == null || region.name.isEmpty()) {
@@ -284,81 +299,8 @@ public class AmbientEngine {
         }
     }
     
-    public TerrainHeight calculateAverageHeight(Level level, Player player) {
-        int sum = 0;
-        int count = 0;
-        
-        int min = Integer.MAX_VALUE;
-        int max = Integer.MIN_VALUE;
-        
-        MutableBlockPos pos = new MutableBlockPos();
-        BlockPos center = player.blockPosition();
-        
-        for (int x = -averageHeightScanCount; x <= averageHeightScanCount; x++) {
-            for (int z = -averageHeightScanCount; z <= averageHeightScanCount; z++) {
-                
-                pos.set(center.getX() + averageHeightScanDistance * x, center.getY(), center.getZ() + averageHeightScanDistance * z);
-                int height = getHeightBlock(level, pos);
-                
-                min = Math.min(height, min);
-                max = Math.max(height, max);
-                sum += height;
-                count++;
-            }
-        }
-        return new TerrainHeight((double) sum / count, min, max);
-    }
-    
-    public LinkedHashMap<BiomeArea, Float> calculateBiomes(Level level, Player player, double volume) {
-        LinkedHashMap<BiomeArea, Float> biomes = new LinkedHashMap<>();
-        if (volume > 0.0) {
-            
-            int posX = (int) player.getX();
-            int posZ = (int) player.getZ();
-            BlockPos center = new BlockPos(posX, 0, posZ);
-            MutableBlockPos pos = new MutableBlockPos();
-            for (int x = -biomeScanCount; x <= biomeScanCount; x++) {
-                for (int z = -biomeScanCount; z <= biomeScanCount; z++) {
-                    pos.set(posX + x * biomeScanDistance, 0, posZ + z * biomeScanDistance);
-                    Biome biome = level.getBiome(pos);
-                    
-                    float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (biomeScanCount * biomeScanDistance * 2)) * volume);
-                    BiomeArea area = new BiomeArea(biome, pos);
-                    Float before = biomes.get(area);
-                    if (before == null)
-                        before = 0F;
-                    biomes.put(area, Math.max(before, biomeVolume));
-                }
-            }
-            
-            List<Entry<BiomeArea, Float>> entries = new ArrayList<>(biomes.entrySet());
-            Collections.sort(entries, new Comparator<Entry<BiomeArea, Float>>() {
-                @Override
-                public int compare(Entry<BiomeArea, Float> o1, Entry<BiomeArea, Float> o2) {
-                    return o1.getValue().compareTo(o2.getValue());
-                }
-            });
-            biomes = new LinkedHashMap<>();
-            for (Map.Entry<BiomeArea, Float> entry : entries)
-                biomes.put(entry.getKey(), entry.getValue());
-        }
-        return biomes;
-    }
-    
-    public static int getHeightBlock(Level world, MutableBlockPos pos) {
-        int y;
-        int heighest = 0;
-        
-        for (y = 256; y > 0; --y) {
-            pos.setY(y);
-            BlockState state = world.getBlockState(pos);
-            if ((state.isSolidRender(world, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.is(Blocks.WATER)) {
-                heighest = y;
-                break;
-            }
-        }
-        
-        return heighest;
+    public void collectDetails(List<Pair<String, Object>> details) {
+        details.add(new Pair<>("", name + " v" + version));
     }
     
 }

@@ -11,6 +11,7 @@ import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import team.creative.ambientsounds.env.AmbientEnviroment;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientSound extends AmbientCondition {

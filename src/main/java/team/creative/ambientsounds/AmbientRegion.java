@@ -16,6 +16,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import team.creative.ambientsounds.env.AmbientEnviroment;
 
 public class AmbientRegion extends AmbientCondition {
     
@@ -63,7 +64,7 @@ public class AmbientRegion extends AmbientCondition {
     
     @Override
     public AmbientSelection value(AmbientEnviroment env) {
-        if (dimension != null && !dimension.is(env.level))
+        if (dimension != null && dimension != env.dimension)
             return null;
         if (volumeSetting == 0)
             return null;
