@@ -49,7 +49,7 @@
 		"dimension-names": [
 			"twilightforest"
 		],
-		"biome-selector": {
+		"surface-selector": {
 			"regions": [
 				"surface"
 			]
@@ -60,7 +60,12 @@
 		"dimension-names": [
 			"betweenlands"
 		],
-		"average-height": 0
+		"average-height": 0,
+		"surface-selector": {
+			"regions": [
+				"surface"
+			]
+		}
 	},
 	{
 		"name": "cave",
@@ -105,7 +110,7 @@
 	},
 	{
 		"name": "surface",
-		"biome-selector": {
+		"surface-selector": {
 			"regions": [
 				"surface"
 			]
