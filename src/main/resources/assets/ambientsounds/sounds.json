@@ -474,6 +474,15 @@
     ],
     "category": "ambient"
   },
+  "cave.underworld": {
+    "sounds": [
+      {
+        "name": "ambientsounds:cave/underworld",
+        "stream": true
+      }
+    ],
+    "category": "ambient"
+  },
   "water.beach": {
     "sounds": [
       {

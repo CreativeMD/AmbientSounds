@@ -60,8 +60,7 @@
 	{
 		"name": "underworld",
 		"absolute-height": {
-			"min": -10000,
-			"max": -5,
+			"max": -64,
 			"fade": 5
 		}
 	},
