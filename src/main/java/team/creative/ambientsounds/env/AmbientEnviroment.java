@@ -76,7 +76,7 @@ public class AmbientEnviroment {
     public void analyzeUnderwater(Player player, Level level) {
         int depth = 0;
         if (player.isEyeInFluid(FluidTags.WATER)) {
-            BlockPos blockpos = new BlockPos(player.blockPosition()).above();
+            BlockPos blockpos = new BlockPos(player.blockPosition());
             while (level.getBlockState(blockpos).getMaterial() == Material.WATER) {
                 depth++;
                 blockpos = blockpos.above();
