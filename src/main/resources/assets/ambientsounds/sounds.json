@@ -501,6 +501,15 @@
     ],
     "category": "ambient"
   },
+  "water.underwater-deep": {
+    "sounds": [
+      {
+        "name": "ambientsounds:water/underwater-deep",
+        "stream": true
+      }
+    ],
+    "category": "ambient"
+  },
   "weather.rain": {
     "sounds": [
       {

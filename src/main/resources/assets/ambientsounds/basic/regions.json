@@ -15,6 +15,13 @@
 		}
 	},
 	{
+		"name": "underwater-deep",
+		"fade-volume": 0.05,
+		"underwater": {
+			"min": 7
+		}
+	},
+	{
 		"name": "rain",
 		"raining": true,
 		"regions": [
@@ -82,11 +89,6 @@
 		"light": {
 			"max": 8,
 			"fade": 2
-		},
-		"blocks": {
-			"materials": [
-				"stone"
-			]
 		}
 	},
 	{
