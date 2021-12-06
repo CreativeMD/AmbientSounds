@@ -9,5 +9,6 @@
 	"average-height-scan-distance": 2,
 	"average-height-scan-count": 5,
 	"biome-scan-distance": 5,
-	"biome-scan-count": 3
+	"biome-scan-count": 3,
+	"air-pocket-count": 10000
 }

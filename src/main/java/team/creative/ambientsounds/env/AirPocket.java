@@ -57,7 +57,7 @@ public class AirPocket {
     }
     
     protected HashSet<Pair<BlockPos, BlockPos>> getOrCreate(int distance) {
-        if (distance < toScan.size()) {
+        if (distance <= toScan.size()) {
             HashSet<Pair<BlockPos, BlockPos>> set = new HashSet<>();
             toScan.add(set);
             return set;
