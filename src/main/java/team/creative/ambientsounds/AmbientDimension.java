@@ -30,6 +30,9 @@ public class AmbientDimension {
     @SerializedName("biome-selector")
     public AmbientCondition biomeSelector;
     
+    @SerializedName("surface-selector")
+    public AmbientCondition surfaceSelector;
+    
     public Boolean night;
     public Boolean rain;
     public Boolean storm;

@@ -71,14 +71,19 @@ public class AmbientEngine {
         }
         
         for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION))) {
-            AmbientRegion[] regions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
-            for (int i = 0; i < regions.length; i++) {
-                AmbientRegion region = regions[i];
-                if (engine.checkRegion(null, i, region)) {
-                    engine.generalRegions.put(region.name, region);
-                    region.load(engine, gson, manager);
-                    engine.addRegion(region);
+            try {
+                AmbientRegion[] regions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
+                for (int i = 0; i < regions.length; i++) {
+                    AmbientRegion region = regions[i];
+                    if (engine.checkRegion(null, i, region)) {
+                        engine.generalRegions.put(region.name, region);
+                        region.load(engine, gson, manager);
+                        engine.addRegion(region);
+                    }
                 }
+            } catch (JsonSyntaxException e) {
+                System.out.println("Failed to load  " + resource.getLocation());
+                e.printStackTrace();
             }
         }
         
