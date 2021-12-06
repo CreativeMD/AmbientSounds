@@ -18,6 +18,7 @@ public class TerrainEnviroment {
     public int maxHeight;
     
     public AirPocket airPocket = new AirPocket();
+    public AirPocketScanner scanner;
     
     public TerrainEnviroment() {
         this.averageHeight = 60;
@@ -25,7 +26,7 @@ public class TerrainEnviroment {
         this.maxHeight = 60;
     }
     
-    public TerrainEnviroment(AmbientEngine engine, AmbientDimension dimension, Player player, Level level) {
+    public void analyze(AmbientEngine engine, AmbientDimension dimension, Player player, Level level) {
         analyzeHeight(engine, dimension, player, level);
         analyzeAirPocket(engine, player, level);
     }
@@ -65,7 +66,10 @@ public class TerrainEnviroment {
     }
     
     public void analyzeAirPocket(AmbientEngine engine, Player player, Level level) {
-        airPocket = new AirPocket(engine, level, player.eyeBlockPosition());
+        scanner = new AirPocketScanner(engine, level, player.eyeBlockPosition(), x -> {
+            airPocket = x;
+            scanner = null;
+        });
     }
     
     public static int getHeightBlock(Level level, MutableBlockPos pos) {

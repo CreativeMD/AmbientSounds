@@ -87,7 +87,7 @@ public class AmbientEnviroment {
     }
     
     public void analyzeSlow(AmbientDimension dimension, AmbientEngine engine, Player player, Level level, float deltaTime) {
-        terrain = new TerrainEnviroment(engine, dimension, player, level);
+        terrain.analyze(engine, dimension, player, level);
         biome = new BiomeEnviroment(engine, player, level, biomeVolume);
     }
     
