@@ -549,7 +549,7 @@
 	"cave.cave-large1": {
 		"sounds": [
 			{
-				"name": "ambientsounds:cave/carve-large1",
+				"name": "ambientsounds:cave/cave-large1",
 				"stream": true
 			}
 		],
@@ -558,7 +558,16 @@
 	"cave.cave-large2": {
 		"sounds": [
 			{
-				"name": "ambientsounds:cave/carve-large2",
+				"name": "ambientsounds:cave/cave-large2",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
+	"cave.cave-lush": {
+		"sounds": [
+			{
+				"name": "ambientsounds:cave/cave-lush",
 				"stream": true
 			}
 		],

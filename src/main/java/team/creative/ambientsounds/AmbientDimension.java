@@ -62,6 +62,9 @@ public class AmbientDimension {
         if (biomeSelector != null)
             biomeSelector.init(engine);
         
+        if (surfaceSelector != null)
+            surfaceSelector.init(engine);
+        
         if (badDimensionNames != null)
             for (int i = 0; i < badDimensionNames.length; i++)
                 badDimensionNames[i] = ".*" + badDimensionNames[i].toLowerCase().replace("*", ".*").replace("?", "\\?") + ".*";

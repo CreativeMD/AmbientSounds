@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import team.creative.ambientsounds.AmbientEngine;
 
 public class BiomeEnviroment {
@@ -21,8 +22,8 @@ public class BiomeEnviroment {
     
     public BiomeEnviroment() {}
     
-    public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume) {
-        if (volume > 10.0) {
+    public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume, double surface) {
+        if (volume > 0.0) {
             BlockPos center = player.eyeBlockPosition();
             MutableBlockPos pos = new MutableBlockPos();
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {
@@ -31,6 +32,8 @@ public class BiomeEnviroment {
                     Biome biome = level.getBiome(pos);
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
+                    if (biome.getBiomeCategory() != BiomeCategory.UNDERGROUND)
+                        biomeVolume *= surface;
                     BiomeArea area = new BiomeArea(biome, pos);
                     Float before = biomes.get(area);
                     if (before == null)

@@ -114,6 +114,9 @@
 			"regions": [
 				"surface"
 			]
+		},
+		"biome-selector": {
+			"always": true
 		}
 	}
 ]

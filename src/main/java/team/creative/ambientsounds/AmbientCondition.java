@@ -48,6 +48,8 @@ public class AmbientCondition extends AmbientSoundProperties {
     
     public AmbientMinMaxFadeCondition air;
     
+    public AmbientMinMaxFadeCondition temperature;
+    
     public String[] features;
     @SerializedName(value = "bad-features")
     public String[] badFeatures;
@@ -243,6 +245,14 @@ public class AmbientCondition extends AmbientSoundProperties {
         
         if (features != null) {
             double volume = env.terrain.airPocket.volume(features);
+            if (volume <= 0)
+                return null;
+            
+            selection.volume *= volume;
+        }
+        
+        if (temperature != null) {
+            double volume = temperature.volume(env.temperature);
             if (volume <= 0)
                 return null;
             

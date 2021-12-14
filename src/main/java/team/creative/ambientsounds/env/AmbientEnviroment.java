@@ -11,6 +11,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Material;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
+import team.creative.ambientsounds.AmbientSelection;
 import team.creative.ambientsounds.AmbientTickHandler;
 import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
 import team.creative.creativecore.common.util.type.list.Pair;
@@ -41,6 +42,8 @@ public class AmbientEnviroment {
     public double relativeMaxHeight;
     public double underwater;
     
+    public double temperature;
+    
     public AmbientEnviroment() {}
     
     public void analyzeFast(AmbientDimension dimension, Player player, Level level, float deltaTime) {
@@ -54,6 +57,8 @@ public class AmbientEnviroment {
         this.relativeHeight = absoluteHeight - terrain.averageHeight;
         this.relativeMinHeight = absoluteHeight - terrain.minHeight;
         this.relativeMaxHeight = absoluteHeight - terrain.maxHeight;
+        
+        this.temperature = player.level.getBiome(player.eyeBlockPosition()).getBaseTemperature();
         
         analyzeUnderwater(player, level);
         analyzeTime(level, deltaTime);
@@ -88,7 +93,8 @@ public class AmbientEnviroment {
     
     public void analyzeSlow(AmbientDimension dimension, AmbientEngine engine, Player player, Level level, float deltaTime) {
         terrain.analyze(engine, dimension, player, level);
-        biome = new BiomeEnviroment(engine, player, level, biomeVolume);
+        AmbientSelection surface = dimension.surfaceSelector.value(this);
+        biome = new BiomeEnviroment(engine, player, level, biomeVolume, surface != null ? surface.getEntireVolume() : 0);
     }
     
     public void collectLevelDetails(List<Pair<String, Object>> details) {
@@ -100,6 +106,7 @@ public class AmbientEnviroment {
         details.add(new Pair<>("storm", thundering));
         details.add(new Pair<>("time", time));
         details.add(new Pair<>("underwater", underwater));
+        details.add(new Pair<>("temp", temperature));
         
     }
     

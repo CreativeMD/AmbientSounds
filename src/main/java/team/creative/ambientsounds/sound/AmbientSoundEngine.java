@@ -115,7 +115,7 @@ public class AmbientSoundEngine {
     
     @SubscribeEvent
     public void play(PlayStreamingSourceEvent event) {
-        if (event.getSound() instanceof SoundStream stream) {
+        if (event.getSound() instanceof SoundStream stream && stream.loop() && stream.duration != -1) {
             try {
                 int source = sourceField.getInt(event.getChannel());
                 LoopingAudioStream looping = (LoopingAudioStream) streamField.get(event.getChannel());

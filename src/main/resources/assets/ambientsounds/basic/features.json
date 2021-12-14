@@ -23,5 +23,15 @@
 		"name": "water",
 		"low-count": 100,
 		"high-count": 300
+	},
+	{
+		"name": "lush",
+		"low-count": 20,
+		"high-count": 50
+	},
+	{
+		"name": "dripstone",
+		"low-count": 3,
+		"high-count": 5
 	}
 ]

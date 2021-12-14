@@ -305,6 +305,8 @@ public class AmbientEngine {
         
         for (AmbientRegion region : allRegions.values())
             region.init(this);
+        
+        onClientLoad();
     }
     
     public void onClientLoad() {

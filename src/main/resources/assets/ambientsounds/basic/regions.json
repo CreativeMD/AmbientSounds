@@ -79,7 +79,22 @@
 			"fade": 2
 		},
 		"features": [
-			"rock"
+			"rock",
+			"lush",
+			"dripstone"
+		]
+	},
+	{
+		"name": "cave.lush",
+		"regions": [
+			"cave"
+		],
+		"min-height-relative": {
+			"max": -2,
+			"fade": 2
+		},
+		"features": [
+			"lush"
 		]
 	},
 	{
@@ -123,17 +138,9 @@
 		],
 		"variants": [
 			{
-				"special-biomes": {
-					"trees-per-chunk": {
-						"min": 5
-					},
-					"temperature": {
-						"min": 0.2,
-						"max": 1.5
-					},
-					"top-block": [
-						"minecraft:grass"
-					]
+				"temperature": {
+					"min": 0.2,
+					"max": 1.5
 				}
 			},
 			{
@@ -170,21 +177,14 @@
 		"features": [
 			"tree"
 		],
-		"special-biomes": {
-			"temperature": {
-				"max": 0.5
-			},
-			"trees-per-chunk": {
-				"min": 1
-			}
+		"temperature": {
+			"max": 0.5
 		}
 	},
 	{
 		"name": "taiga",
-		"special-biomes": {
-			"temperature": {
-				"min": 0.2
-			}
+		"temperature": {
+			"min": 0.2
 		},
 		"biomes": [
 			"taiga",
@@ -261,13 +261,8 @@
 		"bad-biomes": [
 			"river"
 		],
-		"special-biomes": {
-			"top-block": [
-				"minecraft:grass"
-			],
-			"temperature": {
-				"min": 0.2
-			}
+		"temperature": {
+			"min": 0.2
 		}
 	},
 	{
@@ -283,10 +278,8 @@
 			"highland",
 			"nether"
 		],
-		"special-biomes": {
-			"temperature": {
-				"min": 0.2
-			}
+		"temperature": {
+			"min": 0.2
 		},
 		"variants": [
 			{
@@ -392,11 +385,9 @@
 			"fungal forest",
 			"tyros swamp"
 		],
-		"special-biomes": {
-			"temperature": {
-				"min": 0.5,
-				"max": 2
-			}
+		"temperature": {
+			"min": 0.5,
+			"max": 2
 		}
 	},
 	{
@@ -419,10 +410,8 @@
 			"subtropical forest",
 			"tropical*extreme hills"
 		],
-		"special-biomes": {
-			"temperature": {
-				"min": 0.5
-			}
+		"temperature": {
+			"min": 0.5
 		}
 	},
 	{
@@ -452,11 +441,9 @@
 				}
 			},
 			{
-				"special-biomes": {
-					"temperature": {
-						"max": 0,
-						"min": -5
-					}
+				"temperature": {
+					"max": 0,
+					"min": -5
 				}
 			}
 		]
@@ -471,10 +458,8 @@
 		"bad-biomes": [
 			"gravel_beach"
 		],
-		"special-biomes": {
-			"temperature": {
-				"min": 0
-			}
+		"temperature": {
+			"min": 0
 		}
 	},
 	{
@@ -488,10 +473,8 @@
 			"stream",
 			"sea"
 		],
-		"special-biomes": {
-			"temperature": {
-				"min": 0
-			}
+		"temperature": {
+			"min": 0
 		}
 	}
 ]
