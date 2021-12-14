@@ -1,0 +1,27 @@
+[
+	{
+		"name": "grass",
+		"low-weight": 0.2,
+		"high-weight": 0.4
+	},
+	{
+		"name": "lava",
+		"low-count": 10,
+		"high-count": 30
+	},
+	{
+		"name": "rock",
+		"low-weight": 0.6,
+		"high-weight": 0.75
+	},
+	{
+		"name": "tree",
+		"low-count": 25,
+		"high-count": 40
+	},
+	{
+		"name": "water",
+		"low-count": 100,
+		"high-count": 300
+	}
+]

@@ -1,6 +1,7 @@
-package team.creative.ambientsounds.env;
+package team.creative.ambientsounds.env.feature;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.resources.ResourceLocation;
@@ -10,23 +11,34 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class BlockGroup {
+public class AmbientBlockGroup {
     
     public List<Tag<Block>> tags = new ArrayList<>();
     public List<Block> blocks = new ArrayList<>();
     
-    public void add(String[] data) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i].startsWith("t->")) {
-                Tag<Block> tag = BlockTags.getAllTags().getTag(new ResourceLocation(data[i].replace("t->", "")));
+    public List<String> data = new ArrayList<>();
+    
+    public void onClientLoad() {
+        for (int i = 0; i < data.size(); i++) {
+            String entry = data.get(i);
+            if (entry.startsWith("t->")) {
+                Tag<Block> tag = BlockTags.getAllTags().getTag(new ResourceLocation(entry.replace("t->", "")));
                 if (tag != null)
                     tags.add(tag);
             } else {
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(data[i]));
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entry));
                 if (block != null)
                     blocks.add(block);
             }
         }
+    }
+    
+    public void add(String[] data) {
+        this.data.addAll(Arrays.asList(data));
+    }
+    
+    public boolean isEmpty() {
+        return blocks.isEmpty() && tags.isEmpty();
     }
     
     public boolean is(BlockState state) {

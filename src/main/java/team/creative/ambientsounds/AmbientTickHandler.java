@@ -19,14 +19,16 @@ import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.sound.AmbientSoundEngine;
 import team.creative.creativecore.CreativeCore;
 import team.creative.creativecore.common.config.holder.ConfigHolderDynamic;
 import team.creative.creativecore.common.config.holder.CreativeConfigRegistry;
 import team.creative.creativecore.common.config.sync.ConfigSynchronization;
-import team.creative.creativecore.common.util.type.Pair;
+import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientTickHandler {
     
@@ -178,9 +180,15 @@ public class AmbientTickHandler {
     }
     
     @SubscribeEvent
+    public void load(WorldEvent.Load event) {
+        if (event.getWorld().isClientSide())
+            if (engine != null)
+                engine.onClientLoad();
+    }
+    
+    @SubscribeEvent
     public void onTick(ClientTickEvent event) {
         if (event.phase == Phase.START) {
-            
             if (soundEngine == null) {
                 soundEngine = new AmbientSoundEngine(mc.getSoundManager(), mc.options);
                 if (engine == null)

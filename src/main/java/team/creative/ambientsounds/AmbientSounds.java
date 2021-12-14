@@ -53,6 +53,7 @@ public class AmbientSounds {
             protected void apply(Object p_10793_, ResourceManager p_10794_, ProfilerFiller p_10795_) {
                 if (tickHandler.engine != null)
                     tickHandler.engine.stopEngine();
+                tickHandler.enviroment.reload();
                 tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
             }
             
@@ -69,6 +70,7 @@ public class AmbientSounds {
             ClientCommandRegistry.register(LiteralArgumentBuilder.<SharedSuggestionProvider>literal("ambient-reload").executes(x -> {
                 if (tickHandler.engine != null)
                     tickHandler.engine.stopEngine();
+                tickHandler.enviroment.reload();
                 tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
                 return Command.SINGLE_SUCCESS;
             }));

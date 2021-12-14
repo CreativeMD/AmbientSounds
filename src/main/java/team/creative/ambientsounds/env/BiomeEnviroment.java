@@ -22,7 +22,7 @@ public class BiomeEnviroment {
     public BiomeEnviroment() {}
     
     public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume) {
-        if (volume > 0.0) {
+        if (volume > 10.0) {
             BlockPos center = player.eyeBlockPosition();
             MutableBlockPos pos = new MutableBlockPos();
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {

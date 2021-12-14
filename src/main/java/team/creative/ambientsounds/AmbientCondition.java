@@ -43,9 +43,14 @@ public class AmbientCondition extends AmbientSoundProperties {
     
     public AmbientMinMaxFadeCondition light;
     
-    public String[] blocks;
-    @SerializedName(value = "bad-blocks")
-    public String[] badBlocks;
+    @SerializedName(value = "sky-light")
+    public AmbientMinMaxFadeCondition skyLight;
+    
+    public AmbientMinMaxFadeCondition air;
+    
+    public String[] features;
+    @SerializedName(value = "bad-features")
+    public String[] badFeatures;
     
     public AmbientCondition[] variants;
     
@@ -121,22 +126,9 @@ public class AmbientCondition extends AmbientSoundProperties {
         if (storming != null && env.thundering != storming)
             return null;
         
-        /*if (outside != null)
-            if (outside) {
-                if (env.blocks.outsideVolume == 0)
-                    return null;
-            } else if (env.blocks.outsideVolume == 1)
-                return null;*/
-        
         AmbientSelection selection = new AmbientSelection(this);
         
         selection.volume *= env.night ? nightVolume : dayVolume;
-        
-        /*if (outside != null)
-            if (outside)
-                selection.volume *= env.blocks.outsideVolume;
-            else
-                selection.volume *= 1 - env.blocks.outsideVolume;*/
         
         if (badRegionList != null)
             for (AmbientRegion region : badRegionList)
@@ -230,11 +222,32 @@ public class AmbientCondition extends AmbientSoundProperties {
             selection.volume *= volume;
         }
         
-        if (badBlocks != null && env.terrain.airPocket.contains(badBlocks))
+        if (skyLight != null) {
+            double volume = skyLight.volume(env.terrain.airPocket.averageSkyLight);
+            if (volume <= 0)
+                return null;
+            
+            selection.volume *= volume;
+        }
+        
+        if (air != null) {
+            double volume = air.volume(env.terrain.airPocket.air);
+            if (volume <= 0)
+                return null;
+            
+            selection.volume *= volume;
+        }
+        
+        if (badFeatures != null && env.terrain.airPocket.volume(badFeatures) > 0)
             return null;
         
-        if (blocks != null && !env.terrain.airPocket.contains(blocks))
-            return null;
+        if (features != null) {
+            double volume = env.terrain.airPocket.volume(features);
+            if (volume <= 0)
+                return null;
+            
+            selection.volume *= volume;
+        }
         
         if (variants != null) {
             AmbientSelection bestCondition = null;

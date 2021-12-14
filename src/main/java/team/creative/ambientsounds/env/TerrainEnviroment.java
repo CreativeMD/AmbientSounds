@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
+import team.creative.ambientsounds.env.pocket.AirPocket;
+import team.creative.ambientsounds.env.pocket.AirPocketScanner;
 
 public class TerrainEnviroment {
     
@@ -66,10 +68,11 @@ public class TerrainEnviroment {
     }
     
     public void analyzeAirPocket(AmbientEngine engine, Player player, Level level) {
-        scanner = new AirPocketScanner(engine, level, player.eyeBlockPosition(), x -> {
-            airPocket = x;
-            scanner = null;
-        });
+        if (scanner == null)
+            scanner = new AirPocketScanner(engine, level, player.eyeBlockPosition(), x -> {
+                airPocket = x;
+                scanner = null;
+            });
     }
     
     public static int getHeightBlock(Level level, MutableBlockPos pos) {

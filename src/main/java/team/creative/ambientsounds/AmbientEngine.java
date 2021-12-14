@@ -1,8 +1,8 @@
 package team.creative.ambientsounds;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,8 +26,10 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.env.AmbientEnviroment;
-import team.creative.ambientsounds.env.BlockGroup;
-import team.creative.creativecore.common.util.type.Pair;
+import team.creative.ambientsounds.env.feature.AmbientFeature;
+import team.creative.ambientsounds.env.pocket.AirPocketGroup;
+import team.creative.ambientsounds.sound.AmbientSoundEngine;
+import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientEngine {
     
@@ -36,7 +38,7 @@ public class AmbientEngine {
     public static final String DIMENSIONS_LOCATION = "dimensions.json";
     public static final String REGIONS_LOCATION = "regions.json";
     public static final String SOUNDS_LOCATION = "sounds.json";
-    public static final String SCANS_LOCATION = "scans.json";
+    public static final String FEATURES_LOCATION = "features.json";
     
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
         
@@ -87,20 +89,28 @@ public class AmbientEngine {
             }
         }
         
-        engine.toScan = new HashMap<>();
-        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + SCANS_LOCATION))) {
-            String[] scans = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), String[].class);
-            for (int i = 0; i < scans.length; i++) {
-                String group = scans[i];
-                BlockGroup block = new BlockGroup();
-                for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/scans/" + group + ".json"))) {
+        engine.features = new ArrayList<>();
+        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION))) {
+            AmbientFeature[] features = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientFeature[].class);
+            for (int i = 0; i < features.length; i++) {
+                AmbientFeature feature = features[i];
+                for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/features/" + feature.name + ".json"))) {
                     try {
-                        block.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
+                        feature.blocks.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
                     } catch (JsonSyntaxException e) {
                         e.printStackTrace();
                     }
                 }
-                engine.toScan.put(group, block);
+                try {
+                    for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/features/bad-" + feature.name + ".json"))) {
+                        try {
+                            feature.badBlocks.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
+                        } catch (JsonSyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (FileNotFoundException e) {}
+                engine.features.add(feature);
             }
         }
         
@@ -163,7 +173,9 @@ public class AmbientEngine {
     
     protected transient AmbientDimension silentDim;
     
-    public transient HashMap<String, BlockGroup> toScan = new HashMap<>();
+    public transient List<AmbientFeature> features;
+    protected transient double[] airPocketDistanceFactor;
+    public transient int maxAirPocketCount;
     
     public AmbientRegion getRegion(String name) {
         return allRegions.get(name);
@@ -196,7 +208,11 @@ public class AmbientEngine {
     public int biomeScanCount = 3;
     
     @SerializedName(value = "air-pocket-count")
-    public int airPocketCount = 10000;
+    public int airPocketCount = 50000;
+    @SerializedName(value = "air-pocket-distance")
+    public int airPocketDistance = 25;
+    @SerializedName(value = "air-pocket-groups")
+    public AirPocketGroup[] airPocketGroups = new AirPocketGroup[0];
     
     protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
         if (region.name == null || region.name.isEmpty()) {
@@ -243,12 +259,62 @@ public class AmbientEngine {
         }
     }
     
+    public int airPocketVolume(int r) {
+        int res = 0;
+        for (int i = r; r > 0; r--) {
+            int f;
+            if (i == r)
+                f = 1;
+            else if (i == r - 1)
+                f = 4;
+            else if (i == r - 2)
+                f = 7;
+            else
+                f = 8;
+            res += (f * r * (r + 1) * 0.5);
+        }
+        return res;
+    }
+    
     public void init() {
+        airPocketDistanceFactor = new double[airPocketDistance + 1];
+        int index = 0;
+        int subDistance = 0;
+        for (int distance = 0; distance < airPocketDistanceFactor.length; distance++) {
+            if (index < airPocketGroups.length) {
+                if (subDistance <= airPocketGroups[index].distance) {
+                    airPocketDistanceFactor[distance] = airPocketGroups[index].weight;
+                    subDistance++;
+                    continue;
+                } else {
+                    subDistance = 0;
+                    index++;
+                    if (index < airPocketGroups.length) {
+                        airPocketDistanceFactor[distance] = airPocketGroups[index].weight;
+                        continue;
+                    }
+                }
+            }
+            airPocketDistanceFactor[distance] = 1;
+        }
+        
+        maxAirPocketCount = airPocketVolume(airPocketDistance);
+        
         for (AmbientDimension dimension : dimensions.values())
             dimension.init(this);
         
         for (AmbientRegion region : allRegions.values())
             region.init(this);
+    }
+    
+    public void onClientLoad() {
+        features.forEach(x -> x.onClientLoad());
+    }
+    
+    public double airWeightFactor(int distance) {
+        if (distance >= airPocketDistanceFactor.length)
+            return 1;
+        return airPocketDistanceFactor[distance];
     }
     
     public void tick(AmbientEnviroment env) {

@@ -15,13 +15,6 @@
 		}
 	},
 	{
-		"name": "underwater-deep",
-		"fade-volume": 0.05,
-		"underwater": {
-			"min": 7
-		}
-	},
-	{
 		"name": "rain",
 		"raining": true,
 		"regions": [
@@ -71,7 +64,7 @@
 			"fade": 5
 		},
 		"absolute-height": {
-			"min": -10,
+			"min": -70,
 			"fade": 5
 		}
 	},
@@ -85,10 +78,9 @@
 			"max": -2,
 			"fade": 2
 		},
-		"light": {
-			"max": 8,
-			"fade": 2
-		}
+		"features": [
+			"rock"
+		]
 	},
 	{
 		"name": "surface",
@@ -121,6 +113,9 @@
 	},
 	{
 		"name": "forest",
+		"features": [
+			"tree"
+		],
 		"bad-regions": [
 			"taiga",
 			"roofed-forest",
@@ -172,6 +167,9 @@
 	},
 	{
 		"name": "forest.cold",
+		"features": [
+			"tree"
+		],
 		"special-biomes": {
 			"temperature": {
 				"max": 0.5
@@ -249,6 +247,9 @@
 	},
 	{
 		"name": "grass",
+		"features": [
+			"grass"
+		],
 		"bad-regions": [
 			"plains",
 			"savanna",
@@ -271,6 +272,9 @@
 	},
 	{
 		"name": "plains",
+		"features": [
+			"grass"
+		],
 		"bad-regions": [
 			"ocean",
 			"forest",
@@ -304,6 +308,9 @@
 				]
 			},
 			{
+				"features": [
+					"grass"
+				],
 				"bad-regions": [
 					"roofed-forest"
 				],
@@ -333,6 +340,9 @@
 	},
 	{
 		"name": "desert",
+		"features": [
+			"sand"
+		],
 		"bad-regions": [
 			"beach"
 		],
@@ -417,6 +427,9 @@
 	},
 	{
 		"name": "cold",
+		"features": [
+			"grass"
+		],
 		"variants": [
 			{
 				"biomes": [

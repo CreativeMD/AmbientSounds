@@ -13,7 +13,7 @@ import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
 import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
-import team.creative.creativecore.common.util.type.Pair;
+import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientEnviroment {
     
@@ -104,7 +104,10 @@ public class AmbientEnviroment {
     }
     
     public void collectTerrainDetails(List<Pair<String, Object>> details, Player player) {
-        details.add(new Pair<>("features", terrain.airPocket.blockGroups));
+        details.add(new Pair<>("features", terrain.airPocket.features.toString(AmbientTickHandler.df)));
+        details.add(new Pair<>("light", terrain.airPocket.averageLight));
+        details.add(new Pair<>("sky-light", terrain.airPocket.averageSkyLight));
+        details.add(new Pair<>("air", terrain.airPocket.air));
         details.add(new Pair<>("height", AmbientTickHandler.df.format(relativeHeight) + "," + AmbientTickHandler.df.format(terrain.averageHeight) + "," + AmbientTickHandler.df
                 .format(player.getEyeY() - terrain.averageHeight) + "," + AmbientTickHandler.df.format(player.getEyeY() - terrain.maxHeight)));
     }
@@ -113,6 +116,10 @@ public class AmbientEnviroment {
         details.add(new Pair<>("b-volume", biomeVolume));
         for (Entry<BiomeArea, Float> pair : biome.biomes.entrySet())
             details.add(new Pair<>(pair.getKey().biome.getRegistryName().toString(), pair.getValue()));
+    }
+    
+    public void reload() {
+        terrain.scanner = null;
     }
     
 }

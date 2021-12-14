@@ -4,5 +4,15 @@
 		"files": [
 			"ambientsounds:water.underwater"
 		]
+	},
+	{
+		"name": "underwater-deep",
+		"fade-volume": 0.05,
+		"underwater": {
+			"min": 7
+		},
+		"files": [
+			"ambientsounds:water.underwater-deep"
+		]
 	}
 ]
