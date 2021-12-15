@@ -37,6 +37,14 @@ public class AmbientSounds {
     
     public static AmbientTickHandler tickHandler;
     
+    public static void reload() {
+        if (tickHandler.engine != null)
+            tickHandler.engine.stopEngine();
+        if (tickHandler.enviroment != null)
+            tickHandler.enviroment.reload();
+        tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+    }
+    
     private void doClientStuff(final FMLClientSetupEvent event) {
         ModLoadingContext.get()
                 .registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
@@ -51,10 +59,7 @@ public class AmbientSounds {
             
             @Override
             protected void apply(Object p_10793_, ResourceManager p_10794_, ProfilerFiller p_10795_) {
-                if (tickHandler.engine != null)
-                    tickHandler.engine.stopEngine();
-                tickHandler.enviroment.reload();
-                tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+                AmbientSounds.reload();
             }
             
             @Override
@@ -68,10 +73,7 @@ public class AmbientSounds {
                 return Command.SINGLE_SUCCESS;
             }));
             ClientCommandRegistry.register(LiteralArgumentBuilder.<SharedSuggestionProvider>literal("ambient-reload").executes(x -> {
-                if (tickHandler.engine != null)
-                    tickHandler.engine.stopEngine();
-                tickHandler.enviroment.reload();
-                tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+                AmbientSounds.reload();
                 return Command.SINGLE_SUCCESS;
             }));
         });
