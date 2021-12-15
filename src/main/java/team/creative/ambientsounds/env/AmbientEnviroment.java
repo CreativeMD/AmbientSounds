@@ -93,7 +93,7 @@ public class AmbientEnviroment {
     
     public void analyzeSlow(AmbientDimension dimension, AmbientEngine engine, Player player, Level level, float deltaTime) {
         terrain.analyze(engine, dimension, player, level);
-        AmbientSelection surface = dimension.surfaceSelector.value(this);
+        AmbientSelection surface = dimension.surfaceSelector != null ? dimension.surfaceSelector.value(this) : null;
         biome = new BiomeEnviroment(engine, player, level, biomeVolume, surface != null ? surface.getEntireVolume() : 0);
     }
     
