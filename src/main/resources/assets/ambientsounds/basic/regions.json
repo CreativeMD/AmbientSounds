@@ -177,6 +177,9 @@
 		"features": [
 			"tree"
 		],
+		"regions": [
+			"surface"
+		],
 		"temperature": {
 			"max": 0.5
 		}
@@ -432,13 +435,6 @@
 				"bad-biomes": [
 					"arctic peaks"
 				]
-			},
-			{
-				"special-biomes": {
-					"top-block": [
-						"minecraft:snow"
-					]
-				}
 			},
 			{
 				"temperature": {
