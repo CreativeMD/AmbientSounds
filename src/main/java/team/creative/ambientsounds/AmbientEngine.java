@@ -1,8 +1,9 @@
 package team.creative.ambientsounds;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.feature.AmbientBlockGroup;
 import team.creative.ambientsounds.env.feature.AmbientFeature;
 import team.creative.ambientsounds.env.pocket.AirPocketGroup;
 import team.creative.ambientsounds.sound.AmbientSoundEngine;
@@ -92,26 +94,25 @@ public class AmbientEngine {
         engine.features = new ArrayList<>();
         for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION))) {
             AmbientFeature[] features = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientFeature[].class);
+            HashSet<String> groups = new HashSet<>();
             for (int i = 0; i < features.length; i++) {
                 AmbientFeature feature = features[i];
-                for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/features/" + feature.name + ".json"))) {
+                feature.collectGroups(groups);
+                engine.features.add(feature);
+            }
+            
+            for (String groupName : groups) {
+                AmbientBlockGroup group = new AmbientBlockGroup();
+                for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/blockgroups/" + groupName + ".json"))) {
                     try {
-                        feature.blocks.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
+                        group.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
                     } catch (JsonSyntaxException e) {
                         e.printStackTrace();
                     }
                 }
-                try {
-                    for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/features/bad-" + feature.name + ".json"))) {
-                        try {
-                            feature.badBlocks.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
-                        } catch (JsonSyntaxException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } catch (FileNotFoundException e) {}
-                engine.features.add(feature);
+                engine.groups.put(groupName, group);
             }
+            
         }
         
         engine.silentDim = new AmbientDimension();
@@ -123,8 +124,9 @@ public class AmbientEngine {
         
         engine.soundEngine = soundEngine;
         
-        AmbientSounds.LOGGER.info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} region(s) and {} sound(s)", engine.name, engine.version, engine.dimensions
-                .size(), engine.allRegions.size(), engine.sounds.size());
+        AmbientSounds.LOGGER
+                .info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} groups, {} region(s) and {} sound(s)", engine.name, engine.version, engine.dimensions
+                        .size(), engine.features.size(), engine.groups.size(), engine.allRegions.size(), engine.sounds.size());
         
         return engine;
     }
@@ -166,6 +168,7 @@ public class AmbientEngine {
     protected transient List<AmbientRegion> activeRegions = new ArrayList<>();
     
     protected transient LinkedHashMap<String, AmbientSound> sounds = new LinkedHashMap<>();
+    public transient HashMap<String, AmbientBlockGroup> groups = new HashMap<>();
     
     protected transient List<String> silentDimensions = new ArrayList<>();
     
@@ -310,7 +313,7 @@ public class AmbientEngine {
     }
     
     public void onClientLoad() {
-        features.forEach(x -> x.onClientLoad());
+        groups.values().forEach(x -> x.onClientLoad());
     }
     
     public double airWeightFactor(int distance) {

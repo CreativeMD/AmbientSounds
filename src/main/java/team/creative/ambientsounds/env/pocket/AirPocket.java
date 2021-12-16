@@ -1,6 +1,7 @@
 package team.creative.ambientsounds.env.pocket;
 
-import net.minecraft.world.level.block.state.BlockState;
+import java.util.HashMap;
+
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.env.feature.AmbientFeature;
 import team.creative.creativecore.common.util.type.map.HashMapDouble;
@@ -18,12 +19,12 @@ public class AirPocket {
         air = 1;
     }
     
-    public AirPocket(AmbientEngine engine, HashMapDouble<BlockState> foundPercentage, HashMapDouble<BlockState> foundCount, double averageLight, double averageSkyLight, double air) {
+    public AirPocket(AmbientEngine engine, HashMap<String, BlockDistribution> distribution, double averageLight, double averageSkyLight, double air) {
         this.averageLight = averageLight;
         this.averageSkyLight = averageSkyLight;
         this.air = air;
         for (AmbientFeature feature : engine.features) {
-            double volume = feature.volume(foundPercentage, foundCount);
+            double volume = feature.volume(distribution);
             if (volume > 0)
                 features.put(feature.name, volume);
         }

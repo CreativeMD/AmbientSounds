@@ -2,8 +2,10 @@ package team.creative.ambientsounds.env.pocket;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import net.minecraft.core.BlockPos;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import team.creative.ambientsounds.AmbientEngine;
+import team.creative.ambientsounds.env.feature.AmbientBlockGroup;
 import team.creative.creativecore.common.util.type.list.Pair;
 import team.creative.creativecore.common.util.type.list.SingletonList;
 import team.creative.creativecore.common.util.type.map.HashMapDouble;
@@ -26,7 +29,6 @@ public class AirPocketScanner extends Thread {
     public final BlockPos origin;
     
     private List<Collection<Pair<BlockPos, BlockPos>>> toScan = new ArrayList<>();
-    private final HashMapDouble<BlockState> foundPercentage = new HashMapDouble<>();
     private final HashMapDouble<BlockState> foundCount = new HashMapDouble<>();
     private QuadBitSet sky = new QuadBitSet();
     
@@ -56,9 +58,18 @@ public class AirPocketScanner extends Thread {
                 scan(level, currentDistance, pos.key, pos.value);
             currentDistance++;
         }
-        foundCount.putAll(foundPercentage);
-        foundPercentage.scale(1 / distributionCounter);
-        consumer.accept(new AirPocket(engine, foundPercentage, foundCount, lightValueCounter / (double) blocks, skyLightValueCounter / (double) blocks, air / (double) engine.maxAirPocketCount));
+        
+        HashMap<String, BlockDistribution> distribution = new HashMap<>();
+        for (Entry<String, AmbientBlockGroup> entry : engine.groups.entrySet()) {
+            BlockDistribution dist = new BlockDistribution();
+            for (Entry<BlockState, Double> state : foundCount.entrySet())
+                if (entry.getValue().is(state.getKey()))
+                    dist.add(state.getValue());
+            dist.calculatePercentage(distributionCounter);
+            distribution.put(entry.getKey(), dist);
+        }
+        
+        consumer.accept(new AirPocket(engine, distribution, lightValueCounter / (double) blocks, skyLightValueCounter / (double) blocks, air / (double) engine.maxAirPocketCount));
     }
     
     protected HashSet<Pair<BlockPos, BlockPos>> getOrCreate(int distance) {
@@ -73,7 +84,7 @@ public class AirPocketScanner extends Thread {
     protected void findState(BlockState state, int distance) {
         double factor = engine.airWeightFactor(distance);
         distributionCounter += factor;
-        foundPercentage.put(state, factor);
+        foundCount.put(state, factor);
     }
     
     protected void scan(Level level, int distance, BlockPos pos, BlockPos from) {
