@@ -110,6 +110,11 @@ public class AmbientTickHandler {
             list.add(format(details));
             details.clear();
             
+            enviroment.collectPlayerDetails(details);
+            
+            list.add(format(details));
+            details.clear();
+            
             enviroment.collectTerrainDetails(details, mc.player);
             
             list.add(format(details));

@@ -105,6 +105,10 @@ public class AmbientEnviroment {
         details.add(new Pair<>("snow", snowing));
         details.add(new Pair<>("storm", thundering));
         details.add(new Pair<>("time", time));
+        
+    }
+    
+    public void collectPlayerDetails(List<Pair<String, Object>> details) {
         details.add(new Pair<>("underwater", underwater));
         details.add(new Pair<>("temp", temperature));
         
