@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -34,7 +36,7 @@ public class BiomeEnviroment {
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
                     if (biome.getBiomeCategory() != BiomeCategory.UNDERGROUND)
                         biomeVolume *= surface;
-                    BiomeArea area = new BiomeArea(biome, pos);
+                    BiomeArea area = new BiomeArea(level, biome, pos);
                     Float before = biomes.get(area);
                     if (before == null)
                         before = 0F;
@@ -57,10 +59,12 @@ public class BiomeEnviroment {
     public static class BiomeArea {
         
         public final Biome biome;
+        public final ResourceLocation location;
         public final BlockPos pos;
         
-        public BiomeArea(Biome biome, BlockPos pos) {
+        public BiomeArea(Level level, Biome biome, BlockPos pos) {
             this.biome = biome;
+            this.location = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
             this.pos = pos;
         }
         
@@ -68,6 +72,9 @@ public class BiomeEnviroment {
             for (String name : names) {
                 String biomename = biome.getBiomeCategory().getName().toLowerCase().replace("_", " ");
                 if (biomename.matches(".*" + name.replace("*", ".*") + ".*"))
+                    return true;
+                
+                if (location.getPath().matches(".*" + name.replace("*", ".*") + ".*"))
                     return true;
             }
             return false;

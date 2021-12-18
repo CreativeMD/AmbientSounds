@@ -126,7 +126,7 @@ public class AmbientEnviroment {
     public void collectBiomeDetails(List<Pair<String, Object>> details) {
         details.add(new Pair<>("b-volume", biomeVolume));
         for (Entry<BiomeArea, Float> pair : biome.biomes.entrySet())
-            details.add(new Pair<>(pair.getKey().biome.getRegistryName().toString(), pair.getValue()));
+            details.add(new Pair<>(pair.getKey().location.toString(), pair.getValue()));
     }
     
     public void reload() {
