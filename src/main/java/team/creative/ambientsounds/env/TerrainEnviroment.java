@@ -79,7 +79,7 @@ public class TerrainEnviroment {
         int y;
         int heighest = 0;
         
-        for (y = level.dimensionType().height(); y > 0; --y) {
+        for (y = level.dimensionType().height(); y > level.dimensionType().minY(); --y) {
             pos.setY(y);
             BlockState state = level.getBlockState(pos);
             if ((state.isSolidRender(level, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.is(Blocks.WATER)) {

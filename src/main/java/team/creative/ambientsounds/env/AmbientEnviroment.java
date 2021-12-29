@@ -108,19 +108,20 @@ public class AmbientEnviroment {
         
     }
     
-    public void collectPlayerDetails(List<Pair<String, Object>> details) {
+    public void collectPlayerDetails(List<Pair<String, Object>> details, Player player) {
         details.add(new Pair<>("underwater", underwater));
         details.add(new Pair<>("temp", temperature));
+        details.add(new Pair<>("height", "r:" + AmbientTickHandler.df.format(relativeHeight) + ",a:" + AmbientTickHandler.df
+                .format(terrain.averageHeight) + " (" + AmbientTickHandler.df
+                        .format(player.getEyeY() - terrain.minHeight) + "," + AmbientTickHandler.df.format(player.getEyeY() - terrain.maxHeight) + ")"));
         
     }
     
-    public void collectTerrainDetails(List<Pair<String, Object>> details, Player player) {
+    public void collectTerrainDetails(List<Pair<String, Object>> details) {
         details.add(new Pair<>("features", terrain.airPocket.features.toString(AmbientTickHandler.df)));
         details.add(new Pair<>("light", terrain.airPocket.averageLight));
         details.add(new Pair<>("sky-light", terrain.airPocket.averageSkyLight));
         details.add(new Pair<>("air", terrain.airPocket.air));
-        details.add(new Pair<>("height", AmbientTickHandler.df.format(relativeHeight) + "," + AmbientTickHandler.df.format(terrain.averageHeight) + "," + AmbientTickHandler.df
-                .format(player.getEyeY() - terrain.averageHeight) + "," + AmbientTickHandler.df.format(player.getEyeY() - terrain.maxHeight)));
     }
     
     public void collectBiomeDetails(List<Pair<String, Object>> details) {
