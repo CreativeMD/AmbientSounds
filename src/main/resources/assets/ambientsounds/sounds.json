@@ -279,6 +279,15 @@
 		],
 		"category": "ambient"
 	},
+	"animals.cricket-night5": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/cricket/cricket-night5",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
 	"animals.cricket-warm-night": {
 		"sounds": [
 			{
