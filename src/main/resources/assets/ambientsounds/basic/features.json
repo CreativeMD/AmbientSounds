@@ -30,14 +30,14 @@
 				"groups": [
 					"leave"
 				],
-				"low-count": 20,
+				"low-count": 5,
 				"high-count": 30
 			},
 			{
 				"groups": [
 					"log"
 				],
-				"low-count": 5,
+				"low-count": 3,
 				"high-count": 10
 			}
 		]
