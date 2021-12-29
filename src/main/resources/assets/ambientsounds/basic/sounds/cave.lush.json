@@ -13,5 +13,20 @@
 			"max": 500
 		},
 		"volume": 0.4
+	},
+	{
+		"name": "frog",
+		"files": [
+			"ambientsounds:animals.frog-cave1"
+		],
+		"volume": 0.3,
+		"length": {
+			"min": 100,
+			"max": 300
+		},
+		"pause": {
+			"min": 100,
+			"max": 750
+		}
 	}
 ]

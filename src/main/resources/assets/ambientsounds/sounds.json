@@ -342,6 +342,15 @@
 		],
 		"category": "ambient"
 	},
+	"animals.frog-cave1": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/frog/frog-cave1",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
 	"animals.owl": {
 		"sounds": [
 			{
