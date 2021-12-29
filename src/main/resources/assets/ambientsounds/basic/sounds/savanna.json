@@ -82,7 +82,8 @@
 	{
 		"name": "bird-warm",
 		"files": [
-			"ambientsounds:animals.bird-ambience-warm"
+			"ambientsounds:animals.bird-ambience-warm1",
+			"ambientsounds:animals.bird-ambience-warm2"
 		],
 		"overall-raining": false,
 		"day": 1,

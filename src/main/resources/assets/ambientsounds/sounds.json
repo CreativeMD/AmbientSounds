@@ -71,6 +71,42 @@
 		],
 		"category": "ambient"
 	},
+	"animals.bird-ambience9": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/bird/bird-ambience9",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
+	"animals.bird-ambience10": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/bird/bird-ambience10",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
+	"animals.bird-ambience11": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/bird/bird-ambience11",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
+	"animals.bird-ambience12": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/bird/bird-ambience12",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
 	"animals.bird-ambience-huge1": {
 		"sounds": [
 			{
@@ -152,10 +188,19 @@
 		],
 		"category": "ambient"
 	},
-	"animals.bird-ambience-warm": {
+	"animals.bird-ambience-warm1": {
 		"sounds": [
 			{
-				"name": "ambientsounds:animals/bird/bird-ambience-warm",
+				"name": "ambientsounds:animals/bird/bird-ambience-warm1",
+				"stream": true
+			}
+		],
+		"category": "ambient"
+	},
+	"animals.bird-ambience-warm2": {
+		"sounds": [
+			{
+				"name": "ambientsounds:animals/bird/bird-ambience-warm2",
 				"stream": true
 			}
 		],
@@ -164,35 +209,35 @@
 	"animals.crow": {
 		"sounds": [
 			{
-				"name": "ambientsounds:animals/bird/crow1",
+				"name": "ambientsounds:animals/crow/crow1",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow2",
+				"name": "ambientsounds:animals/crow/crow2",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow3",
+				"name": "ambientsounds:animals/crow/crow3",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow4",
+				"name": "ambientsounds:animals/crow/crow4",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow5",
+				"name": "ambientsounds:animals/crow/crow5",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow6",
+				"name": "ambientsounds:animals/crow/crow6",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow7",
+				"name": "ambientsounds:animals/crow/crow7",
 				"stream": true
 			},
 			{
-				"name": "ambientsounds:animals/bird/crow8",
+				"name": "ambientsounds:animals/crow/crow8",
 				"stream": true
 			}
 		],
@@ -363,31 +408,31 @@
 	"animals.owl": {
 		"sounds": [
 			{
-				"name": "ambientsounds:animals/bird/owl1"
+				"name": "ambientsounds:animals/owl/owl1"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl2"
+				"name": "ambientsounds:animals/owl/owl2"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl3"
+				"name": "ambientsounds:animals/owl/owl3"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl4"
+				"name": "ambientsounds:animals/owl/owl4"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl5"
+				"name": "ambientsounds:animals/owl/owl5"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl6"
+				"name": "ambientsounds:animals/owl/owl6"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl7"
+				"name": "ambientsounds:animals/owl/owl7"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl8"
+				"name": "ambientsounds:animals/owl/owl8"
 			},
 			{
-				"name": "ambientsounds:animals/bird/owl9"
+				"name": "ambientsounds:animals/owl/owl9"
 			}
 		],
 		"category": "ambient"
@@ -395,19 +440,19 @@
 	"animals.seagull": {
 		"sounds": [
 			{
-				"name": "ambientsounds:animals/bird/seagull1"
+				"name": "ambientsounds:animals/seagull/seagull1"
 			},
 			{
-				"name": "ambientsounds:animals/bird/seagull2"
+				"name": "ambientsounds:animals/seagull/seagull2"
 			},
 			{
-				"name": "ambientsounds:animals/bird/seagull3"
+				"name": "ambientsounds:animals/seagull/seagull3"
 			},
 			{
-				"name": "ambientsounds:animals/bird/seagull4"
+				"name": "ambientsounds:animals/seagull/seagull4"
 			},
 			{
-				"name": "ambientsounds:animals/bird/seagull5"
+				"name": "ambientsounds:animals/seagull/seagull5"
 			}
 		],
 		"category": "ambient"
@@ -415,7 +460,7 @@
 	"animals.seagull-long": {
 		"sounds": [
 			{
-				"name": "ambientsounds:animals/bird/seagull-long",
+				"name": "ambientsounds:animals/seagull/seagull-long",
 				"stream": true
 			}
 		],

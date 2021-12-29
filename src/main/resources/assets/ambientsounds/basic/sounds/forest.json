@@ -9,7 +9,11 @@
 			"ambientsounds:animals.bird-ambience5",
 			"ambientsounds:animals.bird-ambience6",
 			"ambientsounds:animals.bird-ambience7",
-			"ambientsounds:animals.bird-ambience8"
+			"ambientsounds:animals.bird-ambience8",
+			"ambientsounds:animals.bird-ambience9",
+			"ambientsounds:animals.bird-ambience10",
+			"ambientsounds:animals.bird-ambience11",
+			"ambientsounds:animals.bird-ambience12"
 		],
 		"length": {
 			"min": 2000,
