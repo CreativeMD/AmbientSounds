@@ -2,7 +2,7 @@ package team.creative.ambientsounds.env.pocket;
 
 public class BlockDistribution {
     
-    public double percentage = -1;
+    public double percentage = 0;
     public double count = 0;
     
     public BlockDistribution() {}
