@@ -1,4 +1,7 @@
 [
 	"minecraft:grass_block",
-	"minecraft:podzol"
+	"minecraft:podzol",
+	"minecraft:grass",
+	"minecraft:fern",
+	"minecraft:tall_grass"
 ]
