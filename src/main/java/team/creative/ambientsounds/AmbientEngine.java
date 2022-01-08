@@ -177,7 +177,7 @@ public class AmbientEngine {
     protected transient AmbientDimension silentDim;
     
     public transient List<AmbientFeature> features;
-    protected transient double[] airPocketDistanceFactor;
+    protected transient List<Double> airPocketDistanceFactor;
     public transient int maxAirPocketCount;
     
     public AmbientRegion getRegion(String name) {
@@ -280,27 +280,11 @@ public class AmbientEngine {
     }
     
     public void init() {
-        airPocketDistanceFactor = new double[airPocketDistance + 1];
-        int index = 0;
-        int subDistance = 0;
-        for (int distance = 0; distance < airPocketDistanceFactor.length; distance++) {
-            if (index < airPocketGroups.length) {
-                if (subDistance <= airPocketGroups[index].distance) {
-                    airPocketDistanceFactor[distance] = airPocketGroups[index].weight;
-                    subDistance++;
-                    continue;
-                } else {
-                    subDistance = 0;
-                    index++;
-                    if (index < airPocketGroups.length) {
-                        airPocketDistanceFactor[distance] = airPocketGroups[index].weight;
-                        continue;
-                    }
-                }
-            }
-            airPocketDistanceFactor[distance] = 1;
-        }
-        
+        airPocketDistanceFactor = new ArrayList<>();
+        for (int i = 0; i < airPocketGroups.length; i++)
+            for (int subDistance = 0; subDistance < airPocketGroups[i].distance; subDistance++)
+                airPocketDistanceFactor.add(airPocketGroups[i].weight);
+            
         maxAirPocketCount = airPocketVolume(airPocketDistance);
         
         for (AmbientDimension dimension : dimensions.values())
@@ -317,9 +301,9 @@ public class AmbientEngine {
     }
     
     public double airWeightFactor(int distance) {
-        if (distance >= airPocketDistanceFactor.length)
-            return 1;
-        return airPocketDistanceFactor[distance];
+        if (distance >= airPocketDistanceFactor.size())
+            return 0;
+        return airPocketDistanceFactor.get(distance);
     }
     
     public void tick(AmbientEnviroment env) {
