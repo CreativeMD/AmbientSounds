@@ -8,6 +8,14 @@
 		"high-weight": 0.4
 	},
 	{
+		"name": "sand",
+		"groups": [
+			"sand"
+		],
+		"low-weight": 0.2,
+		"high-weight": 0.4
+	},
+	{
 		"name": "lava",
 		"groups": [
 			"lava"
