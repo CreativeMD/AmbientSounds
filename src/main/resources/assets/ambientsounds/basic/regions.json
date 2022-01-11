@@ -186,6 +186,9 @@
 	},
 	{
 		"name": "taiga",
+		"features": [
+			"tree"
+		],
 		"temperature": {
 			"min": 0.2
 		},
@@ -412,6 +415,9 @@
 			"tyros swamp",
 			"subtropical forest",
 			"tropical*extreme hills"
+		],
+		"features": [
+			"tree"
 		],
 		"temperature": {
 			"min": 0.5
