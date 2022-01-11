@@ -1,9 +1,8 @@
 package team.creative.ambientsounds.env.pocket;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -17,8 +16,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.env.feature.AmbientBlockGroup;
-import team.creative.creativecore.common.util.type.list.Pair;
-import team.creative.creativecore.common.util.type.list.SingletonList;
 import team.creative.creativecore.common.util.type.map.HashMapDouble;
 import team.creative.creativecore.common.util.type.set.QuadBitSet;
 
@@ -28,7 +25,7 @@ public class AirPocketScanner extends Thread {
     public final Level level;
     public final BlockPos origin;
     
-    private List<Collection<Pair<BlockPos, BlockPos>>> toScan = new ArrayList<>();
+    private List<HashMap<BlockPosInspection, BlockPosInspection>> toScan = new ArrayList<>();
     private final HashMapDouble<BlockState> foundCount = new HashMapDouble<>();
     private QuadBitSet sky = new QuadBitSet();
     
@@ -37,7 +34,7 @@ public class AirPocketScanner extends Thread {
     private int currentDistance = 0;
     private int lightValueCounter = 0;
     private int skyLightValueCounter = 0;
-    private int blocks = 0;
+    private int faceCounter = 0;
     private int air;
     
     private Consumer<AirPocket> consumer;
@@ -52,10 +49,13 @@ public class AirPocketScanner extends Thread {
     
     @Override
     public void run() {
-        this.toScan.add(new SingletonList<Pair<BlockPos, BlockPos>>(new Pair<>(origin, origin)));
+        HashMap<BlockPosInspection, BlockPosInspection> first = new HashMap<>();
+        BlockPosInspection ins = new BlockPosInspection(origin);
+        first.put(ins, ins);
+        this.toScan.add(first);
         while (currentDistance < toScan.size()) {
-            for (Pair<BlockPos, BlockPos> pos : toScan.get(currentDistance))
-                scan(level, currentDistance, pos.key, pos.value);
+            for (BlockPosInspection pos : toScan.get(currentDistance).keySet())
+                scan(level, currentDistance, pos);
             currentDistance++;
         }
         
@@ -69,16 +69,16 @@ public class AirPocketScanner extends Thread {
             distribution.put(entry.getKey(), dist);
         }
         
-        consumer.accept(new AirPocket(engine, distribution, lightValueCounter / (double) blocks, skyLightValueCounter / (double) blocks, air / (double) engine.maxAirPocketCount));
+        consumer.accept(new AirPocket(engine, distribution, lightValueCounter / (double) faceCounter, skyLightValueCounter / (double) faceCounter, air / (double) engine.maxAirPocketCount));
     }
     
-    protected HashSet<Pair<BlockPos, BlockPos>> getOrCreate(int distance) {
+    protected HashMap<BlockPosInspection, BlockPosInspection> getOrCreate(int distance) {
         if (distance >= toScan.size()) {
-            HashSet<Pair<BlockPos, BlockPos>> set = new HashSet<>();
+            HashMap<BlockPosInspection, BlockPosInspection> set = new HashMap<>();
             toScan.add(set);
             return set;
         }
-        return (HashSet<Pair<BlockPos, BlockPos>>) toScan.get(distance);
+        return toScan.get(distance);
     }
     
     protected void findState(BlockState state, int distance) {
@@ -87,7 +87,7 @@ public class AirPocketScanner extends Thread {
         foundCount.put(state, factor);
     }
     
-    protected void scan(Level level, int distance, BlockPos pos, BlockPos from) {
+    protected void scan(Level level, int distance, BlockPosInspection pos) {
         BlockState state = level.getBlockState(pos);
         if (state.isAir() || !state.isCollisionShapeFullBlock(level, pos)) {
             if (!state.isAir())
@@ -109,19 +109,176 @@ public class AirPocketScanner extends Thread {
                         continue;
                 } else if (pos.get(axis) - 1 >= origin.get(axis))
                     continue;
-                getOrCreate(distance).add(new Pair<>(pos.relative(direction), pos));
+                HashMap<BlockPosInspection, BlockPosInspection> map = getOrCreate(distance);
+                BlockPos newPos = pos.relative(direction);
+                BlockPosInspection ins = map.get(newPos);
+                if (ins != null)
+                    ins.add(direction.getOpposite());
+                else {
+                    ins = new BlockPosInspection(newPos, direction.getOpposite());
+                    map.put(ins, ins);
+                }
                 totalSize++;
             }
         } else {
-            if (!sky.get(pos.getX(), pos.getZ()) && level.canSeeSky(pos.above())) {
+            if (!sky.get(pos.getX(), pos.getZ()) && pos.isUp() && level.canSeeSky(pos.above())) {
                 sky.set(pos.getX(), pos.getZ());
                 if (distance < engine.airPocketDistance)
                     air = engine.maxAirPocketCount;
             }
-            lightValueCounter += level.getLightEmission(from);
-            skyLightValueCounter += level.getBrightness(LightLayer.SKY, from);
-            blocks++;
+            for (Direction direction : pos) {
+                BlockPos other = pos.relative(direction);
+                lightValueCounter += level.getLightEmission(other);
+                skyLightValueCounter += level.getBrightness(LightLayer.SKY, other);
+                faceCounter++;
+            }
             findState(state, distance);
         }
+    }
+    
+    public static class BlockPosInspection extends BlockPos implements Iterable<Direction> {
+        
+        protected boolean east;
+        protected boolean west;
+        protected boolean up;
+        protected boolean down;
+        protected boolean south;
+        protected boolean north;
+        
+        public BlockPosInspection(BlockPos pos) {
+            super(pos);
+            this.east = this.west = this.up = this.down = this.south = this.north = true;
+        }
+        
+        public BlockPosInspection(BlockPos pos, Direction direction) {
+            super(pos);
+            add(direction);
+        }
+        
+        public void add(Direction direction) {
+            switch (direction) {
+            case DOWN:
+                this.down = true;
+                break;
+            case EAST:
+                this.east = true;
+                break;
+            case NORTH:
+                this.north = true;
+                break;
+            case SOUTH:
+                this.south = true;
+                break;
+            case UP:
+                this.up = true;
+                break;
+            case WEST:
+                this.west = true;
+                break;
+            default:
+                break;
+            
+            }
+        }
+        
+        public boolean isUp() {
+            return up;
+        }
+        
+        public boolean is(Direction direction) {
+            switch (direction) {
+            case DOWN:
+                return down;
+            case EAST:
+                return east;
+            case NORTH:
+                return north;
+            case SOUTH:
+                return south;
+            case UP:
+                return up;
+            case WEST:
+                return west;
+            default:
+                return false;
+            }
+        }
+        
+        @Override
+        public Iterator<Direction> iterator() {
+            return new Iterator<Direction>() {
+                
+                int next = findNext(-1);
+                
+                int findNext(int next) {
+                    while (next < 6) {
+                        next++;
+                        switch (next) {
+                        case 0:
+                            if (east)
+                                return next;
+                            break;
+                        case 1:
+                            if (west)
+                                return next;
+                            break;
+                        case 2:
+                            if (up)
+                                return next;
+                            break;
+                        case 3:
+                            if (down)
+                                return next;
+                            break;
+                        case 4:
+                            if (south)
+                                return next;
+                            break;
+                        case 5:
+                            if (north)
+                                return next;
+                            break;
+                        }
+                    }
+                    return next;
+                }
+                
+                @Override
+                public boolean hasNext() {
+                    return next >= 0 && next < 6;
+                }
+                
+                @Override
+                public Direction next() {
+                    Direction result;
+                    switch (next) {
+                    case 0:
+                        result = Direction.EAST;
+                        break;
+                    case 1:
+                        result = Direction.WEST;
+                        break;
+                    case 2:
+                        result = Direction.UP;
+                        break;
+                    case 3:
+                        result = Direction.DOWN;
+                        break;
+                    case 4:
+                        result = Direction.SOUTH;
+                        break;
+                    case 5:
+                        result = Direction.NORTH;
+                        break;
+                    default:
+                        result = null;
+                        break;
+                    }
+                    next = findNext(next);
+                    return result;
+                }
+            };
+        }
+        
     }
 }
