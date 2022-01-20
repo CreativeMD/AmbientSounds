@@ -21,7 +21,7 @@ public class AmbientDimension {
     
     @CreativeConfig.DecimalRange(min = 0, max = 1)
     public transient double volumeSetting = 1;
-    public transient HashMap<String, AmbientRegion> regions = new HashMap<>();
+    public transient HashMap<String, AmbientRegion> regions;
     
     public String name;
     
@@ -47,6 +47,7 @@ public class AmbientDimension {
     public Integer averageHeight;
     
     public void load(AmbientEngine engine, Gson gson, ResourceManager manager) throws IOException {
+        regions = new HashMap<>();
         for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/dimension_regions/" + name + ".json"))) {
             AmbientRegion[] regions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
             for (int j = 0; j < regions.length; j++) {

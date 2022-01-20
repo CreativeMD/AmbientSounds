@@ -80,6 +80,13 @@ public class AmbientEngine {
                 for (int i = 0; i < regions.length; i++) {
                     AmbientRegion region = regions[i];
                     if (engine.checkRegion(null, i, region)) {
+                        if (region.stack != AmbientStackType.overwrite) {
+                            AmbientRegion original = engine.generalRegions.get(region.name);
+                            if (original != null) {
+                                original.apply(region);
+                                region = original;
+                            }
+                        }
                         engine.generalRegions.put(region.name, region);
                         region.load(engine, gson, manager);
                         engine.addRegion(region);

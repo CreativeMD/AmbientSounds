@@ -1,6 +1,8 @@
 package team.creative.ambientsounds;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -22,6 +24,7 @@ public class AmbientRegion extends AmbientCondition {
     
     public String name;
     public transient double volumeSetting = 1;
+    public AmbientStackType stack = AmbientStackType.overwrite;
     protected transient boolean active;
     public transient LinkedHashMap<String, AmbientSound> sounds = new LinkedHashMap<>();
     
@@ -34,6 +37,7 @@ public class AmbientRegion extends AmbientCondition {
     }
     
     public void load(AmbientEngine engine, Gson gson, ResourceManager manager) throws IOException {
+        this.sounds = new LinkedHashMap<>();
         for (Resource resource : manager
                 .getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
             try {
@@ -51,6 +55,17 @@ public class AmbientRegion extends AmbientCondition {
     @Override
     public String regionName() {
         return name;
+    }
+    
+    public void apply(AmbientRegion region) {
+        for (Field field : getClass().getFields()) {
+            if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()))
+                continue;
+            
+            try {
+                region.stack.apply(this, field, region);
+            } catch (IllegalArgumentException | IllegalAccessException e) {}
+        }
     }
     
     @Override
