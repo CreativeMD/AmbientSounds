@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Material;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
@@ -50,7 +49,7 @@ public class AmbientEnviroment {
         this.dimension = dimension;
         this.overallRaining = level.isRaining();
         this.raining = level.isRainingAt(player.blockPosition());
-        this.snowing = level.getBiome(player.blockPosition()).getPrecipitation() == Biome.Precipitation.SNOW && level.isRaining();
+        this.snowing = level.getBiome(player.blockPosition()).shouldSnow(level, player.blockPosition()) && level.isRaining();
         this.thundering = level.isThundering();
         
         this.absoluteHeight = player.getEyeY();
