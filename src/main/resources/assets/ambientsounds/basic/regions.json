@@ -133,7 +133,7 @@
 		],
 		"bad-regions": [
 			"taiga",
-			"roofed-forest",
+			"forest.roofed",
 			"jungle"
 		],
 		"variants": [
@@ -248,7 +248,8 @@
 	{
 		"name": "forest.roofed",
 		"biomes": [
-			"roofed*forest"
+			"roofed*forest",
+			"dark_forest"
 		]
 	},
 	{
@@ -311,7 +312,7 @@
 					"grass"
 				],
 				"bad-regions": [
-					"roofed-forest"
+					"forest.roofed"
 				],
 				"special-biomes": {
 					"top-block": [
