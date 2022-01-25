@@ -319,13 +319,15 @@ public class AmbientEngine {
     
     public static int getHeightBlock(World world, BlockPos.Mutable pos) {
         int y;
-        int heighest = 2;
+        int heighest = 0;
         
-        for (y = 45; y < 256; ++y) {
+        for (y = 256; y > 0; --y) {
             pos.setY(y);
             BlockState state = world.getBlockState(pos);
-            if ((state.isSolidRender(world, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.getBlock() == Blocks.WATER)
+            if ((state.isSolidRender(world, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.is(Blocks.WATER)) {
                 heighest = y;
+                break;
+            }
         }
         
         return heighest;
