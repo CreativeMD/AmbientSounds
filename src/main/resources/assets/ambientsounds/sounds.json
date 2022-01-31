@@ -98,15 +98,6 @@
 		],
 		"category": "ambient"
 	},
-	"animals.bird-ambience12": {
-		"sounds": [
-			{
-				"name": "ambientsounds:animals/bird/bird-ambience12",
-				"stream": true
-			}
-		],
-		"category": "ambient"
-	},
 	"animals.bird-ambience-huge1": {
 		"sounds": [
 			{
