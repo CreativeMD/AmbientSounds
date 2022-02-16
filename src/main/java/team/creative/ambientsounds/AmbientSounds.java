@@ -7,11 +7,12 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -20,7 +21,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkConstants;
 import team.creative.creativecore.client.CreativeCoreClient;
-import team.creative.creativecore.client.command.ClientCommandRegistry;
 
 @Mod(value = AmbientSounds.MODID)
 public class AmbientSounds {
@@ -33,6 +33,7 @@ public class AmbientSounds {
     
     public AmbientSounds() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
     
     public static AmbientTickHandler tickHandler;
@@ -67,18 +68,19 @@ public class AmbientSounds {
                 return null;
             }
         });
-        event.enqueueWork(() -> {
-            ClientCommandRegistry.register(LiteralArgumentBuilder.<SharedSuggestionProvider>literal("ambient-debug").executes(x -> {
-                tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
-                return Command.SINGLE_SUCCESS;
-            }));
-            ClientCommandRegistry.register(LiteralArgumentBuilder.<SharedSuggestionProvider>literal("ambient-reload").executes(x -> {
-                AmbientSounds.reload();
-                return Command.SINGLE_SUCCESS;
-            }));
-        });
         
         CreativeCoreClient.registerClientConfig(MODID);
+    }
+    
+    private void commands(RegisterClientCommandsEvent event) {
+        event.getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-debug").executes(x -> {
+            tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
+            return Command.SINGLE_SUCCESS;
+        }));
+        event.getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-reload").executes(x -> {
+            AmbientSounds.reload();
+            return Command.SINGLE_SUCCESS;
+        }));
     }
     
 }
