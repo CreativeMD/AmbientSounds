@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -24,6 +24,7 @@ public class BiomeEnviroment {
     
     public BiomeEnviroment() {}
     
+    @SuppressWarnings("deprecation")
     public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume, double surface) {
         if (volume > 0.0) {
             BlockPos center = player.eyeBlockPosition();
@@ -31,12 +32,12 @@ public class BiomeEnviroment {
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {
                 for (int z = -engine.biomeScanCount; z <= engine.biomeScanCount; z++) {
                     pos.set(center.getX() + x * engine.biomeScanDistance, center.getY(), center.getZ() + z * engine.biomeScanDistance);
-                    Biome biome = level.getBiome(pos);
+                    Holder<Biome> holder = level.getBiome(pos);
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
-                    if (biome.getBiomeCategory() != BiomeCategory.UNDERGROUND)
+                    if (Biome.getBiomeCategory(holder) != BiomeCategory.UNDERGROUND)
                         biomeVolume *= surface;
-                    BiomeArea area = new BiomeArea(level, biome, pos);
+                    BiomeArea area = new BiomeArea(level, holder, pos);
                     Float before = biomes.get(area);
                     if (before == null)
                         before = 0F;
@@ -58,19 +59,20 @@ public class BiomeEnviroment {
     
     public static class BiomeArea {
         
-        public final Biome biome;
+        public final Holder<Biome> biome;
         public final ResourceLocation location;
         public final BlockPos pos;
         
-        public BiomeArea(Level level, Biome biome, BlockPos pos) {
+        public BiomeArea(Level level, Holder<Biome> biome, BlockPos pos) {
             this.biome = biome;
-            this.location = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+            this.location = biome.value().getRegistryName();
             this.pos = pos;
         }
         
         public boolean checkBiome(String[] names) {
             for (String name : names) {
-                String biomename = biome.getBiomeCategory().getName().toLowerCase().replace("_", " ");
+                @SuppressWarnings("deprecation")
+                String biomename = Biome.getBiomeCategory(biome).getName().toLowerCase().replace("_", " ");
                 if (biomename.matches(".*" + name.replace("*", ".*") + ".*"))
                     return true;
                 
@@ -83,7 +85,7 @@ public class BiomeEnviroment {
         @Override
         public boolean equals(Object object) {
             if (object instanceof BiomeArea)
-                return ((BiomeArea) object).biome == biome;
+                return ((BiomeArea) object).biome.equals(biome);
             return false;
         }
         

@@ -6,14 +6,14 @@ import java.util.List;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class AmbientBlockGroup {
     
-    public List<Tag<Block>> tags = new ArrayList<>();
+    public List<TagKey<Block>> tags = new ArrayList<>();
     public List<Block> blocks = new ArrayList<>();
     
     public List<String> data = new ArrayList<>();
@@ -22,7 +22,7 @@ public class AmbientBlockGroup {
         for (int i = 0; i < data.size(); i++) {
             String entry = data.get(i);
             if (entry.startsWith("t->")) {
-                Tag<Block> tag = BlockTags.getAllTags().getTag(new ResourceLocation(entry.replace("t->", "")));
+                TagKey<Block> tag = BlockTags.create(new ResourceLocation(entry.replace("t->", "")));
                 if (tag != null)
                     tags.add(tag);
             } else {
@@ -48,7 +48,7 @@ public class AmbientBlockGroup {
                     return true;
                 
         if (!tags.isEmpty())
-            for (Tag<Block> tag : tags)
+            for (TagKey<Block> tag : tags)
                 if (state.is(tag))
                     return true;
                 

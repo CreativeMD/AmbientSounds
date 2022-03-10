@@ -49,7 +49,7 @@ public class AmbientEnviroment {
         this.dimension = dimension;
         this.overallRaining = level.isRaining();
         this.raining = level.isRainingAt(player.blockPosition());
-        this.snowing = level.getBiome(player.blockPosition()).shouldSnow(level, player.blockPosition()) && level.isRaining();
+        this.snowing = level.getBiome(player.blockPosition()).value().shouldSnow(level, player.blockPosition()) && level.isRaining();
         this.thundering = level.isThundering();
         
         this.absoluteHeight = player.getEyeY();
@@ -57,7 +57,7 @@ public class AmbientEnviroment {
         this.relativeMinHeight = absoluteHeight - terrain.minHeight;
         this.relativeMaxHeight = absoluteHeight - terrain.maxHeight;
         
-        this.temperature = player.level.getBiome(player.eyeBlockPosition()).getBaseTemperature();
+        this.temperature = player.level.getBiome(player.eyeBlockPosition()).value().getBaseTemperature();
         
         analyzeUnderwater(player, level);
         analyzeTime(level, deltaTime);
