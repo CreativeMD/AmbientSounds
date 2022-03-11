@@ -476,6 +476,9 @@
 			"stream",
 			"sea"
 		],
+		"features": [
+			"water"
+		],
 		"temperature": {
 			"min": 0
 		}
