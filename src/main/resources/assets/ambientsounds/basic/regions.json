@@ -288,41 +288,21 @@
 		"temperature": {
 			"min": 0.2
 		},
-		"variants": [
-			{
-				"biomes": [
-					"plains",
-					"chaparral",
-					"field",
-					"flower",
-					"grass",
-					"oasis",
-					"tundra",
-					"mushroom*fields",
-					"darklands",
-					"badlands",
-					"pasture",
-					"rocky plateau",
-					"tropics plains",
-					"mycelium"
-				]
-			},
-			{
-				"features": [
-					"grass"
-				],
-				"bad-regions": [
-					"forest.roofed"
-				],
-				"special-biomes": {
-					"top-block": [
-						"minecraft:grass"
-					],
-					"trees-per-chunk": {
-						"max": 4
-					}
-				}
-			}
+		"biomes": [
+			"plains",
+			"chaparral",
+			"field",
+			"flower",
+			"grass",
+			"oasis",
+			"tundra",
+			"mushroom*fields",
+			"darklands",
+			"badlands",
+			"pasture",
+			"rocky plateau",
+			"tropics plains",
+			"mycelium"
 		]
 	},
 	{
