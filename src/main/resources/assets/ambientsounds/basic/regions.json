@@ -341,32 +341,22 @@
 	{
 		"name": "desert",
 		"features": [
-			"sand"
+			"sand",
+			"water"
 		],
 		"bad-regions": [
 			"beach"
 		],
-		"variants": [
-			{
-				"biomes": [
-					"desert",
-					"quagmire",
-					"petrified forest",
-					"menelaus",
-					"dry scrub"
-				],
-				"bad-biomes": [
-					"lush desert",
-					"ocean"
-				]
-			},
-			{
-				"special-biomes": {
-					"top-block": [
-						"minecraft:sand"
-					]
-				}
-			}
+		"biomes": [
+			"desert",
+			"quagmire",
+			"petrified forest",
+			"menelaus",
+			"dry scrub"
+		],
+		"bad-biomes": [
+			"lush desert",
+			"ocean"
 		]
 	},
 	{
