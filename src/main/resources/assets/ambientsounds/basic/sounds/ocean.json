@@ -11,7 +11,9 @@
 		"files": [
 			"ambientsounds:wind.light-wind"
 		],
-		"outside": true,
+		"air": {
+			"min": 0.5
+		},
 		"volume": 0.4
 	}
 ]
