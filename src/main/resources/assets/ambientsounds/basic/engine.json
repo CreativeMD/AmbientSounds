@@ -1,6 +1,6 @@
 {
 	"name": "basic",
-	"version": "2.0.5",
+	"version": "2.0.6",
 	"enviroment-tick-time": 40,
 	"sound-tick-time": 4,
 	"block-scan-distance": 40,
@@ -29,5 +29,10 @@
 			"distance": 10,
 			"weight": 1
 		}
+	],
+	"solids": [
+		"t->doors",
+		"m->buildable_glass",
+		"m->glass"
 	]
 }

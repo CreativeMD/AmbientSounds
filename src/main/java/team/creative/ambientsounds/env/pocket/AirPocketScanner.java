@@ -14,7 +14,6 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.env.feature.AmbientBlockGroup;
 import team.creative.creativecore.common.util.type.map.HashMapDouble;
@@ -90,7 +89,7 @@ public class AirPocketScanner extends Thread {
     
     protected void scan(Level level, int distance, BlockPosInspection pos) {
         BlockState state = level.getBlockState(pos);
-        if (state.isAir() || !(state.isCollisionShapeFullBlock(level, pos) || state.getMaterial() == Material.BUILDABLE_GLASS || state.getMaterial() == Material.GLASS)) {
+        if (state.isAir() || !(state.isCollisionShapeFullBlock(level, pos) || engine.considerSolid.is(state))) {
             if (!state.isAir())
                 findState(state, distance);
             if (distance < engine.airPocketDistance && air < engine.maxAirPocketCount)

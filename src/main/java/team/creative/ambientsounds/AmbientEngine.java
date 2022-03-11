@@ -187,6 +187,8 @@ public class AmbientEngine {
     protected transient List<Double> airPocketDistanceFactor;
     public transient int maxAirPocketCount;
     
+    public transient AmbientBlockGroup considerSolid;
+    
     public AmbientRegion getRegion(String name) {
         return allRegions.get(name);
     }
@@ -223,6 +225,8 @@ public class AmbientEngine {
     public int airPocketDistance = 25;
     @SerializedName(value = "air-pocket-groups")
     public AirPocketGroup[] airPocketGroups = new AirPocketGroup[0];
+    
+    public String[] solids;
     
     protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
         if (region.name == null || region.name.isEmpty()) {
@@ -300,11 +304,16 @@ public class AmbientEngine {
         for (AmbientRegion region : allRegions.values())
             region.init(this);
         
+        considerSolid = new AmbientBlockGroup();
+        if (solids != null)
+            considerSolid.add(solids);
+        
         onClientLoad();
     }
     
     public void onClientLoad() {
         groups.values().forEach(x -> x.onClientLoad());
+        considerSolid.onClientLoad();
     }
     
     public double airWeightFactor(int distance) {
