@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.registries.ForgeRegistries;
 import team.creative.creativecore.common.util.mc.MaterialUtils;
 
 public class AmbientBlockGroup {
@@ -21,6 +20,7 @@ public class AmbientBlockGroup {
     
     public List<String> data = new ArrayList<>();
     
+    @SuppressWarnings("deprecation")
     public void onClientLoad() {
         tags.clear();
         blocks.clear();
@@ -29,7 +29,7 @@ public class AmbientBlockGroup {
         for (int i = 0; i < data.size(); i++) {
             String entry = data.get(i);
             if (entry.startsWith("t->")) {
-                TagKey<Block> tag = BlockTags.create(new ResourceLocation(entry.replace("t->", "")));
+                TagKey<Block> tag = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(entry.replace("t->", "")));
                 if (tag != null)
                     tags.add(tag);
             } else if (entry.startsWith("m->")) {
@@ -37,7 +37,7 @@ public class AmbientBlockGroup {
                 if (material != null)
                     materials.add(material);
             } else {
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entry));
+                Block block = Registry.BLOCK.get(new ResourceLocation(entry));
                 if (block != null)
                     blocks.add(block);
             }

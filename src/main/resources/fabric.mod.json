@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "ambientsounds",
+  "version": "2.5.0",
+
+  "name": "Ambiend Sounds (Fabric)",
+  "description": "",
+  "authors": [
+    "CreativeMD",
+    "AriaFreeze"
+  ],
+  "contact": {},
+  "license": "GNU LGPL v2.1",
+  "icon": "assets/ambientsounds/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "team.creative.ambientsounds.AmbientSounds"
+    ]
+  },
+  "mixins": [
+    "ambientsounds.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.18.x"
+  }
+}

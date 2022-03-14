@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
@@ -17,16 +18,15 @@ import net.minecraft.client.Options;
 import net.minecraft.client.sounds.LoopingAudioStream;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import team.creative.ambientsounds.AmbientSound.SoundStream;
+import team.creative.creativecore.CreativeCore;
+import team.creative.creativecore.reflection.ReflectionHelper;
 
 public class AmbientSoundEngine {
     
-    private static final Field sourceField = ObfuscationReflectionHelper.findField(Channel.class, "f_83642_");
-    private static final Field streamField = ObfuscationReflectionHelper.findField(Channel.class, "f_83645_");
-    private static final Field bufferedInputStreamField = ObfuscationReflectionHelper.findField(LoopingAudioStream.class, "f_120161_");
+    private static final Field sourceField = ReflectionHelper.findField(Channel.class, "f_83642_", "source");
+    private static final Field streamField = ReflectionHelper.findField(Channel.class, "f_83645_", "stream");
+    private static final Field bufferedInputStreamField = ReflectionHelper.findField(LoopingAudioStream.class, "f_120161_", "bufferedInputStream");
     
     public SoundManager manager;
     public Options options;
@@ -42,7 +42,7 @@ public class AmbientSoundEngine {
     public AmbientSoundEngine(SoundManager manager, Options options) {
         this.options = options;
         this.manager = manager;
-        MinecraftForge.EVENT_BUS.register(this);
+        CreativeCore.loader().registerListener((Consumer<PlayStreamingSourceEvent>) this::play);
     }
     
     public void tick() {
@@ -113,7 +113,6 @@ public class AmbientSoundEngine {
         }
     }
     
-    @SubscribeEvent
     public void play(PlayStreamingSourceEvent event) {
         if (event.getSound() instanceof SoundStream stream && stream.loop() && stream.duration != -1) {
             try {

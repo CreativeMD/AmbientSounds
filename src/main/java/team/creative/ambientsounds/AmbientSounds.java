@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.client.Minecraft;
@@ -12,46 +13,42 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkConstants;
+import team.creative.creativecore.CreativeCore;
+import team.creative.creativecore.ICreativeLoader;
+import team.creative.creativecore.client.ClientLoader;
 import team.creative.creativecore.client.CreativeCoreClient;
 
 @Mod(value = AmbientSounds.MODID)
-public class AmbientSounds {
+public class AmbientSounds implements ClientLoader {
     
     public static final Logger LOGGER = LogManager.getLogger(AmbientSounds.MODID);
-    
     public static final String MODID = "ambientsounds";
-    
     public static final AmbientSoundsConfig CONFIG = new AmbientSoundsConfig();
+    public static AmbientTickHandler TICK_HANDLER;
     
     public AmbientSounds() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-        MinecraftForge.EVENT_BUS.addListener(this::commands);
+        ICreativeLoader loader = CreativeCore.loader();
+        loader.registerClient(this);
     }
-    
-    public static AmbientTickHandler tickHandler;
     
     public static void reload() {
-        if (tickHandler.engine != null)
-            tickHandler.engine.stopEngine();
-        if (tickHandler.enviroment != null)
-            tickHandler.enviroment.reload();
-        tickHandler.setEngine(AmbientEngine.loadAmbientEngine(tickHandler.soundEngine));
+        if (TICK_HANDLER.engine != null)
+            TICK_HANDLER.engine.stopEngine();
+        if (TICK_HANDLER.enviroment != null)
+            TICK_HANDLER.enviroment.reload();
+        TICK_HANDLER.setEngine(AmbientEngine.loadAmbientEngine(TICK_HANDLER.soundEngine));
     }
     
-    private void doClientStuff(final FMLClientSetupEvent event) {
-        ModLoadingContext.get()
-                .registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+    @Override
+    public void onInitializeClient() {
+        ICreativeLoader loader = CreativeCore.loader();
+        loader.registerDisplayTest(() -> loader.ignoreServerNetworkConstant(), (a, b) -> true);
         
-        tickHandler = new AmbientTickHandler();
-        MinecraftForge.EVENT_BUS.register(tickHandler);
+        TICK_HANDLER = new AmbientTickHandler();
+        loader.registerClientTick(TICK_HANDLER::onTick);
+        loader.registerClientRender(TICK_HANDLER::onRender);
+        loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
         Minecraft minecraft = Minecraft.getInstance();
         ReloadableResourceManager reloadableResourceManager = (ReloadableResourceManager) minecraft.getResourceManager();
@@ -72,12 +69,13 @@ public class AmbientSounds {
         CreativeCoreClient.registerClientConfig(MODID);
     }
     
-    private void commands(RegisterClientCommandsEvent event) {
-        event.getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-debug").executes(x -> {
-            tickHandler.showDebugInfo = !tickHandler.showDebugInfo;
+    @Override
+    public void registerClientCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-debug").executes(x -> {
+            TICK_HANDLER.showDebugInfo = !TICK_HANDLER.showDebugInfo;
             return Command.SINGLE_SUCCESS;
         }));
-        event.getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-reload").executes(x -> {
+        dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-reload").executes(x -> {
             AmbientSounds.reload();
             return Command.SINGLE_SUCCESS;
         }));
