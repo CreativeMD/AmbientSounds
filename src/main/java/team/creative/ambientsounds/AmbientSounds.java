@@ -50,20 +50,22 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClientRender(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
-        Minecraft minecraft = Minecraft.getInstance();
-        ReloadableResourceManager reloadableResourceManager = (ReloadableResourceManager) minecraft.getResourceManager();
-        
-        reloadableResourceManager.registerReloadListener(new SimplePreparableReloadListener() {
+        loader.registerClientStarted(() -> {
+            Minecraft minecraft = Minecraft.getInstance();
+            ReloadableResourceManager reloadableResourceManager = (ReloadableResourceManager) minecraft.getResourceManager();
             
-            @Override
-            protected void apply(Object p_10793_, ResourceManager p_10794_, ProfilerFiller p_10795_) {
-                AmbientSounds.reload();
-            }
-            
-            @Override
-            protected Object prepare(ResourceManager p_10796_, ProfilerFiller p_10797_) {
-                return null;
-            }
+            reloadableResourceManager.registerReloadListener(new SimplePreparableReloadListener() {
+                
+                @Override
+                protected void apply(Object p_10793_, ResourceManager p_10794_, ProfilerFiller p_10795_) {
+                    AmbientSounds.reload();
+                }
+                
+                @Override
+                protected Object prepare(ResourceManager p_10796_, ProfilerFiller p_10797_) {
+                    return null;
+                }
+            });
         });
         
         CreativeCoreClient.registerClientConfig(MODID);

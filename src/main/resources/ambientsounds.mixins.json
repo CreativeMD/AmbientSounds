@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "team.creative.ambientsounds.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"refmap": "ambientsounds.mixins.refmap.json",
+	"mixins": [
+		"BiomeAccessor",
+		"ChannelAccessor",
+		"LoopingAudioStreamAccessor"
+	],
+	"client": [
+	],
+	"minVersion": "0.8"
+}

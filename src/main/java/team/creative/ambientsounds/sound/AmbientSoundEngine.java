@@ -24,9 +24,9 @@ import team.creative.creativecore.reflection.ReflectionHelper;
 
 public class AmbientSoundEngine {
     
-    private static final Field sourceField = ReflectionHelper.findField(Channel.class, "f_83642_", "source");
-    private static final Field streamField = ReflectionHelper.findField(Channel.class, "f_83645_", "stream");
-    private static final Field bufferedInputStreamField = ReflectionHelper.findField(LoopingAudioStream.class, "f_120161_", "bufferedInputStream");
+    private static Field sourceField;
+    private static Field streamField;
+    private static Field bufferedInputStreamField;
     
     public SoundManager manager;
     public Options options;
@@ -114,6 +114,11 @@ public class AmbientSoundEngine {
     }
     
     public void play(PlayStreamingSourceEvent event) {
+        if (sourceField != null) {
+            sourceField = ReflectionHelper.findField(Channel.class, "f_83642_", "source");
+            streamField = ReflectionHelper.findField(Channel.class, "f_83645_", "stream");
+            bufferedInputStreamField = ReflectionHelper.findField(LoopingAudioStream.class, "f_120161_", "bufferedInputStream");
+        }
         if (event.getSound() instanceof SoundStream stream && stream.loop() && stream.duration != -1) {
             try {
                 int source = sourceField.getInt(event.getChannel());
