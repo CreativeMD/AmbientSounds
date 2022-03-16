@@ -20,4 +20,4 @@ license="GNU General Public License v3.0"
 	mandatory=true
 	ordering="NONE"
 	side="BOTH"
-	versionRange="[2.4.0,)"
+	versionRange="[2.6.0,)"
