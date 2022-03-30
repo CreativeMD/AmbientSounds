@@ -1,8 +1,5 @@
 package team.creative.ambientsounds;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,9 +9,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.common.Mod;
 import team.creative.creativecore.CreativeCore;
@@ -57,11 +54,16 @@ public class AmbientSounds implements ClientLoader {
             Minecraft minecraft = Minecraft.getInstance();
             ReloadableResourceManager reloadableResourceManager = (ReloadableResourceManager) minecraft.getResourceManager();
             
-            reloadableResourceManager.registerReloadListener(new PreparableReloadListener() {
+            reloadableResourceManager.registerReloadListener(new SimplePreparableReloadListener() {
                 
                 @Override
-                public CompletableFuture<Void> reload(PreparationBarrier p_10638_, ResourceManager p_10639_, ProfilerFiller p_10640_, ProfilerFiller p_10641_, Executor p_10642_, Executor p_10643_) {
-                    return CompletableFuture.runAsync(AmbientSounds::reload, p_10643_);
+                protected void apply(Object p_10793_, ResourceManager p_10794_, ProfilerFiller p_10795_) {
+                    AmbientSounds.reload();
+                }
+                
+                @Override
+                protected Object prepare(ResourceManager p_10796_, ProfilerFiller p_10797_) {
+                    return null;
                 }
             });
         });
