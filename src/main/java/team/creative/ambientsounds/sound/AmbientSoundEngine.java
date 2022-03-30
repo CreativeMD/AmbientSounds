@@ -114,7 +114,7 @@ public class AmbientSoundEngine {
     }
     
     public void play(PlayStreamingSourceEvent event) {
-        if (sourceField != null) {
+        if (sourceField == null) {
             sourceField = ReflectionHelper.findField(Channel.class, "f_83642_", "source");
             streamField = ReflectionHelper.findField(Channel.class, "f_83645_", "stream");
             bufferedInputStreamField = ReflectionHelper.findField(LoopingAudioStream.class, "f_120161_", "bufferedInputStream");
