@@ -6,7 +6,7 @@ license="GNU General Public License v3.0"
 
 [[mods]]
 	modId="ambientsounds"
-	version="3.0.3"
+	version="${file.jarVersion}"
 	displayName="Ambient Sounds"
 	side="CLIENT"
 	displayURL="https://minecraft.curseforge.com/projects/ambientsounds"
