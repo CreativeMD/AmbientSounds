@@ -6,7 +6,6 @@ plugins {
 group = "team.creative"
 
 repositories {
-
     maven {
         url = "https://api.modrinth.com/maven"
     }
@@ -26,7 +25,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
-	implementation project(':CreativeCoreFabric')
+    implementation project(path: ':CreativeCoreFabric', configuration: 'namedElements')
 }
 
 processResources {
