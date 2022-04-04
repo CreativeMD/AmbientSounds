@@ -11,7 +11,7 @@
 	"contact": {
 	},
 	"license": "GNU LGPL v2.1",
-	"icon": "assets/ambientsounds/icon.png",
+	"icon": "ambientsounds.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": [
