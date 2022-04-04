@@ -25,3 +25,4 @@ run/
 /Users/
 
 !/gradle/wrapper/gradle-wrapper.jar
+/.gradle/
