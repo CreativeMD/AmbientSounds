@@ -36,6 +36,8 @@ public class AmbientSoundProperties {
     @SerializedName(value = "underwater-pitch")
     public AmbientMinMaxClimbingProperty underwaterPitch;
     
+    public String category;
+    
     public void init(AmbientEngine engine) {
         if (pitch == null)
             pitch = 1D;

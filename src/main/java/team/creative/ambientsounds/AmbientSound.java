@@ -263,11 +263,13 @@ public class AmbientSound extends AmbientCondition {
         
         private boolean finished = false;
         private boolean playedOnce;
+        public final SoundSource category;
         
         public SoundStream(int index, AmbientEnviroment env) {
             this.index = index;
             this.location = AmbientSound.this.files[index];
             this.volume = AmbientSound.this.getCombinedVolume(env);
+            this.category = getSoundSource(currentPropertries.category);
             this.generatedVoume = (float) volume;
         }
         
@@ -328,7 +330,7 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public SoundSource getSource() {
-            return SoundSource.AMBIENT;
+            return category;
         }
         
         @Override
@@ -399,4 +401,12 @@ public class AmbientSound extends AmbientCondition {
         return builder.toString();
     }
     
+    public static SoundSource getSoundSource(String name) {
+        if (name == null)
+            return SoundSource.AMBIENT;
+        for (int i = 0; i < SoundSource.values().length; i++)
+            if (SoundSource.values()[i].getName().equals(name))
+                return SoundSource.values()[i];
+        return SoundSource.AMBIENT;
+    }
 }

@@ -1,12 +1,14 @@
 [
 	{
 		"name": "storm-away",
+		"category": "weather",
 		"files": [
 			"ambientsounds:weather.storm-away"
 		]
 	},
 	{
 		"name": "howling-wind",
+		"category": "weather",
 		"files": [
 			"ambientsounds:wind.howling-wind"
 		],

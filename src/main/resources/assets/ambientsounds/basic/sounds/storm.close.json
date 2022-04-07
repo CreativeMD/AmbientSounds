@@ -1,12 +1,14 @@
 [
 	{
 		"name": "storm-close",
+		"category": "weather",
 		"files": [
 			"ambientsounds:weather.storm-close"
 		]
 	},
 	{
 		"name": "wind",
+		"category": "weather",
 		"files": [
 			"ambientsounds:wind.wind"
 		],
