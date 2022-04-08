@@ -57,9 +57,6 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                creativecore {
-                    source project(':CreativeCore').sourceSets.main
-                }
                 ambientsounds {
                     source sourceSets.main
                 }
