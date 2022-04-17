@@ -8,7 +8,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -72,12 +71,12 @@ public class AmbientSounds implements ClientLoader {
     }
     
     @Override
-    public void registerClientCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-debug").executes(x -> {
+    public <T> void registerClientCommands(CommandDispatcher<T> dispatcher) {
+        dispatcher.register(LiteralArgumentBuilder.<T>literal("ambient-debug").executes(x -> {
             TICK_HANDLER.showDebugInfo = !TICK_HANDLER.showDebugInfo;
             return Command.SINGLE_SUCCESS;
         }));
-        dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal("ambient-reload").executes(x -> {
+        dispatcher.register(LiteralArgumentBuilder.<T>literal("ambient-reload").executes(x -> {
             AmbientSounds.reload();
             return Command.SINGLE_SUCCESS;
         }));
