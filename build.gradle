@@ -2,7 +2,6 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.+'
-	id 'org.spongepowered.mixin'
 }
 
 group= "team.creative" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -39,18 +38,14 @@ dependencies {
     minecraft "net.minecraftforge:forge:${project.property 'minecraft_version'}-${project.property 'forge_version'}"
 	
 	implementation project(':CreativeCore')
+	
+	// Apply Mixin AP
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {
   duplicatesStrategy = DuplicatesStrategy.INCLUDE
   archiveFileName.set(project.modname + "_FORGE_v" + project.version + "_mc" + project.minecraft_version + ".jar")
-}
-
-mixin {
-    // MixinGradle Settings
-    add sourceSets.main, 'creativecore.mixins.refmap.json'
-     
-    config 'creativecore.mixins.json'
 }
 
 // Example configuration to allow publishing using the maven-publish plugin

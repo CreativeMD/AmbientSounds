@@ -9,6 +9,6 @@ buildscript {
 		mavenLocal()
 	}
     dependencies {
-		classpath 'org.spongepowered:mixingradle:0.7'
+		classpath 'org.spongepowered:mixingradle:0.7.33'
     }
 }
