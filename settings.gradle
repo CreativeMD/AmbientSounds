@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+    }
+}
+buildscript {
+    repositories {
+		mavenLocal()
+	}
+    dependencies {
+		classpath 'org.spongepowered:mixingradle:0.7'
+    }
+}
