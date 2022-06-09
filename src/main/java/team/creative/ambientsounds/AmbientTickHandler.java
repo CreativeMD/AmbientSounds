@@ -250,9 +250,9 @@ public class AmbientTickHandler {
             
             if (timer % engine.soundTickTime == 0) {
                 enviroment.analyzeFast(newDimension, player, level, mc.getDeltaFrameTime());
-                engine.tick(enviroment);
-                
                 enviroment.dimension.manipulateEnviroment(enviroment);
+                
+                engine.tick(enviroment);
             }
             
             engine.fastTick(enviroment);

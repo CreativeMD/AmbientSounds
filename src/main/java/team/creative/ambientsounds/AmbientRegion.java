@@ -1,6 +1,7 @@
 package team.creative.ambientsounds;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -39,15 +40,20 @@ public class AmbientRegion extends AmbientCondition {
     public void load(AmbientEngine engine, Gson gson, ResourceManager manager) throws IOException {
         this.sounds = new LinkedHashMap<>();
         for (Resource resource : manager
-                .getResources(new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
+                .getResourceStack(new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
+            InputStream input = resource.open();
             try {
-                AmbientSound[] sounds = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientSound[].class);
-                for (int j = 0; j < sounds.length; j++) {
-                    AmbientSound sound = sounds[j];
-                    this.sounds.put(sound.name, sound);
+                try {
+                    AmbientSound[] sounds = gson.fromJson(JsonParser.parseString(IOUtils.toString(input, Charsets.UTF_8)), AmbientSound[].class);
+                    for (int j = 0; j < sounds.length; j++) {
+                        AmbientSound sound = sounds[j];
+                        this.sounds.put(sound.name, sound);
+                    }
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
                 }
-            } catch (JsonSyntaxException e) {
-                e.printStackTrace();
+            } finally {
+                input.close();
             }
         }
     }

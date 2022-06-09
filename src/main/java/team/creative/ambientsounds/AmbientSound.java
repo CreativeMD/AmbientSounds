@@ -11,6 +11,7 @@ import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import team.creative.ambientsounds.env.AmbientEnviroment;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
@@ -250,6 +251,8 @@ public class AmbientSound extends AmbientCondition {
     
     public class SoundStream implements TickableSoundInstance {
         
+        private static final RandomSource rand = RandomSource.create();
+        
         public final int index;
         public final ResourceLocation location;
         
@@ -345,7 +348,7 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public Sound getSound() {
-            return soundeventaccessor.getSound();
+            return soundeventaccessor.getSound(rand);
         }
         
         @Override

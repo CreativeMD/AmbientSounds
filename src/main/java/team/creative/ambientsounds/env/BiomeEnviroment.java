@@ -1,12 +1,6 @@
 package team.creative.ambientsounds.env;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Iterator;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -16,19 +10,23 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import team.creative.ambientsounds.AmbientEngine;
+import team.creative.ambientsounds.AmbientTickHandler;
+import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
+import team.creative.ambientsounds.env.BiomeEnviroment.BiomeStats;
+import team.creative.creativecore.common.util.mc.TickUtils;
+import team.creative.creativecore.common.util.type.list.Pair;
+import team.creative.creativecore.common.util.type.list.PairList;
 
-public class BiomeEnviroment {
+public class BiomeEnviroment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     
-    public final LinkedHashMap<BiomeArea, Float> biomes = new LinkedHashMap<>();
+    private final PairList<BiomeArea, BiomeStats> biomes = new PairList<>();
     
     public BiomeEnviroment() {}
     
-    @SuppressWarnings("deprecation")
-    public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume, double surface) {
+    public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume) {
         if (volume > 0.0) {
-            BlockPos center = player.eyeBlockPosition();
+            BlockPos center = new BlockPos(player.getEyePosition(TickUtils.getDeltaFrameTime(level)));
             MutableBlockPos pos = new MutableBlockPos();
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {
                 for (int z = -engine.biomeScanCount; z <= engine.biomeScanCount; z++) {
@@ -36,26 +34,22 @@ public class BiomeEnviroment {
                     Holder<Biome> holder = level.getBiome(pos);
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
-                    if (Biome.getBiomeCategory(holder) != BiomeCategory.UNDERGROUND)
-                        biomeVolume *= surface;
                     BiomeArea area = new BiomeArea(level, holder, pos);
-                    Float before = biomes.get(area);
+                    Pair<BiomeArea, BiomeStats> before = biomes.getPair(area);
                     if (before == null)
-                        before = 0F;
-                    biomes.put(area, Math.max(before, biomeVolume));
+                        biomes.add(area, new BiomeStats(biomeVolume));
+                    else
+                        before.value.volume = Math.max(before.value.volume, biomeVolume);
                 }
             }
             
-            List<Entry<BiomeArea, Float>> entries = new ArrayList<>(biomes.entrySet());
-            Collections.sort(entries, new Comparator<Entry<BiomeArea, Float>>() {
-                @Override
-                public int compare(Entry<BiomeArea, Float> o1, Entry<BiomeArea, Float> o2) {
-                    return o1.getValue().compareTo(o2.getValue());
-                }
-            });
-            for (Map.Entry<BiomeArea, Float> entry : entries)
-                this.biomes.put(entry.getKey(), entry.getValue());
+            biomes.sort((x, y) -> y.value.compareTo(x.value));
         }
+    }
+    
+    @Override
+    public Iterator<Pair<BiomeArea, BiomeStats>> iterator() {
+        return biomes.iterator();
     }
     
     public static class BiomeArea {
@@ -71,15 +65,9 @@ public class BiomeEnviroment {
         }
         
         public boolean checkBiome(String[] names) {
-            for (String name : names) {
-                @SuppressWarnings("deprecation")
-                String biomename = Biome.getBiomeCategory(biome).getName().toLowerCase().replace("_", " ");
-                if (biomename.matches(".*" + name.replace("*", ".*") + ".*"))
-                    return true;
-                
+            for (String name : names)
                 if (location.getPath().matches(".*" + name.replace("*", ".*") + ".*"))
                     return true;
-            }
             return false;
         }
         
@@ -95,6 +83,29 @@ public class BiomeEnviroment {
             return biome.hashCode();
         }
         
+    }
+    
+    public static class BiomeStats implements Comparable<BiomeStats> {
+        
+        private double volume;
+        
+        public BiomeStats(double volume) {
+            this.volume = volume;
+        }
+        
+        public double volume(AmbientEnviroment env, String type) {
+            return volume * env.biomeTypeVolumes.getOrDefault(type, 1D);
+        }
+        
+        @Override
+        public int compareTo(BiomeStats o) {
+            return Double.compare(volume, o.volume);
+        }
+        
+        @Override
+        public String toString() {
+            return AmbientTickHandler.df.format(volume);
+        }
     }
     
 }

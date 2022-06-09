@@ -2,13 +2,14 @@ package team.creative.ambientsounds;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.util.Mth;
 import team.creative.ambientsounds.env.AmbientEnviroment;
 import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
+import team.creative.ambientsounds.env.BiomeEnviroment.BiomeStats;
+import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientCondition extends AmbientSoundProperties {
     
@@ -19,6 +20,9 @@ public class AmbientCondition extends AmbientSoundProperties {
     public double nightVolume = 1.0;
     @SerializedName(value = "day")
     public double dayVolume = 1.0;
+    
+    @SerializedName(value = "biome-type")
+    public String biomeType;
     
     public String[] biomes;
     @SerializedName(value = "bad-biomes")
@@ -100,6 +104,9 @@ public class AmbientCondition extends AmbientSoundProperties {
                     badRegionList.add(region);
             }
         }
+        
+        if (biomeType == null)
+            biomeType = engine.defaultBiomeType;
     }
     
     public AmbientSelection value(AmbientEnviroment env) {
@@ -156,24 +163,25 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (biomes != null || badBiomes != null) {
-            Entry<BiomeArea, Float> highest = null;
+            double highest = -1;
             
-            for (Entry<BiomeArea, Float> pair : env.biome.biomes.entrySet()) {
+            for (Pair<BiomeArea, BiomeStats> pair : env.biome) {
                 
-                if (biomes != null && !pair.getKey().checkBiome(biomes))
+                if (biomes != null && !pair.key.checkBiome(biomes))
                     continue;
                 
-                if (badBiomes != null && pair.getKey().checkBiome(badBiomes))
+                if (badBiomes != null && pair.key.checkBiome(badBiomes))
                     return null;
                 
-                if (highest == null || highest.getValue() < pair.getValue())
-                    highest = pair;
+                double value = pair.value.volume(env, biomeType);
+                if (highest == -1 || highest < value)
+                    highest = value;
             }
             
-            if (highest == null && biomes != null)
+            if (highest == -1 && biomes != null)
                 return null;
-            else if (highest != null)
-                selection.volume *= highest.getValue();
+            else if (highest != -1)
+                selection.volume *= highest;
         }
         
         if (underwater != null) {

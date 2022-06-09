@@ -1,7 +1,7 @@
 package team.creative.ambientsounds.env;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
@@ -10,9 +10,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
-import team.creative.ambientsounds.AmbientSelection;
 import team.creative.ambientsounds.AmbientTickHandler;
 import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
+import team.creative.ambientsounds.env.BiomeEnviroment.BiomeStats;
 import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientEnviroment {
@@ -33,7 +33,9 @@ public class AmbientEnviroment {
     public BiomeEnviroment biome = new BiomeEnviroment();
     public TerrainEnviroment terrain = new TerrainEnviroment();
     
-    public double biomeVolume = 0;
+    public double biomeVolume;
+    
+    public HashMap<String, Double> biomeTypeVolumes = new HashMap<>();
     
     public double absoluteHeight;
     public double relativeHeight;
@@ -57,7 +59,7 @@ public class AmbientEnviroment {
         this.relativeMinHeight = absoluteHeight - terrain.minHeight;
         this.relativeMaxHeight = absoluteHeight - terrain.maxHeight;
         
-        this.temperature = player.level.getBiome(player.eyeBlockPosition()).value().getBaseTemperature();
+        this.temperature = player.level.getBiome(new BlockPos(player.getEyePosition(deltaTime))).value().getBaseTemperature();
         
         analyzeUnderwater(player, level);
         analyzeTime(level, deltaTime);
@@ -92,8 +94,7 @@ public class AmbientEnviroment {
     
     public void analyzeSlow(AmbientDimension dimension, AmbientEngine engine, Player player, Level level, float deltaTime) {
         terrain.analyze(engine, dimension, player, level);
-        AmbientSelection surface = dimension.surfaceSelector != null ? dimension.surfaceSelector.value(this) : null;
-        biome = new BiomeEnviroment(engine, player, level, biomeVolume, surface != null ? surface.getEntireVolume() : 0);
+        biome = new BiomeEnviroment(engine, player, level, biomeVolume);
     }
     
     public void collectLevelDetails(List<Pair<String, Object>> details) {
@@ -125,7 +126,7 @@ public class AmbientEnviroment {
     
     public void collectBiomeDetails(List<Pair<String, Object>> details) {
         details.add(new Pair<>("b-volume", biomeVolume));
-        for (Entry<BiomeArea, Float> pair : biome.biomes.entrySet())
+        for (Pair<BiomeArea, BiomeStats> pair : biome)
             details.add(new Pair<>(pair.getKey().location.toString(), pair.getValue()));
     }
     

@@ -11,6 +11,7 @@ import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.env.pocket.AirPocket;
 import team.creative.ambientsounds.env.pocket.AirPocketScanner;
+import team.creative.creativecore.common.util.mc.TickUtils;
 
 public class TerrainEnviroment {
     
@@ -69,7 +70,7 @@ public class TerrainEnviroment {
     
     public void analyzeAirPocket(AmbientEngine engine, Player player, Level level) {
         if (scanner == null)
-            scanner = new AirPocketScanner(engine, level, player.eyeBlockPosition(), x -> {
+            scanner = new AirPocketScanner(engine, level, new BlockPos(player.getEyePosition(TickUtils.getDeltaFrameTime(level))), x -> {
                 airPocket = x;
                 scanner = null;
             });

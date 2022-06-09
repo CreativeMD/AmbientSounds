@@ -1,5 +1,6 @@
 package team.creative.ambientsounds;
 
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -42,7 +44,7 @@ public class AmbientEngine {
     public static final String SOUNDS_LOCATION = "sounds.json";
     public static final String FEATURES_LOCATION = "features.json";
     
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
         
         @Override
         public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -53,111 +55,137 @@ public class AmbientEngine {
     }).create();
     
     public static AmbientEngine attemptToLoadEngine(AmbientSoundEngine soundEngine, ResourceManager manager, String name) throws Exception {
-        AmbientEngine engine = gson.fromJson(JsonParser
-                .parseString(IOUtils.toString(manager.getResource(new ResourceLocation(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).getInputStream(), Charsets.UTF_8))
-                .getAsJsonObject(), AmbientEngine.class);
-        
-        if (!engine.name.equals(name))
-            throw new Exception("Invalid engine name");
-        
-        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION))) {
-            AmbientDimension[] dimensions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientDimension[].class);
-            for (int i = 0; i < dimensions.length; i++) {
-                AmbientDimension dimension = dimensions[i];
-                if (dimension.name == null || dimension.name.isEmpty())
-                    AmbientSounds.LOGGER.error("Found invalid dimensions at {}", i);
-                engine.dimensions.put(dimension.name, dimension);
-                dimension.load(engine, gson, manager);
-                for (AmbientRegion region : dimension.regions.values())
-                    if (engine.checkRegion(dimension, i, region))
-                        engine.addRegion(region);
+        InputStream engineInput = manager.getResource(new ResourceLocation(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).orElseThrow().open();
+        try {
+            AmbientEngine engine = GSON.fromJson(JsonParser.parseString(IOUtils.toString(engineInput, Charsets.UTF_8)).getAsJsonObject(), AmbientEngine.class);
+            
+            if (!engine.name.equals(name))
+                throw new Exception("Invalid engine name");
+            
+            for (Resource resource : manager.getResourceStack(new ResourceLocation(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION))) {
+                InputStream input = resource.open();
+                try {
+                    JsonArray array = JsonParser.parseString(IOUtils.toString(input, Charsets.UTF_8)).getAsJsonArray();
+                    AmbientDimension[] dimensions = GSON.fromJson(array, AmbientDimension[].class);
+                    for (int i = 0; i < dimensions.length; i++) {
+                        AmbientDimension dimension = dimensions[i];
+                        if (dimension.name == null || dimension.name.isEmpty())
+                            AmbientSounds.LOGGER.error("Found invalid dimensions at {}", i);
+                        engine.dimensions.put(dimension.name, dimension);
+                        dimension.load(engine, GSON, manager, array.get(i).getAsJsonObject());
+                        for (AmbientRegion region : dimension.regions.values())
+                            if (engine.checkRegion(dimension, i, region))
+                                engine.addRegion(region);
+                    }
+                } finally {
+                    input.close();
+                }
             }
-        }
-        
-        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION))) {
-            try {
-                AmbientRegion[] regions = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientRegion[].class);
-                for (int i = 0; i < regions.length; i++) {
-                    AmbientRegion region = regions[i];
-                    if (engine.checkRegion(null, i, region)) {
-                        if (region.stack != AmbientStackType.overwrite) {
-                            AmbientRegion original = engine.generalRegions.get(region.name);
-                            if (original != null) {
-                                original.apply(region);
-                                region = original;
+            
+            for (Resource resource : manager.getResourceStack(new ResourceLocation(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION))) {
+                InputStream input = resource.open();
+                try {
+                    try {
+                        AmbientRegion[] regions = GSON.fromJson(JsonParser.parseString(IOUtils.toString(input, Charsets.UTF_8)), AmbientRegion[].class);
+                        for (int i = 0; i < regions.length; i++) {
+                            AmbientRegion region = regions[i];
+                            if (engine.checkRegion(null, i, region)) {
+                                if (region.stack != AmbientStackType.overwrite) {
+                                    AmbientRegion original = engine.generalRegions.get(region.name);
+                                    if (original != null) {
+                                        original.apply(region);
+                                        region = original;
+                                    }
+                                }
+                                engine.generalRegions.put(region.name, region);
+                                region.load(engine, GSON, manager);
+                                engine.addRegion(region);
                             }
                         }
-                        engine.generalRegions.put(region.name, region);
-                        region.load(engine, gson, manager);
-                        engine.addRegion(region);
-                    }
-                }
-            } catch (JsonSyntaxException e) {
-                System.out.println("Failed to load  " + resource.getLocation());
-                e.printStackTrace();
-            }
-        }
-        
-        engine.features = new ArrayList<>();
-        for (Resource resource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION))) {
-            AmbientFeature[] features = gson.fromJson(JsonParser.parseString(IOUtils.toString(resource.getInputStream(), Charsets.UTF_8)), AmbientFeature[].class);
-            HashSet<String> groups = new HashSet<>();
-            for (int i = 0; i < features.length; i++) {
-                AmbientFeature feature = features[i];
-                feature.collectGroups(groups);
-                engine.features.add(feature);
-            }
-            
-            for (String groupName : groups) {
-                AmbientBlockGroup group = new AmbientBlockGroup();
-                for (Resource scanResource : manager.getResources(new ResourceLocation(AmbientSounds.MODID, name + "/blockgroups/" + groupName + ".json"))) {
-                    try {
-                        group.add(gson.fromJson(JsonParser.parseString(IOUtils.toString(scanResource.getInputStream(), Charsets.UTF_8)), String[].class));
                     } catch (JsonSyntaxException e) {
+                        System.out.println("Failed to load  " + AmbientSounds.MODID + ":" + name + "/" + REGIONS_LOCATION + " " + resource.sourcePackId());
                         e.printStackTrace();
                     }
+                } finally {
+                    input.close();
                 }
-                engine.groups.put(groupName, group);
             }
             
+            engine.features = new ArrayList<>();
+            for (Resource resource : manager.getResourceStack(new ResourceLocation(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION))) {
+                InputStream input = resource.open();
+                try {
+                    AmbientFeature[] features = GSON.fromJson(JsonParser.parseString(IOUtils.toString(input, Charsets.UTF_8)), AmbientFeature[].class);
+                    HashSet<String> groups = new HashSet<>();
+                    for (int i = 0; i < features.length; i++) {
+                        AmbientFeature feature = features[i];
+                        feature.collectGroups(groups);
+                        engine.features.add(feature);
+                    }
+                    
+                    for (String groupName : groups) {
+                        AmbientBlockGroup group = new AmbientBlockGroup();
+                        for (Resource scanResource : manager.getResourceStack(new ResourceLocation(AmbientSounds.MODID, name + "/blockgroups/" + groupName + ".json"))) {
+                            InputStream input2 = scanResource.open();
+                            try {
+                                try {
+                                    group.add(GSON.fromJson(JsonParser.parseString(IOUtils.toString(input2, Charsets.UTF_8)), String[].class));
+                                } catch (JsonSyntaxException e) {
+                                    e.printStackTrace();
+                                }
+                            } finally {
+                                input2.close();
+                            }
+                        }
+                        engine.groups.put(groupName, group);
+                    }
+                } finally {
+                    input.close();
+                }
+            }
+            
+            engine.silentDim = new AmbientDimension();
+            engine.silentDim.name = "silent";
+            engine.silentDim.volumeSetting = 0;
+            engine.silentDim.mute = true;
+            
+            engine.init();
+            
+            engine.soundEngine = soundEngine;
+            
+            AmbientSounds.LOGGER
+                    .info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} groups, {} regions, {} sounds, {} solids and {} biome types", engine.name, engine.version, engine.dimensions
+                            .size(), engine.features.size(), engine.groups.size(), engine.allRegions.size(), engine.sounds.size(), engine.solids.length, engine.biomeTypes.length);
+            return engine;
+        } finally {
+            engineInput.close();
         }
-        
-        engine.silentDim = new AmbientDimension();
-        engine.silentDim.name = "silent";
-        engine.silentDim.volumeSetting = 0;
-        engine.silentDim.mute = true;
-        
-        engine.init();
-        
-        engine.soundEngine = soundEngine;
-        
-        AmbientSounds.LOGGER
-                .info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} groups, {} region(s) and {} sound(s)", engine.name, engine.version, engine.dimensions
-                        .size(), engine.features.size(), engine.groups.size(), engine.allRegions.size(), engine.sounds.size());
-        
-        return engine;
     }
     
     public static AmbientEngine loadAmbientEngine(AmbientSoundEngine soundEngine) {
         try {
             ResourceManager manager = Minecraft.getInstance().getResourceManager();
             
-            AmbientConfig config = gson.fromJson(JsonParser.parseString(IOUtils.toString(manager.getResource(CONFIG_LOCATION).getInputStream(), Charsets.UTF_8))
-                    .getAsJsonObject(), AmbientConfig.class);
-            
-            if (!AmbientSounds.CONFIG.engine.equalsIgnoreCase("default"))
+            InputStream input = manager.getResource(CONFIG_LOCATION).orElseThrow().open();
+            try {
+                AmbientConfig config = GSON.fromJson(JsonParser.parseString(IOUtils.toString(input, Charsets.UTF_8)).getAsJsonObject(), AmbientConfig.class);
+                
+                if (!AmbientSounds.CONFIG.engine.equalsIgnoreCase("default"))
+                    try {
+                        return attemptToLoadEngine(soundEngine, manager, AmbientSounds.CONFIG.engine);
+                    } catch (Exception e) {
+                        AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
+                        e.printStackTrace();
+                    }
+                
                 try {
-                    return attemptToLoadEngine(soundEngine, manager, AmbientSounds.CONFIG.engine);
+                    return attemptToLoadEngine(soundEngine, manager, config.defaultEngine);
                 } catch (Exception e) {
                     AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
                     e.printStackTrace();
                 }
-            
-            try {
-                return attemptToLoadEngine(soundEngine, manager, config.defaultEngine);
-            } catch (Exception e) {
-                AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
-                e.printStackTrace();
+            } finally {
+                input.close();
             }
             
             throw new Exception();
@@ -226,7 +254,12 @@ public class AmbientEngine {
     @SerializedName(value = "air-pocket-groups")
     public AirPocketGroup[] airPocketGroups = new AirPocketGroup[0];
     
-    public String[] solids;
+    public String[] solids = {};
+    
+    @SerializedName(value = "biome-types")
+    public String[] biomeTypes = {};
+    @SerializedName(value = "default-biome-type")
+    public String defaultBiomeType;
     
     protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
         if (region.name == null || region.name.isEmpty()) {

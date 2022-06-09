@@ -89,6 +89,7 @@
 		"regions": [
 			"cave"
 		],
+		"biome-type": "underground",
 		"min-height-relative": {
 			"max": -2,
 			"fade": 2
