@@ -111,7 +111,7 @@ public class AmbientEnviroment {
         details.add(new Pair<>("temp", temperature));
         details.add(new Pair<>("height", "r:" + AmbientTickHandler.df.format(relativeHeight) + ",a:" + AmbientTickHandler.df
                 .format(terrain.averageHeight) + " (" + AmbientTickHandler.df
-                        .format(player.getEyeY() - terrain.minHeight) + "," + AmbientTickHandler.df.format(player.getEyeY() - terrain.maxHeight) + ")"));
+                        .format(terrain.minHeight - player.getEyeY()) + "," + AmbientTickHandler.df.format(terrain.maxHeight - player.getEyeY()) + ")"));
         
     }
     
