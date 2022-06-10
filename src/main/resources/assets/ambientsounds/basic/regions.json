@@ -1,457 +1,460 @@
 [
-	{
-		"name": "underwater",
-		"mute": 0.9,
-		"fade-volume": 0.1,
-		"fade-pitch": 0.1,
-		"pitch": 2.0,
-		"underwater": {
-			"min": 0.01
-		},
-		"underwater-pitch": {
-			"min": 0,
-			"max": 1,
-			"distance-factor": -0.1
-		}
-	},
-	{
-		"name": "rain",
-		"raining": true,
-		"regions": [
-			"surface"
-		],
-		"bad-regions": [
-			"cold"
-		],
-		"mute": 0.8
-	},
-	{
-		"name": "storm.close",
-		"storming": true,
-		"bad-regions": [
-			"cold"
-		],
-		"regions": [
-			"surface"
-		]
-	},
-	{
-		"name": "storm.away",
-		"storming": true,
-		"bad-regions": [
-			"cold"
-		],
-		"regions": [
-			"cave",
-			"sky"
-		],
-		"relative-height": {
-			"min": -30,
-			"fade": 20
-		}
-	},
-	{
-		"name": "underworld",
-		"absolute-height": {
-			"max": -64,
-			"fade": 5
-		}
-	},
-	{
-		"name": "cave",
-		"relative-height": {
-			"max": -10,
-			"fade": 5
-		},
-		"absolute-height": {
-			"min": -70,
-			"fade": 5
-		}
-	},
-	{
-		"name": "cave.ambience",
-		"regions": [
-			"cave",
-			"underworld"
-		],
-		"min-height-relative": {
-			"max": -2,
-			"fade": 2
-		},
-		"features": [
-			"rock",
-			"lush",
-			"dripstone"
-		]
-	},
-	{
-		"name": "cave.lush",
-		"regions": [
-			"cave"
-		],
-		"biome-type": "underground",
-		"min-height-relative": {
-			"max": -2,
-			"fade": 2
-		},
-		"features": [
-			"lush"
-		]
-	},
-	{
-		"name": "surface",
-		"relative-height": {
-			"min": -10,
-			"max": 20,
-			"fade": 10
-		}
-	},
-	{
-		"name": "sky",
-		"relative-height": {
-			"min": 15,
-			"fade": 20
-		},
-		"absolute-height": {
-			"max": 4000,
-			"fade": 20
-		},
-		"bad-regions": [
-			"end"
-		]
-	},
-	{
-		"name": "space",
-		"absolute-height": {
-			"min": 4000,
-			"fade": 100
-		}
-	},
-	{
-		"name": "forest",
-		"features": [
-			"tree"
-		],
-		"bad-regions": [
-			"taiga",
-			"forest.roofed",
-			"jungle"
-		],
-		"variants": [
-			{
-				"temperature": {
-					"min": 0.2,
-					"max": 1.5
-				}
-			},
-			{
-				"biomes": [
-					"forest",
-					"blossom",
-					"mangrove",
-					"woods",
-					"orchard",
-					"origin island",
-					"thicket",
-					"woodland",
-					"grove",
-					"origin valley",
-					"rainforest",
-					"lush hills",
-					"orchad",
-					"valley",
-					"origin island",
-					"birch hills",
-					"twilight clearing"
-				]
-			},
-			{
-				"regions": [
-					"swamp"
-				],
-				"volume": 0.3
-			}
-		]
-	},
-	{
-		"name": "forest.cold",
-		"features": [
-			"tree"
-		],
-		"regions": [
-			"surface"
-		],
-		"temperature": {
-			"max": 0.5
-		}
-	},
-	{
-		"name": "taiga",
-		"features": [
-			"tree"
-		],
-		"temperature": {
-			"min": 0.2
-		},
-		"biomes": [
-			"taiga",
-			"grove",
-			"jade cliffs",
-			"shield",
-			"coniferous forest",
-			"land of lakes",
-			"snowy*forest",
-			"temperate rainforest",
-			"seasonal forest",
-			"spruce",
-			"meneglin",
-			"redwood",
-			"dead forest",
-			"ominous woods",
-			"autumnal forest",
-			"boreal forest",
-			"maple wood",
-			"meadow",
-			"thornlands",
-			"twilight highlands"
-		]
-	},
-	{
-		"name": "highland",
-		"biomes": [
-			"extreme*hills",
-			"alps",
-			"crag",
-			"highland",
-			"mountain",
-			"volcanic island",
-			"mountains",
-			"cliffs",
-			"defiled hills",
-			"volcanic island",
-			"final plateau",
-			"twilight glaciers",
-			"magnetic hills"
-		]
-	},
-	{
-		"name": "mesa",
-		"biomes": [
-			"mesa",
-			"lush desert",
-			"outback",
-			"wasteland",
-			"steppe",
-			"arid highland",
-			"canyon"
-		]
-	},
-	{
-		"name": "forest.roofed",
-		"biomes": [
-			"roofed*forest",
-			"dark_forest"
-		]
-	},
-	{
-		"name": "grass",
-		"features": [
-			"grass"
-		],
-		"bad-regions": [
-			"plains",
-			"savanna",
-			"swamp",
-			"ocean",
-			"highland",
-			"jungle"
-		],
-		"bad-biomes": [
-			"river"
-		],
-		"temperature": {
-			"min": 0.2
-		}
-	},
-	{
-		"name": "plains",
-		"features": [
-			"grass"
-		],
-		"bad-regions": [
-			"ocean",
-			"forest",
-			"savanna",
-			"swamp",
-			"highland",
-			"nether"
-		],
-		"temperature": {
-			"min": 0.2
-		},
-		"biomes": [
-			"plains",
-			"chaparral",
-			"field",
-			"flower",
-			"grass",
-			"oasis",
-			"tundra",
-			"mushroom*fields",
-			"darklands",
-			"badlands",
-			"pasture",
-			"rocky plateau",
-			"tropics plains",
-			"mycelium"
-		]
-	},
-	{
-		"name": "savanna",
-		"biomes": [
-			"savanna",
-			"heathland",
-			"prairie",
-			"brushland",
-			"lush desert",
-			"outback",
-			"shrubland",
-			"spiny forest"
-		]
-	},
-	{
-		"name": "desert",
-		"features": [
-			"sand",
-			"water"
-		],
-		"bad-regions": [
-			"beach"
-		],
-		"biomes": [
-			"desert",
-			"quagmire",
-			"petrified forest",
-			"menelaus",
-			"dry scrub"
-		],
-		"bad-biomes": [
-			"lush desert",
-			"ocean"
-		]
-	},
-	{
-		"name": "swamp",
-		"biomes": [
-			"swamp",
-			"bayou",
-			"bog",
-			"marsh",
-			"moor",
-			"fen",
-			"mystic grove",
-			"bamboo marsh",
-			"silkglades",
-			"sludgepit",
-			"wetland",
-			"quagmire",
-			"dead forest",
-			"patchy islands",
-			"deep waters",
-			"coarse islands",
-			"erebus",
-			"fungal forest",
-			"tyros swamp"
-		],
-		"temperature": {
-			"min": 0.5,
-			"max": 2
-		}
-	},
-	{
-		"name": "jungle",
-		"biomes": [
-			"jungle",
-			"sacred springs",
-			"tropical",
-			"bamboo forest",
-			"bambona beach",
-			"encalyptus forest",
-			"overgrown cliffs",
-			"tropics",
-			"tyros"
-		],
-		"bad-biomes": [
-			"tropics plains",
-			"tropics beach",
-			"tyros swamp",
-			"subtropical forest",
-			"tropical*extreme hills"
-		],
-		"features": [
-			"tree"
-		],
-		"temperature": {
-			"min": 0.5
-		}
-	},
-	{
-		"name": "cold",
-		"features": [
-			"grass"
-		],
-		"variants": [
-			{
-				"biomes": [
-					"frozen",
-					"ice",
-					"cold",
-					"arctic",
-					"glacier",
-					"snow"
-				],
-				"bad-biomes": [
-					"arctic peaks"
-				]
-			},
-			{
-				"temperature": {
-					"max": 0,
-					"min": -5
-				}
-			}
-		]
-	},
-	{
-		"name": "beach",
-		"biomes": [
-			"beach",
-			"shore",
-			"tropics beach"
-		],
-		"bad-biomes": [
-			"gravel_beach"
-		],
-		"temperature": {
-			"min": 0
-		}
-	},
-	{
-		"name": "ocean",
-		"biomes": [
-			"ocean",
-			"river",
-			"coral reef",
-			"kelp forest",
-			"lake",
-			"stream",
-			"sea"
-		],
-		"features": [
-			"water"
-		],
-		"temperature": {
-			"min": 0
-		}
-	}
+    {
+        "name": "underwater",
+        "mute": 0.9,
+        "fade-volume": 0.1,
+        "fade-pitch": 0.1,
+        "pitch": 2.0,
+        "underwater": {
+            "min": 0.01
+        },
+        "underwater-pitch": {
+            "min": 0,
+            "max": 1,
+            "distance-factor": -0.1
+        }
+    },
+    {
+        "name": "rain",
+        "raining": true,
+        "regions": [
+            "surface"
+        ],
+        "bad-regions": [
+            "cold"
+        ],
+        "mute": 0.8
+    },
+    {
+        "name": "storm.close",
+        "storming": true,
+        "bad-regions": [
+            "cold"
+        ],
+        "regions": [
+            "surface"
+        ]
+    },
+    {
+        "name": "storm.away",
+        "storming": true,
+        "bad-regions": [
+            "cold"
+        ],
+        "regions": [
+            "cave",
+            "sky"
+        ],
+        "relative-height": {
+            "min": -30,
+            "fade": 20
+        }
+    },
+    {
+        "name": "underworld",
+        "absolute-height": {
+            "max": -64,
+            "fade": 5
+        }
+    },
+    {
+        "name": "cave",
+        "relative-height": {
+            "max": -10,
+            "fade": 5
+        },
+        "absolute-height": {
+            "min": -70,
+            "fade": 5
+        }
+    },
+    {
+        "name": "cave.ambience",
+        "regions": [
+            "cave",
+            "underworld"
+        ],
+        "min-height-relative": {
+            "max": -2,
+            "fade": 2
+        },
+        "features": [
+            "rock",
+            "lush",
+            "dripstone"
+        ]
+    },
+    {
+        "name": "cave.lush",
+        "regions": [
+            "cave"
+        ],
+        "biome-type": "underground",
+        "min-height-relative": {
+            "max": -2,
+            "fade": 2
+        },
+        "features": [
+            "lush"
+        ]
+    },
+    {
+        "name": "surface",
+        "relative-height": {
+            "min": -10,
+            "max": 20,
+            "fade": 10
+        }
+    },
+    {
+        "name": "sky",
+        "relative-height": {
+            "min": 15,
+            "fade": 20
+        },
+        "absolute-height": {
+            "max": 4000,
+            "fade": 20
+        },
+        "bad-regions": [
+            "end"
+        ]
+    },
+    {
+        "name": "space",
+        "absolute-height": {
+            "min": 4000,
+            "fade": 100
+        }
+    },
+    {
+        "name": "forest",
+        "features": [
+            "tree"
+        ],
+        "bad-regions": [
+            "taiga",
+            "forest.roofed",
+            "jungle"
+        ],
+        "variants": [
+            {
+                "regions": [
+                    "surface"
+                ],
+                "temperature": {
+                    "min": 0.2,
+                    "max": 1.5
+                }
+            },
+            {
+                "biomes": [
+                    "forest",
+                    "blossom",
+                    "mangrove",
+                    "woods",
+                    "orchard",
+                    "origin island",
+                    "thicket",
+                    "woodland",
+                    "grove",
+                    "origin valley",
+                    "rainforest",
+                    "lush hills",
+                    "orchad",
+                    "valley",
+                    "origin island",
+                    "birch hills",
+                    "twilight clearing"
+                ]
+            },
+            {
+                "regions": [
+                    "swamp"
+                ],
+                "volume": 0.3
+            }
+        ]
+    },
+    {
+        "name": "forest.cold",
+        "features": [
+            "tree"
+        ],
+        "regions": [
+            "surface"
+        ],
+        "temperature": {
+            "max": 0.5
+        }
+    },
+    {
+        "name": "taiga",
+        "features": [
+            "tree"
+        ],
+        "temperature": {
+            "min": 0.2
+        },
+        "biomes": [
+            "taiga",
+            "grove",
+            "jade cliffs",
+            "shield",
+            "coniferous forest",
+            "land of lakes",
+            "snowy*forest",
+            "temperate rainforest",
+            "seasonal forest",
+            "spruce",
+            "meneglin",
+            "redwood",
+            "dead forest",
+            "ominous woods",
+            "autumnal forest",
+            "boreal forest",
+            "maple wood",
+            "meadow",
+            "thornlands",
+            "twilight highlands"
+        ]
+    },
+    {
+        "name": "highland",
+        "biomes": [
+            "extreme*hills",
+            "alps",
+            "crag",
+            "highland",
+            "mountain",
+            "volcanic island",
+            "mountains",
+            "cliffs",
+            "defiled hills",
+            "volcanic island",
+            "final plateau",
+            "twilight glaciers",
+            "magnetic hills"
+        ]
+    },
+    {
+        "name": "mesa",
+        "biomes": [
+            "mesa",
+            "lush desert",
+            "outback",
+            "wasteland",
+            "steppe",
+            "arid highland",
+            "canyon"
+        ]
+    },
+    {
+        "name": "forest.roofed",
+        "biomes": [
+            "roofed*forest",
+            "dark_forest"
+        ]
+    },
+    {
+        "name": "grass",
+        "features": [
+            "grass"
+        ],
+        "bad-regions": [
+            "plains",
+            "savanna",
+            "swamp",
+            "ocean",
+            "highland",
+            "jungle"
+        ],
+        "bad-biomes": [
+            "river"
+        ],
+        "temperature": {
+            "min": 0.2
+        }
+    },
+    {
+        "name": "plains",
+        "features": [
+            "grass"
+        ],
+        "bad-regions": [
+            "ocean",
+            "forest",
+            "savanna",
+            "swamp",
+            "highland",
+            "nether"
+        ],
+        "temperature": {
+            "min": 0.2
+        },
+        "biomes": [
+            "plains",
+            "chaparral",
+            "field",
+            "flower",
+            "grass",
+            "oasis",
+            "tundra",
+            "mushroom*fields",
+            "darklands",
+            "badlands",
+            "pasture",
+            "rocky plateau",
+            "tropics plains",
+            "mycelium"
+        ]
+    },
+    {
+        "name": "savanna",
+        "biomes": [
+            "savanna",
+            "heathland",
+            "prairie",
+            "brushland",
+            "lush desert",
+            "outback",
+            "shrubland",
+            "spiny forest"
+        ]
+    },
+    {
+        "name": "desert",
+        "features": [
+            "sand",
+            "water"
+        ],
+        "bad-regions": [
+            "beach"
+        ],
+        "biomes": [
+            "desert",
+            "quagmire",
+            "petrified forest",
+            "menelaus",
+            "dry scrub"
+        ],
+        "bad-biomes": [
+            "lush desert",
+            "ocean"
+        ]
+    },
+    {
+        "name": "swamp",
+        "biomes": [
+            "swamp",
+            "bayou",
+            "bog",
+            "marsh",
+            "moor",
+            "fen",
+            "mystic grove",
+            "bamboo marsh",
+            "silkglades",
+            "sludgepit",
+            "wetland",
+            "quagmire",
+            "dead forest",
+            "patchy islands",
+            "deep waters",
+            "coarse islands",
+            "erebus",
+            "fungal forest",
+            "tyros swamp"
+        ],
+        "temperature": {
+            "min": 0.5,
+            "max": 2
+        }
+    },
+    {
+        "name": "jungle",
+        "biomes": [
+            "jungle",
+            "sacred springs",
+            "tropical",
+            "bamboo forest",
+            "bambona beach",
+            "encalyptus forest",
+            "overgrown cliffs",
+            "tropics",
+            "tyros"
+        ],
+        "bad-biomes": [
+            "tropics plains",
+            "tropics beach",
+            "tyros swamp",
+            "subtropical forest",
+            "tropical*extreme hills"
+        ],
+        "features": [
+            "tree"
+        ],
+        "temperature": {
+            "min": 0.5
+        }
+    },
+    {
+        "name": "cold",
+        "features": [
+            "grass"
+        ],
+        "variants": [
+            {
+                "biomes": [
+                    "frozen",
+                    "ice",
+                    "cold",
+                    "arctic",
+                    "glacier",
+                    "snow"
+                ],
+                "bad-biomes": [
+                    "arctic peaks"
+                ]
+            },
+            {
+                "temperature": {
+                    "max": 0,
+                    "min": -5
+                }
+            }
+        ]
+    },
+    {
+        "name": "beach",
+        "biomes": [
+            "beach",
+            "shore",
+            "tropics beach"
+        ],
+        "bad-biomes": [
+            "gravel_beach"
+        ],
+        "temperature": {
+            "min": 0
+        }
+    },
+    {
+        "name": "ocean",
+        "biomes": [
+            "ocean",
+            "river",
+            "coral reef",
+            "kelp forest",
+            "lake",
+            "stream",
+            "sea"
+        ],
+        "features": [
+            "water"
+        ],
+        "temperature": {
+            "min": 0
+        }
+    }
 ]
