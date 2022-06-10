@@ -2,10 +2,10 @@ package team.creative.ambientsounds.env;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
@@ -83,7 +83,7 @@ public class TerrainEnviroment {
         for (y = level.dimensionType().height(); y > level.dimensionType().minY(); --y) {
             pos.setY(y);
             BlockState state = level.getBlockState(pos);
-            if ((state.isSolidRender(level, pos) && !(state.getBlock() instanceof LeavesBlock)) || state.is(Blocks.WATER)) {
+            if (state.isSolidRender(level, pos) || state.is(BlockTags.LEAVES) || level.getFluidState(pos).is(FluidTags.WATER)) {
                 heighest = y;
                 break;
             }
