@@ -42,6 +42,11 @@ public class AmbientTickHandler {
     public int timer = 0;
     
     public boolean showDebugInfo = false;
+    private boolean shouldReload = false;
+    
+    public void scheduleReload() {
+        shouldReload = true;
+    }
     
     public void setEngine(AmbientEngine engine) {
         this.engine = engine;
@@ -51,24 +56,33 @@ public class AmbientTickHandler {
     public void initConfiguration() {
         CreativeConfigRegistry.ROOT.removeField(AmbientSounds.MODID);
         
+        ConfigHolderDynamic holder = CreativeConfigRegistry.ROOT.registerFolder(AmbientSounds.MODID, ConfigSynchronization.CLIENT);
+        
+        holder.registerValue("general", AmbientSounds.CONFIG);
+        
         if (engine == null)
             return;
         
-        ConfigHolderDynamic holder = CreativeConfigRegistry.ROOT.registerFolder(AmbientSounds.MODID, ConfigSynchronization.CLIENT);
-        ConfigHolderDynamic sounds = holder.registerFolder("sounds");
-        Field soundField = ReflectionHelper.findField(AmbientSound.class, "volumeSetting", "volumeSetting");
-        for (Entry<String, AmbientRegion> pair : engine.allRegions.entrySet())
-            if (pair.getValue().sounds != null)
-                for (AmbientSound sound : pair.getValue().sounds.values())
-                    sounds.registerField(pair.getKey() + "." + sound.name, soundField, sound);
-                
         ConfigHolderDynamic dimensions = holder.registerFolder("dimensions");
-        Field dimensionField = ReflectionHelper.findField(AmbientDimension.class, "volumeSetting", "volumeSetting");
+        Field dimensionField = ReflectionHelper.findField(AmbientDimension.class, "volumeSetting");
         for (AmbientDimension dimension : engine.dimensions.values())
             dimensions.registerField(dimension.name, dimensionField, dimension);
         
-        holder.registerField("silent-dimensions", ReflectionHelper.findField(AmbientEngine.class, "silentDimensions", "silentDimensions"), engine);
-        holder.registerValue("general", AmbientSounds.CONFIG);
+        ConfigHolderDynamic regions = holder.registerFolder("regions");
+        Field regionField = ReflectionHelper.findField(AmbientRegion.class, "volumeSetting");
+        Field soundField = ReflectionHelper.findField(AmbientSound.class, "volumeSetting");
+        for (Entry<String, AmbientRegion> pair : engine.allRegions.entrySet()) {
+            ConfigHolderDynamic region = regions.registerFolder(pair.getKey().replace(".", "_"));
+            region.registerField("overall", regionField, pair.getValue());
+            if (pair.getValue().sounds != null)
+                for (AmbientSound sound : pair.getValue().sounds.values())
+                    region.registerField(sound.name, soundField, sound);
+        }
+        
+        holder.registerField("fade-volume", ReflectionHelper.findField(AmbientEngine.class, "fadeVolume"), engine);
+        holder.registerField("fade-pitch", ReflectionHelper.findField(AmbientEngine.class, "fadePitch"), engine);
+        holder.registerField("silent-dimensions", ReflectionHelper.findField(AmbientEngine.class, "silentDimensions"), engine);
+        
         CreativeCore.CONFIG_HANDLER.load(AmbientSounds.MODID, Side.CLIENT);
     }
     
@@ -228,6 +242,11 @@ public class AmbientTickHandler {
                 engine.soundEngine = soundEngine;
         }
         
+        if (shouldReload) {
+            AmbientSounds.reload();
+            shouldReload = false;
+        }
+        
         if (engine == null)
             return;
         
@@ -261,4 +280,5 @@ public class AmbientTickHandler {
         } else if (!engine.activeRegions.isEmpty())
             engine.stopEngine();
     }
+    
 }

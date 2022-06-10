@@ -11,7 +11,7 @@ public class AmbientSoundProperties {
     @SerializedName(value = "transition")
     public Integer transition;
     
-    public Double pitch;
+    public Double pitch = 1D;
     
     @SerializedName(value = "fade-volume")
     public Double fadeVolume;
@@ -27,7 +27,7 @@ public class AmbientSoundProperties {
     @SerializedName(value = "fade-out-pitch")
     public Double fadeOutPitch;
     
-    public Double mute;
+    public Double mute = 0D;
     
     //public AmbientMinMaxCondition offset;
     public AmbientMinMaxCondition pause;
@@ -39,23 +39,39 @@ public class AmbientSoundProperties {
     public String category;
     
     public void init(AmbientEngine engine) {
-        if (pitch == null)
-            pitch = 1D;
-        
-        if (fadeInVolume == null)
-            fadeInVolume = fadeVolume == null ? engine.fadeInVolume : fadeVolume;
-        if (fadeOutVolume == null)
-            fadeOutVolume = fadeVolume == null ? engine.fadeOutVolume : fadeVolume;
-        
-        if (fadeInPitch == null)
-            fadeInPitch = fadePitch == null ? engine.fadeInPitch : fadePitch;
-        if (fadeOutPitch == null)
-            fadeOutPitch = fadePitch == null ? engine.fadeOutPitch : fadePitch;
-        
-        if (mute == null)
-            mute = 0D;
-        else
-            mute = Mth.clamp(mute, 0, 1);
+        mute = Mth.clamp(mute, 0, 1);
+    }
+    
+    public double getFadeInVolume(AmbientEngine engine) {
+        if (fadeInVolume != null)
+            return fadeInVolume;
+        if (fadeVolume != null)
+            return fadeVolume;
+        return engine.fadeVolume;
+    }
+    
+    public double getFadeOutVolume(AmbientEngine engine) {
+        if (fadeOutVolume != null)
+            return fadeOutVolume;
+        if (fadeVolume != null)
+            return fadeVolume;
+        return engine.fadeVolume;
+    }
+    
+    public double getFadeInPitch(AmbientEngine engine) {
+        if (fadeInPitch != null)
+            return fadeInPitch;
+        if (fadePitch != null)
+            return fadePitch;
+        return engine.fadePitch;
+    }
+    
+    public double getFadeOutPitch(AmbientEngine engine) {
+        if (fadeOutPitch != null)
+            return fadeOutPitch;
+        if (fadePitch != null)
+            return fadePitch;
+        return engine.fadePitch;
     }
     
     public float getPitch(AmbientEnviroment env) {

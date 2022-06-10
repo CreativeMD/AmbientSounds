@@ -20,10 +20,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientRegion extends AmbientCondition {
     
     public String name;
+    @CreativeConfig.DecimalRange(min = 0, max = 1)
     public transient double volumeSetting = 1;
     public AmbientStackType stack = AmbientStackType.overwrite;
     protected transient boolean active;
@@ -33,9 +35,7 @@ public class AmbientRegion extends AmbientCondition {
     
     public transient AmbientDimension dimension;
     
-    public AmbientRegion() {
-        
-    }
+    public AmbientRegion() {}
     
     public void load(AmbientEngine engine, Gson gson, ResourceManager manager) throws IOException {
         this.sounds = new LinkedHashMap<>();

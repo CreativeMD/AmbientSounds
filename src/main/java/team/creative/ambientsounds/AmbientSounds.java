@@ -31,6 +31,10 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClient(this);
     }
     
+    public static void scheduleReload() {
+        TICK_HANDLER.scheduleReload();
+    }
+    
     public static void reload() {
         if (TICK_HANDLER.engine != null)
             TICK_HANDLER.engine.stopEngine();

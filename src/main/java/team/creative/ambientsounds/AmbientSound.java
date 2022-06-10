@@ -82,9 +82,9 @@ public class AmbientSound extends AmbientCondition {
     public boolean fastTick(AmbientEnviroment env) {
         
         if (currentVolume < aimedVolume)
-            currentVolume += Math.min(currentPropertries.fadeInVolume, aimedVolume - currentVolume);
+            currentVolume += Math.min(currentPropertries.getFadeInVolume(engine), aimedVolume - currentVolume);
         else if (currentVolume > aimedVolume)
-            currentVolume -= Math.min(currentPropertries.fadeOutVolume, currentVolume - aimedVolume);
+            currentVolume -= Math.min(currentPropertries.getFadeOutVolume(engine), currentVolume - aimedVolume);
         
         if (isPlaying()) {
             
@@ -133,17 +133,17 @@ public class AmbientSound extends AmbientCondition {
             if (stream1 != null) {
                 
                 if (stream1.pitch < aimedPitch)
-                    stream1.pitch += Math.min(currentPropertries.fadeInPitch, aimedPitch - stream1.pitch);
+                    stream1.pitch += Math.min(currentPropertries.getFadeInPitch(engine), aimedPitch - stream1.pitch);
                 else if (stream1.pitch > aimedPitch)
-                    stream1.pitch -= Math.min(currentPropertries.fadeOutPitch, stream1.pitch - aimedPitch);
+                    stream1.pitch -= Math.min(currentPropertries.getFadeOutPitch(engine), stream1.pitch - aimedPitch);
                 stream1.ticksPlayed++;
             }
             if (stream2 != null) {
                 
                 if (stream2.pitch < aimedPitch)
-                    stream2.pitch += Math.min(currentPropertries.fadeInPitch, aimedPitch - stream2.pitch);
+                    stream2.pitch += Math.min(currentPropertries.getFadeInPitch(engine), aimedPitch - stream2.pitch);
                 else if (stream2.pitch > aimedPitch)
-                    stream2.pitch -= Math.min(currentPropertries.fadeOutPitch, stream2.pitch - aimedPitch);
+                    stream2.pitch -= Math.min(currentPropertries.getFadeOutPitch(engine), stream2.pitch - aimedPitch);
                 stream2.ticksPlayed++;
             }
         } else {

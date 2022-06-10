@@ -44,6 +44,16 @@ public class AmbientEngine {
     public static final String SOUNDS_LOCATION = "sounds.json";
     public static final String FEATURES_LOCATION = "features.json";
     
+    private static String loadedEngine;
+    
+    public static boolean hasLoadedAtLeastOnce() {
+        return loadedEngine != null;
+    }
+    
+    public static boolean hasEngineChanged(String newEngine) {
+        return loadedEngine == null || !loadedEngine.equals(newEngine);
+    }
+    
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
         
         @Override
@@ -170,18 +180,13 @@ public class AmbientEngine {
             try {
                 AmbientConfig config = GSON.fromJson(JsonParser.parseString(IOUtils.toString(input, Charsets.UTF_8)).getAsJsonObject(), AmbientConfig.class);
                 
-                if (!AmbientSounds.CONFIG.engine.equalsIgnoreCase("default"))
-                    try {
-                        return attemptToLoadEngine(soundEngine, manager, AmbientSounds.CONFIG.engine);
-                    } catch (Exception e) {
-                        AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
-                        e.printStackTrace();
-                    }
+                AmbientSounds.CONFIG.engines.updateArray(config.engines, config.defaultEngine);
                 
                 try {
-                    return attemptToLoadEngine(soundEngine, manager, config.defaultEngine);
+                    loadedEngine = AmbientSounds.CONFIG.engines.get();
+                    return attemptToLoadEngine(soundEngine, manager, AmbientSounds.CONFIG.engines.get());
                 } catch (Exception e) {
-                    AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engine);
+                    AmbientSounds.LOGGER.error("Sound engine {} could not be loaded", AmbientSounds.CONFIG.engines.get());
                     e.printStackTrace();
                 }
             } finally {
@@ -263,17 +268,9 @@ public class AmbientEngine {
     
     @SerializedName(value = "fade-volume")
     public Double fadeVolume = 0.005D;
-    @SerializedName(value = "fade-in-volume")
-    public Double fadeInVolume;
-    @SerializedName(value = "fade-out-volume")
-    public Double fadeOutVolume;
     
     @SerializedName(value = "fade-pitch")
     public Double fadePitch = 0.005D;
-    @SerializedName(value = "fade-in-pitch")
-    public Double fadeInPitch;
-    @SerializedName(value = "fade-out-pitch")
-    public Double fadeOutPitch;
     
     protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
         if (region.name == null || region.name.isEmpty()) {
@@ -338,16 +335,6 @@ public class AmbientEngine {
     }
     
     public void init() {
-        
-        if (fadeInVolume == null)
-            fadeInVolume = fadeVolume;
-        if (fadeOutVolume == null)
-            fadeOutVolume = fadeVolume;
-        
-        if (fadeInPitch == null)
-            fadeInPitch = fadePitch;
-        if (fadeOutPitch == null)
-            fadeOutPitch = fadePitch;
         
         airPocketDistanceFactor = new ArrayList<>();
         for (int i = 0; i < airPocketGroups.length; i++)
