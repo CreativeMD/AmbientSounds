@@ -37,7 +37,7 @@ public class AmbientCondition extends AmbientSoundProperties {
     public AmbientMinMaxFadeCondition underwater;
     
     @SerializedName(value = "relative-height")
-    public AmbientMinMaxFadeCondition relativeHeight;
+    public AmbientMinMaxFadeSpecialCondition relativeHeight;
     @SerializedName(value = "absolute-height")
     public AmbientMinMaxFadeCondition absoluteHeight;
     @SerializedName(value = "min-height-relative")
@@ -193,7 +193,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         }
         
         if (relativeHeight != null) {
-            double volume = relativeHeight.volume(env.relativeHeight);
+            double volume = relativeHeight.volume(env.relativeMinHeight, env.relativeHeight, env.relativeMaxHeight);
             if (volume <= 0)
                 return null;
             
@@ -330,6 +330,19 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (max != null)
                 volume = Math.min(volume, Mth.clamp(Math.abs(value - max) / fade, 0, 1));
             return volume;
+        }
+        
+    }
+    
+    public static class AmbientMinMaxFadeSpecialCondition extends AmbientMinMaxFadeCondition {
+        
+        public double volume(double min, double value, double max) {
+            if (fade == null)
+                return is(value) ? 1 : 0;
+            double volume = volume(value);
+            if (volume == 1)
+                return volume;
+            return Math.max(volume(min), volume(max));
         }
         
     }
