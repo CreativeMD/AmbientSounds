@@ -110,8 +110,7 @@ public class AmbientEnviroment {
         details.add(new Pair<>("underwater", underwater));
         details.add(new Pair<>("temp", temperature));
         details.add(new Pair<>("height", "r:" + AmbientTickHandler.df.format(relativeHeight) + ",a:" + AmbientTickHandler.df
-                .format(terrain.averageHeight) + " (" + AmbientTickHandler.df
-                        .format(terrain.minHeight - player.getEyeY()) + "," + AmbientTickHandler.df.format(terrain.maxHeight - player.getEyeY()) + ")"));
+                .format(terrain.averageHeight) + " (" + AmbientTickHandler.df.format(relativeMinHeight) + "," + AmbientTickHandler.df.format(relativeMaxHeight) + ")"));
         
     }
     
