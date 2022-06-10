@@ -261,6 +261,20 @@ public class AmbientEngine {
     @SerializedName(value = "default-biome-type")
     public String defaultBiomeType;
     
+    @SerializedName(value = "fade-volume")
+    public Double fadeVolume = 0.005D;
+    @SerializedName(value = "fade-in-volume")
+    public Double fadeInVolume;
+    @SerializedName(value = "fade-out-volume")
+    public Double fadeOutVolume;
+    
+    @SerializedName(value = "fade-pitch")
+    public Double fadePitch = 0.005D;
+    @SerializedName(value = "fade-in-pitch")
+    public Double fadeInPitch;
+    @SerializedName(value = "fade-out-pitch")
+    public Double fadeOutPitch;
+    
     protected boolean checkRegion(AmbientDimension dimension, int i, AmbientRegion region) {
         if (region.name == null || region.name.isEmpty()) {
             if (dimension == null)
@@ -324,6 +338,17 @@ public class AmbientEngine {
     }
     
     public void init() {
+        
+        if (fadeInVolume == null)
+            fadeInVolume = fadeVolume;
+        if (fadeOutVolume == null)
+            fadeOutVolume = fadeVolume;
+        
+        if (fadeInPitch == null)
+            fadeInPitch = fadePitch;
+        if (fadeOutPitch == null)
+            fadeOutPitch = fadePitch;
+        
         airPocketDistanceFactor = new ArrayList<>();
         for (int i = 0; i < airPocketGroups.length; i++)
             for (int subDistance = 0; subDistance < airPocketGroups[i].distance; subDistance++)

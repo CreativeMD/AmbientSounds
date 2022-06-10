@@ -39,5 +39,7 @@
         "surface",
         "underground"
     ],
+    "fade-volume": "0.005",
+    "fade-pitch": "0.005",
     "default-biome-type": "surface"
 }

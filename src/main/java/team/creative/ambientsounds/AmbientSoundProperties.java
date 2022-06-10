@@ -43,14 +43,14 @@ public class AmbientSoundProperties {
             pitch = 1D;
         
         if (fadeInVolume == null)
-            fadeInVolume = fadeVolume == null ? 0.005 : fadeVolume;
+            fadeInVolume = fadeVolume == null ? engine.fadeInVolume : fadeVolume;
         if (fadeOutVolume == null)
-            fadeOutVolume = fadeVolume == null ? 0.005 : fadeVolume;
+            fadeOutVolume = fadeVolume == null ? engine.fadeOutVolume : fadeVolume;
         
         if (fadeInPitch == null)
-            fadeInPitch = fadePitch == null ? 0.005 : fadePitch;
+            fadeInPitch = fadePitch == null ? engine.fadeInPitch : fadePitch;
         if (fadeOutPitch == null)
-            fadeOutPitch = fadePitch == null ? 0.005 : fadePitch;
+            fadeOutPitch = fadePitch == null ? engine.fadeOutPitch : fadePitch;
         
         if (mute == null)
             mute = 0D;
