@@ -118,7 +118,7 @@ public class AmbientSound extends AmbientCondition {
                             transitionTime = currentPropertries.transition != null ? currentPropertries.transition : 60;
                         }
                     } else {
-                        int fadeOutTime = (int) Math.ceil(aimedVolume / currentPropertries.fadeOutVolume);
+                        int fadeOutTime = (int) Math.ceil(aimedVolume / currentPropertries.getFadeOutVolume(engine));
                         
                         if (stream1.remaining() <= 0) { // Exceeded length
                             engine.soundEngine.stop(stream1);
