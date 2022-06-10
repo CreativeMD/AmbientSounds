@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Material;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
@@ -83,7 +82,7 @@ public class AmbientEnviroment {
         int depth = 0;
         if (player.isEyeInFluid(FluidTags.WATER)) {
             BlockPos blockpos = new BlockPos(player.blockPosition());
-            while (level.getBlockState(blockpos).getMaterial() == Material.WATER) {
+            while (level.getFluidState(blockpos).is(FluidTags.WATER)) {
                 depth++;
                 blockpos = blockpos.above();
             }
