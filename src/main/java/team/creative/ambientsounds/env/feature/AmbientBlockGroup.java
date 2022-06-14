@@ -20,7 +20,6 @@ public class AmbientBlockGroup {
     
     public List<String> data = new ArrayList<>();
     
-    @SuppressWarnings("deprecation")
     public void onClientLoad() {
         tags.clear();
         blocks.clear();
