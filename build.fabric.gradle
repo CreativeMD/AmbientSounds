@@ -25,7 +25,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
-    implementation project(path: ':CreativeCoreFabric', configuration: 'namedElements')
+    implementation project(path: ':CreativeCore', configuration: 'namedElements')
 }
 
 processResources {
