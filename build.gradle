@@ -71,4 +71,16 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": project.modname,
+            "Specification-Vendor": "CreativeMD",
+            "Specification-Version": project.version,
+            "Implementation-Title": project.name,
+            "Implementation-Version"  : project.version,
+            "Implementation-Vendor": "CreativeMD",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
