@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "id": "ambientsounds",
     "version": "${version}",
-    "name": "Ambiend Sounds (Fabric)",
+    "name": "Ambient Sounds (Fabric)",
     "description": "Expands minecraft's ambient sounds.",
     "authors": [
         "CreativeMD",
