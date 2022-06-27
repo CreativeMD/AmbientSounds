@@ -9,6 +9,7 @@ group= "team.creative" // http://maven.apache.org/guides/mini/guide-naming-conve
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 project.evaluationDependsOn(":CreativeCore")
+project.evaluationDependsOn(":CreativeLoaderForge")
 
 minecraft {
     mappings channel: 'official', version: "${project.property 'minecraft_version'}"
@@ -24,7 +25,7 @@ minecraft {
 			
             mods {
 				creativecore {
-                    source project(':CreativeCore').sourceSets.main
+                    source project(':CreativeLoaderForge').sourceSets.main
                 }
                 ambientsounds {
                     source sourceSets.main
