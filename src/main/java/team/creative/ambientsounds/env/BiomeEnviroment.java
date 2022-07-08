@@ -26,7 +26,7 @@ public class BiomeEnviroment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     
     public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume) {
         if (volume > 0.0) {
-            BlockPos center = new BlockPos(player.getEyePosition(TickUtils.getDeltaFrameTime(level)));
+            BlockPos center = new BlockPos(player.getEyePosition(TickUtils.getFrameTime(level)));
             MutableBlockPos pos = new MutableBlockPos();
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {
                 for (int z = -engine.biomeScanCount; z <= engine.biomeScanCount; z++) {

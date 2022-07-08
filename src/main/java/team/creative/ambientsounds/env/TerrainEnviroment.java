@@ -70,7 +70,7 @@ public class TerrainEnviroment {
     
     public void analyzeAirPocket(AmbientEngine engine, Player player, Level level) {
         if (scanner == null)
-            scanner = new AirPocketScanner(engine, level, new BlockPos(player.getEyePosition(TickUtils.getDeltaFrameTime(level))), x -> {
+            scanner = new AirPocketScanner(engine, level, new BlockPos(player.getEyePosition(TickUtils.getFrameTime(level))), x -> {
                 airPocket = x;
                 scanner = null;
             });
