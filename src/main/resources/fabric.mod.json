@@ -23,7 +23,7 @@
     "depends": {
         "fabricloader": ">=0.14.0",
         "fabric": "*",
-        "minecraft": "1.19",
+        "minecraft": ">=1.19",
         "creativecore": ">=2.6.14"
     }
 }
