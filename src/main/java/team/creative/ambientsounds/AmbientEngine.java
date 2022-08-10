@@ -237,11 +237,6 @@ public class AmbientEngine {
     @SerializedName(value = "block-scan-distance")
     public int blockScanDistance = 40;
     
-    @SerializedName(value = "outside-distance-min")
-    public int outsideDistanceMin = 2;
-    @SerializedName(value = "outside-distance-max")
-    public int outsideDistanceMax = 13;
-    
     @SerializedName(value = "average-height-scan-distance")
     public int averageHeightScanDistance = 2;
     @SerializedName(value = "average-height-scan-count")
