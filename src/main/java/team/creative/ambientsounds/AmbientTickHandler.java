@@ -102,7 +102,10 @@ public class AmbientTickHandler {
                 builder.append(",");
             else
                 first = false;
-            builder.append(ChatFormatting.YELLOW + pair.key + ChatFormatting.RESET + ":" + format(pair.value));
+            if (pair.key.isEmpty())
+                builder.append(format(pair.value));
+            else
+                builder.append(ChatFormatting.YELLOW + pair.key + ChatFormatting.RESET + ":" + format(pair.value));
         }
         return builder.toString();
     }
