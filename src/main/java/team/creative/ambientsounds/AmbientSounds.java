@@ -38,8 +38,8 @@ public class AmbientSounds implements ClientLoader {
     public static void reload() {
         if (TICK_HANDLER.engine != null)
             TICK_HANDLER.engine.stopEngine();
-        if (TICK_HANDLER.enviroment != null)
-            TICK_HANDLER.enviroment.reload();
+        if (TICK_HANDLER.environment != null)
+            TICK_HANDLER.environment.reload();
         TICK_HANDLER.setEngine(AmbientEngine.loadAmbientEngine(TICK_HANDLER.soundEngine));
     }
     

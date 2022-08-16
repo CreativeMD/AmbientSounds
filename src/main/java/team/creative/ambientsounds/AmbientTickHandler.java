@@ -22,7 +22,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.ambientsounds.sound.AmbientSoundEngine;
 import team.creative.creativecore.CreativeCore;
 import team.creative.creativecore.Side;
@@ -37,7 +37,7 @@ public class AmbientTickHandler {
     private static Minecraft mc = Minecraft.getInstance();
     
     public AmbientSoundEngine soundEngine;
-    public AmbientEnviroment enviroment = null;
+    public AmbientEnvironment environment = null;
     public AmbientEngine engine;
     public int timer = 0;
     
@@ -111,7 +111,7 @@ public class AmbientTickHandler {
     }
     
     public void onRender() {
-        if (showDebugInfo && engine != null && !mc.isPaused() && enviroment != null && mc.level != null) {
+        if (showDebugInfo && engine != null && !mc.isPaused() && environment != null && mc.level != null) {
             List<String> list = new ArrayList<>();
             
             List<Pair<String, Object>> details = new ArrayList<>();
@@ -123,22 +123,22 @@ public class AmbientTickHandler {
             list.add(format(details));
             details.clear();
             
-            enviroment.collectLevelDetails(details);
+            environment.collectLevelDetails(details);
             
             list.add(format(details));
             details.clear();
             
-            enviroment.collectPlayerDetails(details, mc.player);
+            environment.collectPlayerDetails(details, mc.player);
             
             list.add(format(details));
             details.clear();
             
-            enviroment.collectTerrainDetails(details);
+            environment.collectTerrainDetails(details);
             
             list.add(format(details));
             details.clear();
             
-            enviroment.collectBiomeDetails(details);
+            environment.collectBiomeDetails(details);
             
             list.add(format(details));
             details.clear();
@@ -258,26 +258,26 @@ public class AmbientTickHandler {
         
         if (level != null && player != null && !mc.isPaused() && mc.options.getSoundSourceVolume(SoundSource.AMBIENT) > 0) {
             
-            if (enviroment == null)
-                enviroment = new AmbientEnviroment();
+            if (environment == null)
+                environment = new AmbientEnvironment();
             
             AmbientDimension newDimension = engine.getDimension(level);
-            if (enviroment.dimension != newDimension) {
-                engine.changeDimension(enviroment, newDimension);
-                enviroment.dimension = newDimension;
+            if (environment.dimension != newDimension) {
+                engine.changeDimension(environment, newDimension);
+                environment.dimension = newDimension;
             }
             
-            if (timer % engine.enviromentTickTime == 0)
-                enviroment.analyzeSlow(newDimension, engine, player, level, timer);
+            if (timer % engine.environmentTickTime == 0)
+                environment.analyzeSlow(newDimension, engine, player, level, timer);
             
             if (timer % engine.soundTickTime == 0) {
-                enviroment.analyzeFast(newDimension, player, level, mc.getDeltaFrameTime());
-                enviroment.dimension.manipulateEnviroment(enviroment);
+                environment.analyzeFast(newDimension, player, level, mc.getDeltaFrameTime());
+                environment.dimension.manipulateEnviroment(environment);
                 
-                engine.tick(enviroment);
+                engine.tick(environment);
             }
             
-            engine.fastTick(enviroment);
+            engine.fastTick(environment);
             
             timer++;
         } else if (!engine.activeRegions.isEmpty())

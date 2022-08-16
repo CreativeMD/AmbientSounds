@@ -12,19 +12,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
-import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
-import team.creative.ambientsounds.env.BiomeEnviroment.BiomeStats;
+import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
+import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
 import team.creative.creativecore.common.util.mc.TickUtils;
 import team.creative.creativecore.common.util.type.list.Pair;
 import team.creative.creativecore.common.util.type.list.PairList;
 
-public class BiomeEnviroment implements Iterable<Pair<BiomeArea, BiomeStats>> {
+public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     
     private final PairList<BiomeArea, BiomeStats> biomes = new PairList<>();
     
-    public BiomeEnviroment() {}
+    public BiomeEnvironment() {}
     
-    public BiomeEnviroment(AmbientEngine engine, Player player, Level level, double volume) {
+    public BiomeEnvironment(AmbientEngine engine, Player player, Level level, double volume) {
         if (volume > 0.0) {
             BlockPos center = new BlockPos(player.getEyePosition(TickUtils.getFrameTime(level)));
             MutableBlockPos pos = new MutableBlockPos();
@@ -93,7 +93,7 @@ public class BiomeEnviroment implements Iterable<Pair<BiomeArea, BiomeStats>> {
             this.volume = volume;
         }
         
-        public double volume(AmbientEnviroment env, String type) {
+        public double volume(AmbientEnvironment env, String type) {
             return volume * env.biomeTypeVolumes.getOrDefault(type, 1D);
         }
         

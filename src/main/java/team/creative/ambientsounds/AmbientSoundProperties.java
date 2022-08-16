@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.util.Mth;
 import team.creative.ambientsounds.AmbientCondition.AmbientMinMaxCondition;
-import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.AmbientEnvironment;
 
 public class AmbientSoundProperties {
     
@@ -74,7 +74,7 @@ public class AmbientSoundProperties {
         return engine.fadePitch;
     }
     
-    public float getPitch(AmbientEnviroment env) {
+    public float getPitch(AmbientEnvironment env) {
         if (underwaterPitch != null)
             return (pitch != null ? (float) (double) pitch : 1) + (float) underwaterPitch.getValue(env.underwater);
         return pitch != null ? (float) (double) pitch : 1;

@@ -28,7 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
-import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.ambientsounds.env.feature.AmbientBlockGroup;
 import team.creative.ambientsounds.env.feature.AmbientFeature;
 import team.creative.ambientsounds.env.pocket.AirPocketGroup;
@@ -230,8 +230,8 @@ public class AmbientEngine {
     
     public String version;
     
-    @SerializedName(value = "enviroment-tick-time")
-    public int enviromentTickTime = 40;
+    @SerializedName(value = "environment-tick-time")
+    public int environmentTickTime = 40;
     @SerializedName(value = "sound-tick-time")
     public int soundTickTime = 4;
     @SerializedName(value = "block-scan-distance")
@@ -362,7 +362,7 @@ public class AmbientEngine {
         return airPocketDistanceFactor.get(distance);
     }
     
-    public void tick(AmbientEnviroment env) {
+    public void tick(AmbientEnvironment env) {
         if (env.dimension.regions != null)
             for (AmbientRegion region : env.dimension.regions.values()) {
                 if (region.tick(env)) {
@@ -389,7 +389,7 @@ public class AmbientEngine {
         }
     }
     
-    public void fastTick(AmbientEnviroment env) {
+    public void fastTick(AmbientEnvironment env) {
         soundEngine.tick();
         if (!activeRegions.isEmpty()) {
             for (Iterator<AmbientRegion> iterator = activeRegions.iterator(); iterator.hasNext();) {
@@ -403,7 +403,7 @@ public class AmbientEngine {
         
     }
     
-    public void changeDimension(AmbientEnviroment env, AmbientDimension newDimension) {
+    public void changeDimension(AmbientEnvironment env, AmbientDimension newDimension) {
         if (env.dimension == null || env.dimension.regions == null)
             return;
         

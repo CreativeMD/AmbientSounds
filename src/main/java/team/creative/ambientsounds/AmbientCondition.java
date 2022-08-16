@@ -6,9 +6,9 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.util.Mth;
-import team.creative.ambientsounds.env.AmbientEnviroment;
-import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
-import team.creative.ambientsounds.env.BiomeEnviroment.BiomeStats;
+import team.creative.ambientsounds.env.AmbientEnvironment;
+import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
+import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
 import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientCondition extends AmbientSoundProperties {
@@ -109,7 +109,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             biomeType = engine.defaultBiomeType;
     }
     
-    public AmbientSelection value(AmbientEnviroment env) {
+    public AmbientSelection value(AmbientEnvironment env) {
         
         if (env.muted)
             return null;

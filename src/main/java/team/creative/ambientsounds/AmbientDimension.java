@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
-import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientDimension {
@@ -105,7 +105,7 @@ public class AmbientDimension {
         return dimensionNames == null;
     }
     
-    public void manipulateEnviroment(AmbientEnviroment env) {
+    public void manipulateEnviroment(AmbientEnvironment env) {
         env.muted = mute;
         
         if (night != null)

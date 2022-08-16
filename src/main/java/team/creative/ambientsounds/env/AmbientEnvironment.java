@@ -10,11 +10,11 @@ import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
-import team.creative.ambientsounds.env.BiomeEnviroment.BiomeArea;
-import team.creative.ambientsounds.env.BiomeEnviroment.BiomeStats;
+import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
+import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
 import team.creative.creativecore.common.util.type.list.Pair;
 
-public class AmbientEnviroment {
+public class AmbientEnvironment {
     
     public AmbientDimension dimension;
     
@@ -29,8 +29,8 @@ public class AmbientEnviroment {
     public boolean snowing;
     public boolean thundering;
     
-    public BiomeEnviroment biome = new BiomeEnviroment();
-    public TerrainEnviroment terrain = new TerrainEnviroment();
+    public BiomeEnvironment biome = new BiomeEnvironment();
+    public TerrainEnvironment terrain = new TerrainEnvironment();
     
     public double biomeVolume;
     
@@ -44,7 +44,7 @@ public class AmbientEnviroment {
     
     public double temperature;
     
-    public AmbientEnviroment() {}
+    public AmbientEnvironment() {}
     
     public void analyzeFast(AmbientDimension dimension, Player player, Level level, float deltaTime) {
         this.dimension = dimension;
@@ -92,7 +92,7 @@ public class AmbientEnviroment {
     
     public void analyzeSlow(AmbientDimension dimension, AmbientEngine engine, Player player, Level level, float deltaTime) {
         terrain.analyze(engine, dimension, player, level);
-        biome = new BiomeEnviroment(engine, player, level, biomeVolume);
+        biome = new BiomeEnvironment(engine, player, level, biomeVolume);
     }
     
     public void collectLevelDetails(List<Pair<String, Object>> details) {

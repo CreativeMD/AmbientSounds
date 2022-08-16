@@ -19,7 +19,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientRegion extends AmbientCondition {
@@ -84,7 +84,7 @@ public class AmbientRegion extends AmbientCondition {
     }
     
     @Override
-    public AmbientSelection value(AmbientEnviroment env) {
+    public AmbientSelection value(AmbientEnvironment env) {
         if (dimension != null && dimension != env.dimension)
             return null;
         if (volumeSetting == 0)
@@ -95,7 +95,7 @@ public class AmbientRegion extends AmbientCondition {
         return selection;
     }
     
-    public boolean fastTick(AmbientEnviroment env) {
+    public boolean fastTick(AmbientEnvironment env) {
         if (!playing.isEmpty()) {
             for (Iterator<AmbientSound> iterator = playing.iterator(); iterator.hasNext();) {
                 AmbientSound sound = iterator.next();
@@ -109,7 +109,7 @@ public class AmbientRegion extends AmbientCondition {
         return !playing.isEmpty();
     }
     
-    public boolean tick(AmbientEnviroment env) {
+    public boolean tick(AmbientEnvironment env) {
         
         if (sounds == null)
             return false;

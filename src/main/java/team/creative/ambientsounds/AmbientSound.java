@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import team.creative.ambientsounds.env.AmbientEnviroment;
+import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientSound extends AmbientCondition {
@@ -79,7 +79,7 @@ public class AmbientSound extends AmbientCondition {
         return index;
     }
     
-    public boolean fastTick(AmbientEnviroment env) {
+    public boolean fastTick(AmbientEnvironment env) {
         
         if (currentVolume < aimedVolume)
             currentVolume += Math.min(currentPropertries.getFadeInVolume(engine), aimedVolume - currentVolume);
@@ -167,13 +167,13 @@ public class AmbientSound extends AmbientCondition {
     }
     
     @Override
-    public AmbientSelection value(AmbientEnviroment env) {
+    public AmbientSelection value(AmbientEnvironment env) {
         if (volumeSetting == 0)
             return null;
         return super.value(env);
     }
     
-    public boolean tick(AmbientEnviroment env, AmbientSelection selection) {
+    public boolean tick(AmbientEnvironment env, AmbientSelection selection) {
         if (selection != null) {
             AmbientSelection soundSelection = value(env);
             
@@ -193,7 +193,7 @@ public class AmbientSound extends AmbientCondition {
         return aimedVolume > 0 || currentVolume > 0;
     }
     
-    protected SoundStream play(int index, AmbientEnviroment env) {
+    protected SoundStream play(int index, AmbientEnvironment env) {
         SoundStream stream = new SoundStream(index, env);
         stream.pitch = aimedPitch;
         if (currentPropertries.length != null)
@@ -245,7 +245,7 @@ public class AmbientSound extends AmbientCondition {
         return currentPropertries.length != null || (currentPropertries.pause == null && files.length == 1);
     }
     
-    public double getCombinedVolume(AmbientEnviroment env) {
+    public double getCombinedVolume(AmbientEnvironment env) {
         return currentVolume * volumeSetting * env.dimension.volumeSetting;
     }
     
@@ -268,7 +268,7 @@ public class AmbientSound extends AmbientCondition {
         private boolean playedOnce;
         public final SoundSource category;
         
-        public SoundStream(int index, AmbientEnviroment env) {
+        public SoundStream(int index, AmbientEnvironment env) {
             this.index = index;
             this.location = AmbientSound.this.files[index];
             this.volume = AmbientSound.this.getCombinedVolume(env);

@@ -13,7 +13,7 @@ import team.creative.ambientsounds.env.pocket.AirPocket;
 import team.creative.ambientsounds.env.pocket.AirPocketScanner;
 import team.creative.creativecore.common.util.mc.TickUtils;
 
-public class TerrainEnviroment {
+public class TerrainEnvironment {
     
     public double averageHeight;
     
@@ -23,7 +23,7 @@ public class TerrainEnviroment {
     public AirPocket airPocket = new AirPocket();
     public AirPocketScanner scanner;
     
-    public TerrainEnviroment() {
+    public TerrainEnvironment() {
         this.averageHeight = 60;
         this.minHeight = 60;
         this.maxHeight = 60;

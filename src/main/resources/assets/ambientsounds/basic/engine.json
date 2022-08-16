@@ -1,7 +1,7 @@
 {
     "name": "basic",
     "version": "2.1.1",
-    "enviroment-tick-time": 40,
+    "environment-tick-time": 40,
     "sound-tick-time": 4,
     "block-scan-distance": 40,
     "average-height-scan-distance": 2,
