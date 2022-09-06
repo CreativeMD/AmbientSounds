@@ -51,7 +51,7 @@ public class AmbientEnvironment {
         this.overallRaining = level.isRaining();
         this.raining = level.isRainingAt(player.blockPosition());
         this.snowing = level.getBiome(player.blockPosition()).value().shouldSnow(level, player.blockPosition()) && level.isRaining();
-        this.thundering = level.isThundering();
+        this.thundering = level.isThundering() && !snowing;
         
         this.absoluteHeight = player.getEyeY();
         this.relativeHeight = absoluteHeight - terrain.averageHeight;
