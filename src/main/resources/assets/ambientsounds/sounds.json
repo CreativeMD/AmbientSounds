@@ -134,6 +134,15 @@
 		],
 		"category": "ambient"
 	},
+	"animals.bird-ambience-jungle2": {
+        "sounds": [
+            {
+                "name": "ambientsounds:animals/bird/bird-ambience-jungle2",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
 	"animals.bird-ambience-jungle-night": {
 		"sounds": [
 			{

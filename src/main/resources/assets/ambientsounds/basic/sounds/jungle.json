@@ -18,7 +18,8 @@
 	{
 		"name": "bird-ambience-jungle",
 		"files": [
-			"ambientsounds:animals.bird-ambience-jungle"
+			"ambientsounds:animals.bird-ambience-jungle",
+			"ambientsounds:animals.bird-ambience-jungle2"
 		],
 		"day": 1,
 		"night": 0
