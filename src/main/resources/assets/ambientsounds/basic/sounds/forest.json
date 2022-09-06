@@ -20,7 +20,7 @@
 		},
 		"transition": 400,
 		"day": 1,
-		"night": 0.1
+		"night": 0.05
 	},
 	{
 		"name": "owl",
