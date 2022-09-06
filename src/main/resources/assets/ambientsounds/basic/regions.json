@@ -216,7 +216,11 @@
             "maple wood",
             "meadow",
             "thornlands",
-            "twilight highlands"
+            "twilight highlands",
+            "mirage_isles",
+            "yosemite_lowlands",
+            "yosemite_cliffs",
+            "yellowstone"
         ]
     },
     {
@@ -234,7 +238,11 @@
             "volcanic island",
             "final plateau",
             "twilight glaciers",
-            "magnetic hills"
+            "magnetic*hills",
+            "alpine",
+            "peaks",
+            "caldera",
+            "spires"
         ]
     },
     {
@@ -253,7 +261,8 @@
         "name": "forest.roofed",
         "biomes": [
             "roofed*forest",
-            "dark_forest"
+            "dark_forest",
+            "blooming_valley"
         ]
     },
     {
@@ -336,7 +345,8 @@
             "quagmire",
             "petrified forest",
             "menelaus",
-            "dry scrub"
+            "dry scrub",
+            "sands"
         ],
         "bad-biomes": [
             "lush desert",
