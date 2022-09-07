@@ -12,6 +12,7 @@ import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
+import team.creative.ambientsounds.mod.SereneSeasonsCompat;
 import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientEnvironment {
@@ -58,7 +59,7 @@ public class AmbientEnvironment {
         this.relativeMinHeight = absoluteHeight - terrain.minHeight;
         this.relativeMaxHeight = absoluteHeight - terrain.maxHeight;
         
-        this.temperature = player.level.getBiome(new BlockPos(player.getEyePosition(deltaTime))).value().getBaseTemperature();
+        this.temperature = SereneSeasonsCompat.getTemperature(player);
         
         analyzeUnderwater(player, level);
         analyzeTime(level, deltaTime);
