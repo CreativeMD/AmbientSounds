@@ -246,7 +246,7 @@ public class AmbientSound extends AmbientCondition {
     }
     
     public double getCombinedVolume(AmbientEnvironment env) {
-        return currentVolume * volumeSetting * env.dimension.volumeSetting;
+        return currentVolume * volumeSetting * env.dimension.volumeSetting * AmbientSounds.CONFIG.volume;
     }
     
     public class SoundStream implements TickableSoundInstance {
@@ -405,6 +405,8 @@ public class AmbientSound extends AmbientCondition {
     }
     
     public static SoundSource getSoundSource(String name) {
+        if (AmbientSounds.CONFIG.useSoundMasterSource)
+            return SoundSource.MASTER;
         if (name == null)
             return SoundSource.AMBIENT;
         for (int i = 0; i < SoundSource.values().length; i++)
