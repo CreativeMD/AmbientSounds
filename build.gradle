@@ -22,6 +22,10 @@ minecraft {
             workingDirectory project.file('run')
 			
 			property 'forge.logging.console.level', 'debug'
+			arg '--mixin.config'
+            arg 'creativecore.mixins.json'
+            arg '--mixin.config'
+            arg 'creativecore.forge.mixins.json'
 			
             mods {
 				creativecore {
