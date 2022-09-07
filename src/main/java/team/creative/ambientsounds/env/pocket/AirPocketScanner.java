@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import team.creative.ambientsounds.AmbientEngine;
+import team.creative.ambientsounds.AmbientSounds;
 import team.creative.ambientsounds.env.feature.AmbientBlockGroup;
 import team.creative.creativecore.common.util.type.map.HashMapDouble;
 import team.creative.creativecore.common.util.type.set.QuadBitSet;
@@ -53,9 +54,18 @@ public class AirPocketScanner extends Thread {
         BlockPosInspection ins = new BlockPosInspection(origin);
         first.put(ins, ins);
         this.toScan.add(first);
+        int steps = 0;
         while (currentDistance < toScan.size()) {
-            for (BlockPosInspection pos : toScan.get(currentDistance).keySet())
+            for (BlockPosInspection pos : toScan.get(currentDistance).keySet()) {
                 scan(level, currentDistance, pos);
+                steps++;
+                if (steps > AmbientSounds.CONFIG.scanStepAmount) {
+                    steps = 0;
+                    try {
+                        wait(1);
+                    } catch (InterruptedException e) {}
+                }
+            }
             currentDistance++;
         }
         
@@ -157,27 +167,27 @@ public class AirPocketScanner extends Thread {
         
         public void add(Direction direction) {
             switch (direction) {
-            case DOWN:
-                this.down = true;
-                break;
-            case EAST:
-                this.east = true;
-                break;
-            case NORTH:
-                this.north = true;
-                break;
-            case SOUTH:
-                this.south = true;
-                break;
-            case UP:
-                this.up = true;
-                break;
-            case WEST:
-                this.west = true;
-                break;
-            default:
-                break;
-            
+                case DOWN:
+                    this.down = true;
+                    break;
+                case EAST:
+                    this.east = true;
+                    break;
+                case NORTH:
+                    this.north = true;
+                    break;
+                case SOUTH:
+                    this.south = true;
+                    break;
+                case UP:
+                    this.up = true;
+                    break;
+                case WEST:
+                    this.west = true;
+                    break;
+                default:
+                    break;
+                
             }
         }
         
@@ -187,20 +197,20 @@ public class AirPocketScanner extends Thread {
         
         public boolean is(Direction direction) {
             switch (direction) {
-            case DOWN:
-                return down;
-            case EAST:
-                return east;
-            case NORTH:
-                return north;
-            case SOUTH:
-                return south;
-            case UP:
-                return up;
-            case WEST:
-                return west;
-            default:
-                return false;
+                case DOWN:
+                    return down;
+                case EAST:
+                    return east;
+                case NORTH:
+                    return north;
+                case SOUTH:
+                    return south;
+                case UP:
+                    return up;
+                case WEST:
+                    return west;
+                default:
+                    return false;
             }
         }
         
@@ -214,30 +224,30 @@ public class AirPocketScanner extends Thread {
                     while (next < 6) {
                         next++;
                         switch (next) {
-                        case 0:
-                            if (east)
-                                return next;
-                            break;
-                        case 1:
-                            if (west)
-                                return next;
-                            break;
-                        case 2:
-                            if (up)
-                                return next;
-                            break;
-                        case 3:
-                            if (down)
-                                return next;
-                            break;
-                        case 4:
-                            if (south)
-                                return next;
-                            break;
-                        case 5:
-                            if (north)
-                                return next;
-                            break;
+                            case 0:
+                                if (east)
+                                    return next;
+                                break;
+                            case 1:
+                                if (west)
+                                    return next;
+                                break;
+                            case 2:
+                                if (up)
+                                    return next;
+                                break;
+                            case 3:
+                                if (down)
+                                    return next;
+                                break;
+                            case 4:
+                                if (south)
+                                    return next;
+                                break;
+                            case 5:
+                                if (north)
+                                    return next;
+                                break;
                         }
                     }
                     return next;
@@ -252,27 +262,27 @@ public class AirPocketScanner extends Thread {
                 public Direction next() {
                     Direction result;
                     switch (next) {
-                    case 0:
-                        result = Direction.EAST;
-                        break;
-                    case 1:
-                        result = Direction.WEST;
-                        break;
-                    case 2:
-                        result = Direction.UP;
-                        break;
-                    case 3:
-                        result = Direction.DOWN;
-                        break;
-                    case 4:
-                        result = Direction.SOUTH;
-                        break;
-                    case 5:
-                        result = Direction.NORTH;
-                        break;
-                    default:
-                        result = null;
-                        break;
+                        case 0:
+                            result = Direction.EAST;
+                            break;
+                        case 1:
+                            result = Direction.WEST;
+                            break;
+                        case 2:
+                            result = Direction.UP;
+                            break;
+                        case 3:
+                            result = Direction.DOWN;
+                            break;
+                        case 4:
+                            result = Direction.SOUTH;
+                            break;
+                        case 5:
+                            result = Direction.NORTH;
+                            break;
+                        default:
+                            result = null;
+                            break;
                     }
                     next = findNext(next);
                     return result;

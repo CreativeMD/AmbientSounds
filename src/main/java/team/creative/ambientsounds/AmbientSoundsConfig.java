@@ -17,6 +17,9 @@ public class AmbientSoundsConfig implements ICreativeConfig {
     
     @CreativeConfig
     public boolean useSoundMasterSource = false;
+
+    @CreativeConfig
+    public int scanStepAmount = 100;
     
     @Override
     public void configured(Side side) {
