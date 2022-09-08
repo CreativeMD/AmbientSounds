@@ -62,7 +62,7 @@ public class AirPocketScanner extends Thread {
                 if (steps > AmbientSounds.CONFIG.scanStepAmount) {
                     steps = 0;
                     try {
-                        wait(1);
+                        sleep(1);
                     } catch (InterruptedException e) {}
                 }
             }
