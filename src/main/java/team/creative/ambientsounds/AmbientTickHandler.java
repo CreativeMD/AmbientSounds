@@ -238,7 +238,7 @@ public class AmbientTickHandler {
     
     public void onTick() {
         if (soundEngine == null) {
-            soundEngine = new AmbientSoundEngine(mc.getSoundManager(), mc.options);
+            soundEngine = new AmbientSoundEngine();
             if (engine == null)
                 setEngine(AmbientEngine.loadAmbientEngine(soundEngine));
             if (engine != null)

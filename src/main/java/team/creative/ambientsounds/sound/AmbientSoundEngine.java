@@ -14,7 +14,7 @@ import org.lwjgl.openal.AL11;
 
 import com.mojang.blaze3d.audio.Channel;
 
-import net.minecraft.client.Options;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.sounds.LoopingAudioStream;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
@@ -24,12 +24,10 @@ import team.creative.creativecore.reflection.ReflectionHelper;
 
 public class AmbientSoundEngine {
     
+    private static final Minecraft mc = Minecraft.getInstance();
     private static Field sourceField;
     private static Field streamField;
     private static Field bufferedInputStreamField;
-    
-    public SoundManager manager;
-    public Options options;
     
     private List<SoundStream> sounds = new ArrayList<>();
     
@@ -39,10 +37,12 @@ public class AmbientSoundEngine {
         }
     }
     
-    public AmbientSoundEngine(SoundManager manager, Options options) {
-        this.options = options;
-        this.manager = manager;
+    public AmbientSoundEngine() {
         CreativeCore.loader().registerListener((Consumer<PlayStreamingSourceEvent>) this::play);
+    }
+    
+    public SoundManager getManager() {
+        return mc.getSoundManager();
     }
     
     public void tick() {
@@ -61,7 +61,7 @@ public class AmbientSoundEngine {
                     SoundStream sound = iterator.next();
                     
                     boolean playing;
-                    if (!manager.isActive(sound))
+                    if (!getManager().isActive(sound))
                         if (sound.hasPlayedOnce())
                             playing = false;
                         else
@@ -71,7 +71,7 @@ public class AmbientSoundEngine {
                     
                     if (sound.hasPlayedOnce() && !playing) {
                         sound.onFinished();
-                        manager.stop(sound);
+                        getManager().stop(sound);
                         iterator.remove();
                         continue;
                     } else if (!sound.hasPlayedOnce() && playing)
@@ -90,14 +90,14 @@ public class AmbientSoundEngine {
     }
     
     public void stop(SoundStream sound) {
-        manager.stop(sound);
+        getManager().stop(sound);
         synchronized (sounds) {
             sounds.remove(sound);
         }
     }
     
     public void play(SoundStream stream) {
-        manager.play(stream);
+        getManager().play(stream);
         stream.onStart();
         synchronized (sounds) {
             sounds.add(stream);
