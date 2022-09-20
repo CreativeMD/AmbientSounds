@@ -44,16 +44,6 @@ public class AmbientEngine {
     public static final String SOUNDS_LOCATION = "sounds.json";
     public static final String FEATURES_LOCATION = "features.json";
     
-    private static String loadedEngine;
-    
-    public static boolean hasLoadedAtLeastOnce() {
-        return loadedEngine != null;
-    }
-    
-    public static boolean hasEngineChanged(String newEngine) {
-        return loadedEngine == null || !loadedEngine.equals(newEngine);
-    }
-    
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new JsonDeserializer<ResourceLocation>() {
         
         @Override
@@ -63,6 +53,16 @@ public class AmbientEngine {
             return null;
         }
     }).create();
+    
+    private static String loadedEngine;
+    
+    public static boolean hasLoadedAtLeastOnce() {
+        return loadedEngine != null;
+    }
+    
+    public static boolean hasEngineChanged(String newEngine) {
+        return loadedEngine == null || !loadedEngine.equals(newEngine);
+    }
     
     public static AmbientEngine attemptToLoadEngine(AmbientSoundEngine soundEngine, ResourceManager manager, String name) throws Exception {
         InputStream engineInput = manager.getResource(new ResourceLocation(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).orElseThrow().open();

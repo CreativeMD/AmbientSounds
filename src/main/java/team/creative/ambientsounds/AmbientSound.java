@@ -17,7 +17,7 @@ import team.creative.creativecore.common.config.api.CreativeConfig;
 
 public class AmbientSound extends AmbientCondition {
     
-    private static Random rand = new Random();
+    private static final Random RANDOM = new Random();
     
     @CreativeConfig.DecimalRange(min = 0, max = 1)
     public transient double volumeSetting = 1;
@@ -67,13 +67,13 @@ public class AmbientSound extends AmbientCondition {
     protected int getRandomFile() {
         if (files.length == 1)
             return 0;
-        return rand.nextInt(files.length);
+        return RANDOM.nextInt(files.length);
     }
     
     protected int getRandomFileExcept(int i) {
         if (files.length == 2)
             return i == 0 ? 1 : 0;
-        int index = rand.nextInt(files.length - 1);
+        int index = RANDOM.nextInt(files.length - 1);
         if (index >= i)
             index++;
         return index;
