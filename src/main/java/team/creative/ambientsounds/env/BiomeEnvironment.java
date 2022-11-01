@@ -14,7 +14,7 @@ import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
-import team.creative.creativecore.common.util.mc.TickUtils;
+import team.creative.creativecore.client.CreativeCoreClient;
 import team.creative.creativecore.common.util.type.list.Pair;
 import team.creative.creativecore.common.util.type.list.PairList;
 
@@ -26,7 +26,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     
     public BiomeEnvironment(AmbientEngine engine, Player player, Level level, double volume) {
         if (volume > 0.0) {
-            BlockPos center = new BlockPos(player.getEyePosition(TickUtils.getFrameTime(level)));
+            BlockPos center = new BlockPos(player.getEyePosition(CreativeCoreClient.getFrameTime()));
             MutableBlockPos pos = new MutableBlockPos();
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {
                 for (int z = -engine.biomeScanCount; z <= engine.biomeScanCount; z++) {
