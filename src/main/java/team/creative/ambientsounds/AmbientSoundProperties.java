@@ -27,7 +27,7 @@ public class AmbientSoundProperties {
     @SerializedName(value = "fade-out-pitch")
     public Double fadeOutPitch;
     
-    public Double mute = 0D;
+    public Double mute;
     
     //public AmbientMinMaxCondition offset;
     public AmbientMinMaxCondition pause;
@@ -39,7 +39,10 @@ public class AmbientSoundProperties {
     public String category;
     
     public void init(AmbientEngine engine) {
-        mute = Mth.clamp(mute, 0, 1);
+        if (mute == null)
+            mute = 0D;
+        else
+            mute = Mth.clamp(mute, 0, 1);
     }
     
     public double getFadeInVolume(AmbientEngine engine) {

@@ -1,7 +1,7 @@
 [
     {
         "name": "underwater",
-        "mute": 0.9,
+        "mute": 0.95,
         "fade-volume": 0.1,
         "fade-pitch": 0.1,
         "pitch": 2.0,
