@@ -23,6 +23,17 @@
         "bad-regions": [
             "cold"
         ],
+        "variants": [
+            {
+                "raining": true,
+                "volume": 1
+            },
+            {
+                "overall-raining": true,
+                "air": 1,
+                "volume": 0.2
+            }
+        ],
         "mute": 0.8
     },
     {
@@ -135,7 +146,8 @@
         "bad-regions": [
             "taiga",
             "forest.roofed",
-            "jungle"
+            "jungle",
+            "rain"
         ],
         "variants": [
             {
@@ -181,6 +193,9 @@
         "features": [
             "tree"
         ],
+        "bad-regions": [
+            "rain"
+        ],
         "regions": [
             "surface"
         ],
@@ -196,6 +211,9 @@
         "temperature": {
             "min": 0.2
         },
+        "bad-regions": [
+            "rain"
+        ],
         "biomes": [
             "taiga",
             "grove",
@@ -225,6 +243,9 @@
     },
     {
         "name": "highland",
+        "bad-regions": [
+            "rain"
+        ],
         "biomes": [
             "extreme*hills",
             "alps",
@@ -259,6 +280,9 @@
     },
     {
         "name": "forest.roofed",
+        "bad-regions": [
+            "rain"
+        ],
         "biomes": [
             "roofed*forest",
             "dark_forest",
@@ -276,7 +300,8 @@
             "swamp",
             "ocean",
             "highland",
-            "jungle"
+            "jungle",
+            "rain"
         ],
         "bad-biomes": [
             "river"
@@ -296,7 +321,8 @@
             "savanna",
             "swamp",
             "highland",
-            "nether"
+            "nether",
+            "rain"
         ],
         "temperature": {
             "min": 0.2
@@ -320,6 +346,9 @@
     },
     {
         "name": "savanna",
+        "bad-regions": [
+            "rain"
+        ],
         "biomes": [
             "savanna",
             "heathland",
@@ -355,6 +384,9 @@
     },
     {
         "name": "swamp",
+        "bad-regions": [
+            "rain"
+        ],
         "biomes": [
             "swamp",
             "bayou",
@@ -399,7 +431,8 @@
             "tropics beach",
             "tyros swamp",
             "subtropical forest",
-            "tropical*extreme hills"
+            "tropical*extreme hills",
+            "rain"
         ],
         "features": [
             "tree"
