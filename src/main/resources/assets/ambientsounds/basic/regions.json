@@ -30,7 +30,9 @@
             },
             {
                 "overall-raining": true,
-                "air": 1,
+                "air": {
+                    "min": 1
+                },
                 "volume": 0.2
             }
         ],
