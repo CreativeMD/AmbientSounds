@@ -209,6 +209,7 @@ public class AmbientSound extends AmbientCondition {
             stream.duration = (int) currentPropertries.length.randomValue();
         
         stream.volume = volume;
+        stream.generatedVoume = (float) volume;
         engine.soundEngine.play(stream);
         return stream;
     }
@@ -398,6 +399,11 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public boolean isRelative() {
+            return true;
+        }
+        
+        @Override
+        public boolean canStartSilent() {
             return true;
         }
     }
