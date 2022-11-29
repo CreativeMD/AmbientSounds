@@ -16,7 +16,6 @@
     },
     {
         "name": "rain",
-        "raining": true,
         "regions": [
             "surface"
         ],
