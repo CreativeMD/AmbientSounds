@@ -31,7 +31,8 @@
     "solids": [
         "t->doors",
         "m->buildable_glass",
-        "m->glass"
+        "m->glass",
+        "t->stairs"
     ],
     "biome-types": [
         "surface",
