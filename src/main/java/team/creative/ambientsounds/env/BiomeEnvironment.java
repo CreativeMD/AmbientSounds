@@ -5,7 +5,7 @@ import java.util.Iterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -60,7 +60,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
         
         public BiomeArea(Level level, Holder<Biome> biome, BlockPos pos) {
             this.biome = biome;
-            this.location = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome.value());
+            this.location = level.registryAccess().registryOrThrow(Registries.BIOME).getKey(biome.value());
             this.pos = pos;
         }
         

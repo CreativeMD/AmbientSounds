@@ -4,7 +4,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -36,7 +37,7 @@ public final class AmbientBlockFilters {
     private static Predicate<BlockState> parse(String data) {
         String[] parts = data.split("->");
         if (parts.length == 1) {
-            Block block = Registry.BLOCK.get(new ResourceLocation(parts[0]));
+            Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(parts[0]));
             return state -> state.getBlock() == block;
         } else if (parts.length != 2) {
             AmbientSounds.LOGGER.error("Found invalid block filter '{}'. It will be ignored", data);
@@ -57,7 +58,7 @@ public final class AmbientBlockFilters {
             return state -> state.getMaterial() == material;
         });
         REGISTRY.register("t", data -> {
-            TagKey<Block> tag = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(data));
+            TagKey<Block> tag = TagKey.create(Registries.BLOCK, new ResourceLocation(data));
             return state -> state.is(tag);
         });
         REGISTRY.register("p", data -> {
