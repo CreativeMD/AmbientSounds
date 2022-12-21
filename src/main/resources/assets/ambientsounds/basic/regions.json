@@ -32,6 +32,9 @@
                 "air": {
                     "min": 1
                 },
+                "temperature": {
+                    "min": 0.1
+                },
                 "volume": 0.2
             }
         ],
