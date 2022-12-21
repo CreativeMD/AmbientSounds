@@ -67,8 +67,6 @@ public class AmbientCondition extends AmbientSoundProperties {
     public String[] badRegions;
     transient List<AmbientRegion> badRegionList;
     
-    //public Boolean outside;
-    
     public String regionName() {
         return null;
     }
