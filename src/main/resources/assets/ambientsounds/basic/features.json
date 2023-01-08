@@ -1,77 +1,85 @@
 [
-	{
-		"name": "grass",
-		"groups": [
-			"grass"
-		],
-		"low-weight": 0.2,
-		"high-weight": 0.4
-	},
-	{
-		"name": "sand",
-		"groups": [
-			"sand"
-		],
-		"low-weight": 0.2,
-		"high-weight": 0.4
-	},
-	{
-		"name": "lava",
-		"groups": [
-			"lava"
-		],
-		"low-count": 10,
-		"high-count": 30
-	},
-	{
-		"name": "rock",
-		"groups": [
-			"rock"
-		],
-		"low-weight": 0.6,
-		"high-weight": 0.75
-	},
-	{
-		"name": "tree",
-		"and": [
-			{
-				"groups": [
-					"leave"
-				],
-				"low-count": 5,
-				"high-count": 30
-			},
-			{
-				"groups": [
-					"log"
-				],
-				"low-count": 3,
-				"high-count": 10
-			}
-		]
-	},
-	{
-		"name": "water",
-		"groups": [
-			"water"
-		],
-		"low-count": 100,
-		"high-count": 300
-	},
-	{
-		"name": "lush",
-		"groups": [
-			"lush"
-		],
-		"low-count": 20,
-		"high-count": 50
-	},
-	{
-		"name": "dripstone",
-		"groups": [
-			"dripstone"
-		],
-		"low-count": 3,
-		"high-count": 5
-	}
+    {
+        "name": "grass",
+        "groups": [
+            "grass"
+        ],
+        "low-weight": 0.2,
+        "high-weight": 0.4
+    },
+    {
+        "name": "sand",
+        "groups": [
+            "sand"
+        ],
+        "low-weight": 0.2,
+        "high-weight": 0.4
+    },
+    {
+        "name": "lava",
+        "groups": [
+            "lava"
+        ],
+        "low-count": 10,
+        "high-count": 30
+    },
+    {
+        "name": "rock",
+        "groups": [
+            "rock"
+        ],
+        "low-weight": 0.6,
+        "high-weight": 0.75
+    },
+    {
+        "name": "tree",
+        "and": [
+            {
+                "groups": [
+                    "leave"
+                ],
+                "low-count": 5,
+                "high-count": 30
+            },
+            {
+                "groups": [
+                    "log"
+                ],
+                "low-count": 3,
+                "high-count": 10
+            }
+        ]
+    },
+    {
+        "name": "water",
+        "groups": [
+            "water"
+        ],
+        "low-count": 100,
+        "high-count": 300
+    },
+    {
+        "name": "lush",
+        "groups": [
+            "lush"
+        ],
+        "low-count": 20,
+        "high-count": 50
+    },
+    {
+        "name": "sculk",
+        "groups": [
+            "sculk"
+        ],
+        "low-count": 20,
+        "high-count": 50
+    },
+    {
+        "name": "dripstone",
+        "groups": [
+            "dripstone"
+        ],
+        "low-count": 3,
+        "high-count": 5
+    }
 ]
