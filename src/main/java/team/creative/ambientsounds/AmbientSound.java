@@ -47,6 +47,8 @@ public class AmbientSound extends AmbientCondition {
         if (files == null || files.length == 0)
             throw new RuntimeException("Invalid sound " + name + " which does not contain any sound file");
         
+        super.init(engine);
+        
         this.engine = engine;
         
         if (chances == null) {
