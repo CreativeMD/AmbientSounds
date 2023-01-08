@@ -1,72 +1,76 @@
 [
-	{
-		"name": "cave",
-		"files": [
-			"ambientsounds:cave.cave1",
-			"ambientsounds:cave.cave2",
-			"ambientsounds:cave.cave3"
-		],
-		"length": {
-			"min": 400,
-			"max": 700
-		},
-		"volume": 0.5,
-		"transition": 200
-	},
-	{
-		"name": "cave-water",
-		"files": [
-			"ambientsounds:cave.cave-water1",
-			"ambientsounds:cave.cave-water2",
-			"ambientsounds:cave.cave-water3",
-			"ambientsounds:cave.cave-water4"
-		],
-		"volume": 0.4,
-		"length": {
-			"min": 400,
-			"max": 700
-		},
-		"features": [
-			"water",
-			"lush",
-			"dripstone"
-		],
-		"transition": 200
-	},
-	{
-		"name": "cave-deep",
-		"files": [
-			"ambientsounds:cave.cave-deep1",
-			"ambientsounds:cave.cave-deep2"
-		],
-		"absolute-height": {
-			"max": 0,
-			"fade": 10
-		},
-		"length": {
-			"min": 400,
-			"max": 700
-		},
-		"transition": 200
-	},
-	{
-		"name": "cave-large",
-		"files": [
-			"ambientsounds:cave.cave-large1",
-			"ambientsounds:cave.cave-large2"
-		],
-		"air": {
-			"min": 0.4
-		},
-		"length": {
-			"min": 400,
-			"max": 700
-		},
-		"pause": {
-			"min": 200,
-			"max": 1000
-		},
-		"transition": 200,
-		"volume": 0.5
-	}
+    {
+        "name": "cave",
+        "files": [
+            "ambientsounds:cave.cave1",
+            "ambientsounds:cave.cave2",
+            "ambientsounds:cave.cave3"
+        ],
+        "length": {
+            "min": 400,
+            "max": 700
+        },
+        "volume": 0.5,
+        "transition": 200
+    },
+    {
+        "name": "cave-water",
+        "files": [
+            "ambientsounds:cave.cave-water1",
+            "ambientsounds:cave.cave-water2",
+            "ambientsounds:cave.cave-water3",
+            "ambientsounds:cave.cave-water4",
+            "ambientsounds:cave.cave-water5"
+        ],
+        "volume": 0.4,
+        "length": {
+            "min": 400,
+            "max": 700
+        },
+        "features": [
+            "water",
+            "lush",
+            "dripstone"
+        ],
+        "transition": 200
+    },
+    {
+        "name": "cave-deep",
+        "files": [
+            "ambientsounds:cave.cave-deep1",
+            "ambientsounds:cave.cave-deep2"
+        ],
+        "absolute-height": {
+            "max": 0,
+            "fade": 10
+        },
+        "length": {
+            "min": 400,
+            "max": 700
+        },
+        "transition": 200,
+        "bad-regions": [
+            "cave.deep-dark"
+        ]
+    },
+    {
+        "name": "cave-large",
+        "files": [
+            "ambientsounds:cave.cave-large1",
+            "ambientsounds:cave.cave-large2"
+        ],
+        "air": {
+            "min": 0.4
+        },
+        "length": {
+            "min": 400,
+            "max": 700
+        },
+        "pause": {
+            "min": 200,
+            "max": 1000
+        },
+        "transition": 200,
+        "volume": 0.5
+    }
 ]

@@ -1,0 +1,20 @@
+[
+    {
+        "name": "deep-dark",
+        "files": [
+            "ambientsounds:cave.deep-dark"
+        ],
+        "volume": 1
+    },
+    {
+        "name": "water-droplets",
+        "files": [
+            "ambientsounds:cave.cave-water5"
+        ],
+        "length": {
+            "min": 400,
+            "max": 700
+        },
+        "volume": 0.25
+    }
+]

@@ -96,7 +96,27 @@
         "features": [
             "rock",
             "lush",
-            "dripstone"
+            "dripstone",
+            "sculk"
+        ],
+        "variants": [
+            {
+                "bad-regions": [
+                    "cave.deep-dark"
+                ]
+            },
+            {
+                "volume": 0.25
+            }
+        ]
+    },
+    {
+        "name": "cave.deep-dark",
+        "regions": [
+            "cave"
+        ],
+        "features": [
+            "sculk"
         ]
     },
     {
