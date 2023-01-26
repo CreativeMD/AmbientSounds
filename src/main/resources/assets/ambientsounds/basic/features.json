@@ -81,5 +81,13 @@
         ],
         "low-count": 3,
         "high-count": 5
+    },
+    {
+        "name": "ice",
+        "groups": [
+            "ice"
+        ],
+        "low-weight": 0.1,
+        "high-weight": 0.3
     }
 ]
