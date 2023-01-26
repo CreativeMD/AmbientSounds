@@ -493,6 +493,33 @@
         ]
     },
     {
+        "name": "very_cold",
+        "features": [
+            "ice"
+        ],
+        "variants": [
+            {
+                "biomes": [
+                    "frozen",
+                    "ice",
+                    "cold",
+                    "arctic",
+                    "glacier",
+                    "snow"
+                ],
+                "bad-biomes": [
+                    "arctic peaks"
+                ]
+            },
+            {
+                "temperature": {
+                    "max": 0,
+                    "min": -5
+                }
+            }
+        ]
+    },
+    {
         "name": "beach",
         "biomes": [
             "beach",
