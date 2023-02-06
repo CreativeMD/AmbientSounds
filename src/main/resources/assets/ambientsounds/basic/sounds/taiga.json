@@ -1,12 +1,17 @@
 [
-	{
-		"name": "bird-ambience-huge",
-		"files": [
-			"ambientsounds:animals.bird-ambience-huge1",
-			"ambientsounds:animals.bird-ambience-huge2",
-			"ambientsounds:animals.bird-ambience-huge3"
-		],
-		"day": 1,
-		"night": 0
-	}
+    {
+        "name": "bird-ambience-huge",
+        "files": [
+            "ambientsounds:animals.bird-ambience-huge1",
+            "ambientsounds:animals.bird-ambience-huge2",
+            "ambientsounds:animals.bird-ambience-huge3"
+        ],
+        "length": {
+            "min": 2000,
+            "max": 3000
+        },
+        "transition": 400,
+        "day": 1,
+        "night": 0
+    }
 ]
