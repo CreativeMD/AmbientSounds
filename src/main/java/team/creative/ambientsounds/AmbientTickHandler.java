@@ -6,19 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.joml.Matrix4f;
-
-import com.google.common.base.Strings;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -187,49 +181,18 @@ public class AmbientTickHandler {
                     list.add(text);
                 }
             }
-            
-            for (int i = 0; i < list.size(); ++i) {
-                String s = list.get(i);
-                
-                if (!Strings.isNullOrEmpty(s)) {
-                    int j = mc.font.lineHeight;
-                    int k = mc.font.width(s);
-                    int i1 = 2 + j * i;
-                    PoseStack mat = new PoseStack();
-                    drawGradientRect(mat.last().pose(), 0, 1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752, -1873784752);
-                    mc.font.drawShadow(mat, s, 2, i1, 14737632);
+            RenderSystem.defaultBlendFunc();
+            PoseStack mat = new PoseStack();
+            Font font = mc.font;
+            int top = 2;
+            for (String msg : list) {
+                if (msg != null && !msg.isEmpty()) {
+                    GuiComponent.fill(mat, 1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
+                    font.draw(mat, msg, 2, top, 14737632);
                 }
+                top += font.lineHeight;
             }
         }
-    }
-    
-    public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, int startColor, int endColor) {
-        float startAlpha = (startColor >> 24 & 255) / 255.0F;
-        float startRed = (startColor >> 16 & 255) / 255.0F;
-        float startGreen = (startColor >> 8 & 255) / 255.0F;
-        float startBlue = (startColor & 255) / 255.0F;
-        float endAlpha = (endColor >> 24 & 255) / 255.0F;
-        float endRed = (endColor >> 16 & 255) / 255.0F;
-        float endGreen = (endColor >> 8 & 255) / 255.0F;
-        float endBlue = (endColor & 255) / 255.0F;
-        
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        
-        Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.vertex(mat, right, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.vertex(mat, left, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.vertex(mat, left, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-        buffer.vertex(mat, right, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
-        tessellator.end();
-        
-        RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
     }
     
     public void loadLevel(LevelAccessor level) {

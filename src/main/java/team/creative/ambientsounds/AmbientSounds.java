@@ -50,7 +50,7 @@ public class AmbientSounds implements ClientLoader {
         
         TICK_HANDLER = new AmbientTickHandler();
         loader.registerClientTick(TICK_HANDLER::onTick);
-        loader.registerClientRender(TICK_HANDLER::onRender);
+        loader.registerClientRenderGui(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
         loader.registerClientStarted(() -> {
