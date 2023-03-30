@@ -467,9 +467,6 @@
     },
     {
         "name": "cold",
-        "features": [
-            "grass"
-        ],
         "variants": [
             {
                 "biomes": [
