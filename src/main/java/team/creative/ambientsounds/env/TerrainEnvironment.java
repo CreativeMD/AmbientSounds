@@ -80,7 +80,7 @@ public class TerrainEnvironment {
         int y;
         int heighest = 0;
         
-        for (y = level.dimensionType().height(); y > level.dimensionType().minY(); --y) {
+        for (y = level.getMaxBuildHeight(); y > level.getMinBuildHeight(); --y) {
             pos.setY(y);
             BlockState state = level.getBlockState(pos);
             if (state.isSolidRender(level, pos) || state.is(BlockTags.LEAVES) || level.getFluidState(pos).is(FluidTags.WATER)) {
