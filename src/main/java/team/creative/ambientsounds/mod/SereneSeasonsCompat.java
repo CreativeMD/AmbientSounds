@@ -24,7 +24,7 @@ public class SereneSeasonsCompat {
     }
     
     public static float getTemperature(Player player) {
-        Level level = player.level;
+        Level level = player.level();
         Holder<Biome> biome = level.getBiome(player.blockPosition());
         if (getBiomeTemperature != null)
             try {

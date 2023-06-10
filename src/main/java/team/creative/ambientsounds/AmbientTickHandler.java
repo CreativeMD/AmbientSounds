@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -105,10 +104,11 @@ public class AmbientTickHandler {
         return builder.toString();
     }
     
-    public void onRender() {
+    public void onRender(Object object) {
         if (showDebugInfo && engine != null && !mc.isPaused() && environment != null && mc.level != null) {
             List<String> list = new ArrayList<>();
             
+            GuiGraphics graphics = (GuiGraphics) object;
             List<Pair<String, Object>> details = new ArrayList<>();
             engine.collectDetails(details);
             
@@ -182,13 +182,12 @@ public class AmbientTickHandler {
                 }
             }
             RenderSystem.defaultBlendFunc();
-            PoseStack mat = new PoseStack();
             Font font = mc.font;
             int top = 2;
             for (String msg : list) {
                 if (msg != null && !msg.isEmpty()) {
-                    GuiComponent.fill(mat, 1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
-                    font.draw(mat, msg, 2, top, 14737632);
+                    graphics.fill(1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
+                    graphics.drawString(font, msg, 2, top, 14737632, false);
                 }
                 top += font.lineHeight;
             }

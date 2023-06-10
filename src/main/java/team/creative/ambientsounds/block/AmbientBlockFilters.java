@@ -11,9 +11,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.material.Material;
 import team.creative.ambientsounds.AmbientSounds;
-import team.creative.creativecore.common.util.mc.MaterialUtils;
 import team.creative.creativecore.common.util.registry.NamedHandlerRegistry;
 
 public final class AmbientBlockFilters {
@@ -53,10 +51,6 @@ public final class AmbientBlockFilters {
     }
     
     static {
-        REGISTRY.register("m", data -> {
-            Material material = MaterialUtils.getMaterial(data);
-            return state -> state.getMaterial() == material;
-        });
         REGISTRY.register("t", data -> {
             TagKey<Block> tag = TagKey.create(Registries.BLOCK, new ResourceLocation(data));
             return state -> state.is(tag);
