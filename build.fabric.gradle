@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.12+'
+    id 'fabric-loom' version '1.2+'
     id 'maven-publish'
 }
 
@@ -54,11 +54,11 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
-    archivesBaseName = project.modname
+    archivesBaseName = project.mod_name
 }
 
 remapJar {
-	archiveFileName = project.modname + "_FABRIC_v" + project.version + "_mc" + project.minecraft_version + ".jar"
+	archiveFileName = project.mod_name + "_FABRIC_v" + project.mod_version + "_mc" + project.minecraft_version + ".jar"
 }
 
 jar {
