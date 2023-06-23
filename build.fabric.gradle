@@ -27,11 +27,35 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.mod_version
+    inputs.property "mod_id", project.mod_id
+    inputs.property "mod_name", project.mod_name
+    inputs.property "mod_version", project.mod_version
+    inputs.property "mod_description", project.mod_description
+    inputs.property "mod_license", project.mod_license
+    inputs.property "loader_version_range", project.loader_version_range
+    inputs.property "minecraft_version_range", project.minecraft_version_range
+    inputs.property "creativecore_version", project.creativecore_version
+    
+    inputs.property "resource_pack_format", project.resource_pack_format
+    inputs.property "data_pack_format", project.data_pack_format
+    
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.mod_version
+	    expand(
+	        "mod_id": project.mod_id,
+	        "mod_name": project.mod_name,
+	        "mod_version": project.mod_version,
+	        "mod_description": project.mod_description,
+	        "mod_license": project.mod_license,
+	        "loader_version_range": project.loader_version_range,
+	        "minecraft_version_range": project.minecraft_version_range,
+	        "creativecore_version": project.creativecore_version
+	    )
+    }
+    
+    filesMatching("pack.mcmeta") {
+        expand "mod_id": project.mod_id, "resource_pack_format": project.resource_pack_format, "data_pack_format": project.data_pack_format
     }
 }
 
