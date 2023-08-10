@@ -37,7 +37,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
                     Holder<Biome> holder = level.getBiome(pos);
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
-                    if (level.isRaining() && holder.get().getPrecipitationAt(pos) == Precipitation.RAIN)
+                    if (level.isRaining() && holder.value().getPrecipitationAt(pos) == Precipitation.RAIN)
                         highestRainVolume = Math.max(highestRainVolume, biomeVolume);
                     BiomeArea area = new BiomeArea(level, holder, pos);
                     Pair<BiomeArea, BiomeStats> before = biomes.getPair(area);
