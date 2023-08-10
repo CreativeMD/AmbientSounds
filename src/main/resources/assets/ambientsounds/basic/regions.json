@@ -294,6 +294,7 @@
         "name": "mesa",
         "biomes": [
             "mesa",
+            "badlands",
             "lush desert",
             "outback",
             "wasteland",
