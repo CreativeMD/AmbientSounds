@@ -219,7 +219,7 @@ public class AmbientTickHandler {
         Level level = mc.level;
         Player player = mc.player;
         
-        if (level != null && player != null && !mc.isPaused() && mc.options.getSoundSourceVolume(SoundSource.AMBIENT) > 0) {
+        if (level != null && player != null && mc.options.getSoundSourceVolume(SoundSource.AMBIENT) > 0) {
             
             if (environment == null)
                 environment = new AmbientEnvironment();
