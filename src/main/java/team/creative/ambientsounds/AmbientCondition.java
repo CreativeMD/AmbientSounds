@@ -124,7 +124,7 @@ public class AmbientCondition extends AmbientSoundProperties {
         if (raining != null && raining != env.raining)
             return null;
         
-        if (overallRaining != null && overallRaining != env.overallRaining)
+        if (overallRaining != null && overallRaining != env.isRainAudibleAtSurface()) // excluded, volume is applied later
             return null;
         
         if (snowing != null && snowing != env.snowing)
@@ -181,6 +181,9 @@ public class AmbientCondition extends AmbientSoundProperties {
             else if (highest != -1)
                 selection.volume *= highest;
         }
+        
+        if (overallRaining != null && overallRaining)
+            selection.volume *= env.rainSurfaceVolume;
         
         if (underwater != null) {
             double volume = underwater.volume(env.underwater);

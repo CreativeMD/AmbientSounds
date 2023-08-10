@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biome.Precipitation;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
@@ -21,10 +22,12 @@ import team.creative.creativecore.common.util.type.list.PairList;
 public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     
     private final PairList<BiomeArea, BiomeStats> biomes = new PairList<>();
+    private double highestRainVolume;
     
     public BiomeEnvironment() {}
     
     public BiomeEnvironment(AmbientEngine engine, Player player, Level level, double volume) {
+        highestRainVolume = 0;
         if (volume > 0.0) {
             BlockPos center = BlockPos.containing(player.getEyePosition(CreativeCoreClient.getFrameTime()));
             MutableBlockPos pos = new MutableBlockPos();
@@ -34,6 +37,8 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
                     Holder<Biome> holder = level.getBiome(pos);
                     
                     float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
+                    if (level.isRaining() && holder.get().getPrecipitationAt(pos) == Precipitation.RAIN)
+                        highestRainVolume = Math.max(highestRainVolume, biomeVolume);
                     BiomeArea area = new BiomeArea(level, holder, pos);
                     Pair<BiomeArea, BiomeStats> before = biomes.getPair(area);
                     if (before == null)
@@ -50,6 +55,10 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     @Override
     public Iterator<Pair<BiomeArea, BiomeStats>> iterator() {
         return biomes.iterator();
+    }
+    
+    public double rainVolume() {
+        return highestRainVolume;
     }
     
     public static class BiomeArea {
