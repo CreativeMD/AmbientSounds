@@ -20,7 +20,7 @@
     ],
     "depends": {
 		"fabricloader": "${loader_version_range}",
-		"fabric": "*",
+		"fabric-api": "*",
 		"minecraft": "${minecraft_version_range}",
 		"creativecore": ">=${creativecore_version}"
 	}
