@@ -1,6 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.2+'
-    id 'maven-publish'
+    id 'fabric-loom' version '1.4+'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'com.matthewprenger.cursegradle' version '1.4+'
 }
 
 group = "team.creative"
@@ -15,12 +16,10 @@ repositories {
 }
 
 dependencies {
-    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "maven.modrinth:modmenu:${project.modmenu_version}"
-    // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
     implementation project(path: ':CreativeCore', configuration: 'namedElements')
@@ -61,10 +60,6 @@ processResources {
 
 def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         it.options.release = targetJavaVersion
@@ -91,20 +86,75 @@ jar {
     }
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+String getChangelogText() {
+    String result = ''
+    boolean first = true
+    file('changelog.txt').readLines().find {
+        if (first) {
+            if (it.equals(project.mod_version)) {
+                first = false
+            }
+            return false
+        } else if (!it?.trim()) {
+            return true
+        } else {
+            result += "* " + it + "\n"
+            return false
         }
     }
+    
+    return result
+}
 
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        mavenLocal()
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+task upload(type: GradleBuild) {
+    description 'Uploads new version to modrinth and curseforge.'
+    group = 'publishing'
+    tasks = ['modrinth', 'curseforge']
+}
+
+gradle.taskGraph.whenReady {
+    if (it.hasTask(tasks.modrinth) || it.hasTask(tasks.curseforge)) {
+        if (!getChangelogText()?.trim()) {
+            throw new GradleException('No changelog provided')
+        }
+    }
+}
+
+tasks.modrinth.enabled = System.getenv("MODRINTH_TOKEN") != null
+tasks.modrinth.group = 'publishing'
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = project.mod_id
+    versionNumber = project.mod_version
+    versionType = project.release_type
+    uploadFile = remapJar
+    gameVersions = [ project.minecraft_version ]
+    loaders = [ "fabric" ]
+    changelog = getChangelogText()
+    dependencies {
+        required.project "fabric-api"
+        required.project "creativecore"
+    }
+}
+
+tasks.curseforge.enabled = System.getenv("CURSEFORGE_TOKEN") != null
+tasks.curseforge.group = 'publishing'
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_TOKEN")
+    project {
+        id = project.curse_id
+        changelogType = "markdown"
+        changelog = getChangelogText()
+        addGameVersion project.minecraft_version
+        addGameVersion "Fabric"
+        releaseType = project.release_type
+        mainArtifact(remapJar) {
+        }
+        relations {
+            requiredLibrary "fabric-api"
+            requiredLibrary "creativecore"
+        }
     }
 }
