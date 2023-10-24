@@ -3,7 +3,13 @@
 		"name": "rain",
 		"category": "weather",
 		"files": [
-			"ambientsounds:weather.rain"
-		]
+			"ambientsounds:weather.rain1",
+			"ambientsounds:weather.rain2"
+		],
+		"length": {
+            "min": 2000,
+            "max": 4000
+        },
+        "transition": 400
 	}
 ]

@@ -690,10 +690,19 @@
         ],
         "category": "ambient"
     },
-    "weather.rain": {
+    "weather.rain1": {
         "sounds": [
             {
-                "name": "ambientsounds:weather/rain",
+                "name": "ambientsounds:weather/rain1",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
+    "weather.rain2": {
+        "sounds": [
+            {
+                "name": "ambientsounds:weather/rain2",
                 "stream": true
             }
         ],
