@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.util.Mth;
+import team.creative.ambientsounds.entity.AmbientEntityCondition;
 import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
@@ -67,6 +68,8 @@ public class AmbientCondition extends AmbientSoundProperties {
     public String[] badRegions;
     transient List<AmbientRegion> badRegionList;
     
+    public AmbientEntityCondition entity;
+    
     public String regionName() {
         return null;
     }
@@ -105,6 +108,9 @@ public class AmbientCondition extends AmbientSoundProperties {
         
         if (biomeType == null)
             biomeType = engine.defaultBiomeType;
+        
+        if (entity != null)
+            entity.init(engine);
     }
     
     public AmbientSelection value(AmbientEnvironment env) {
@@ -266,6 +272,13 @@ public class AmbientCondition extends AmbientSoundProperties {
                 return null;
             
             selection.volume *= volume;
+        }
+        
+        if (entity != null) {
+            double entityVolume = entity.value(env);
+            if (entityVolume <= 0)
+                return null;
+            selection.volume *= entityVolume;
         }
         
         if (variants != null) {

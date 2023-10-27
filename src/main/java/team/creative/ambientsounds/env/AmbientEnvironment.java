@@ -32,6 +32,7 @@ public class AmbientEnvironment {
     
     public BiomeEnvironment biome = new BiomeEnvironment();
     public TerrainEnvironment terrain = new TerrainEnvironment();
+    public EntityEnvironment entity = new EntityEnvironment();
     
     public double biomeVolume;
     
@@ -66,6 +67,7 @@ public class AmbientEnvironment {
         
         analyzeUnderwater(player, level);
         analyzeTime(level, deltaTime);
+        entity.analyzeFast(dimension, player, level, deltaTime);
     }
     
     public void analyzeTime(Level level, float deltaTime) {
