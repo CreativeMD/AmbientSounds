@@ -1,27 +1,27 @@
 [
-	{
-		"name": "heavy-wind",
-		"files": [
-			"ambientsounds:wind.heavy-wind"
-		],
-		"outside": true,
-		"air": {
-			"min": 0.6
-		},
-		"volume": 0.5
-	},
-	{
-		"name": "wind-in-leaves",
-		"files": [
-			"ambientsounds:wind.wind-in-leaves"
-		],
-		"outside": true,
-		"air": {
-			"min": 0.6
-		},
-		"features": [
-			"tree"
-		],
-		"volume": 0.5
-	}
+    {
+        "name": "heavy-wind",
+        "files": [
+            "ambientsounds:wind.heavy-wind"
+        ],
+        "outside": true,
+        "air": {
+            "min": 0.6
+        },
+        "volume": 0.5
+    },
+    {
+        "name": "wind-in-leaves",
+        "files": [
+            "ambientsounds:wind.wind-in-leaves"
+        ],
+        "outside": true,
+        "air": {
+            "min": 0.6
+        },
+        "features": [
+            "tree"
+        ],
+        "volume": 0.5
+    }
 ]

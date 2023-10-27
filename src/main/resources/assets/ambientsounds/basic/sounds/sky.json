@@ -1,10 +1,10 @@
 [
-	{
-		"name": "light-wind",
-		"files": [
-			"ambientsounds:wind.light-wind"
-		],
-		"outside": true,
-		"volume": 0.6
-	}
+    {
+        "name": "light-wind",
+        "files": [
+            "ambientsounds:wind.light-wind"
+        ],
+        "outside": true,
+        "volume": 0.6
+    }
 ]

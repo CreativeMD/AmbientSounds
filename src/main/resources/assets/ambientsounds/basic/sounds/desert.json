@@ -1,30 +1,30 @@
 [
-	{
-		"name": "cicadas-desert",
-		"files": [
-			"ambientsounds:animals.cicadas-desert"
-		],
-		"special-biomes": {
-			"temperature": {
-				"min": 0.8
-			}
-		},
-		"day": 1,
-		"night": 0,
-		"length": {
-			"min": 300,
-			"max": 600
-		},
-		"pause": {
-			"min": 200,
-			"max": 500
-		}
-	},
-	{
-		"name": "light-wind",
-		"files": [
-			"ambientsounds:wind.light-wind"
-		],
-		"outside": true
-	}
+    {
+        "name": "cicadas-desert",
+        "files": [
+            "ambientsounds:animals.cicadas-desert"
+        ],
+        "special-biomes": {
+            "temperature": {
+                "min": 0.8
+            }
+        },
+        "day": 1,
+        "night": 0,
+        "length": {
+            "min": 300,
+            "max": 600
+        },
+        "pause": {
+            "min": 200,
+            "max": 500
+        }
+    },
+    {
+        "name": "light-wind",
+        "files": [
+            "ambientsounds:wind.light-wind"
+        ],
+        "outside": true
+    }
 ]

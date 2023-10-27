@@ -1,8 +1,8 @@
 [
-	{
-		"name": "wind",
-		"files": [
-			"ambientsounds:wind.wind"
-		]
-	}
+    {
+        "name": "wind",
+        "files": [
+            "ambientsounds:wind.wind"
+        ]
+    }
 ]

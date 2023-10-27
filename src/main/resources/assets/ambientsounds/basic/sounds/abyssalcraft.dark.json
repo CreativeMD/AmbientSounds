@@ -1,8 +1,8 @@
 [
-	{
-		"name": "suspense",
-		"files": [
-			"ambientsounds:suspense.end"
-		]
-	}
+    {
+        "name": "suspense",
+        "files": [
+            "ambientsounds:suspense.end"
+        ]
+    }
 ]
