@@ -270,6 +270,15 @@
         ],
         "category": "ambient"
     },
+    "animals.cicadas-mushroom-fields": {
+        "sounds": [
+            {
+                "name": "ambientsounds:animals/cicadas/cicadas-mushroom-fields",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
     "animals.cricket": {
         "sounds": [
             {

@@ -1,0 +1,9 @@
+[
+    {
+        "name": "cicadas-mushroom-fields",
+        "files": [
+            "ambientsounds:animals.cicadas-mushroom-fields"
+        ],
+        "volume": 0.5
+    }
+]

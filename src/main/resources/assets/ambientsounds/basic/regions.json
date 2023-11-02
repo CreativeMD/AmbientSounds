@@ -548,5 +548,11 @@
         "temperature": {
             "min": 0
         }
+    },
+    {
+        "name": "mushroom_fields",
+        "biomes": [
+            "mushroom_fields"
+        ]
     }
 ]
