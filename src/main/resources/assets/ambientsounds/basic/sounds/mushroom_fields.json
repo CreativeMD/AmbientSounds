@@ -4,6 +4,25 @@
         "files": [
             "ambientsounds:animals.cicadas-mushroom-fields"
         ],
-        "volume": 0.5
+        "volume": 0.5,
+        "day": 1,
+        "night": "0.1"
+    },
+    {
+        "name": "special-mushroom-fields",
+        "files": [
+            "ambientsounds:animals.special-mushroom-fields"
+        ],
+        "volume": 0.5,
+        "day": 1,
+        "night": "0.2",
+        "length": {
+            "min": 40,
+            "max": 120
+        },
+        "pause": {
+            "min": 500,
+            "max": 2200
+        }
     }
 ]

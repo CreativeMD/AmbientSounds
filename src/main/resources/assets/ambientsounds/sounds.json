@@ -510,6 +510,15 @@
         ],
         "category": "ambient"
     },
+    "animals.special-mushroom-fields": {
+        "sounds": [
+            {
+                "name": "ambientsounds:animals/special/special-mushroom-fields",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
     "suspense.nether": {
         "sounds": [
             {
