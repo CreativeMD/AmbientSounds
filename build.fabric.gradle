@@ -86,6 +86,10 @@ jar {
     }
 }
 
+loom.mixin {
+    defaultRefmapName = "ambientsounds.mixins.refmap.json"
+}
+
 String getChangelogText() {
     String result = ''
     boolean first = true

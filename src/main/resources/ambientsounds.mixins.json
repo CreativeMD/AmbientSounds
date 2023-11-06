@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "package": "team.creative.ambientsounds.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "ambientsounds.mixins.refmap.json",
+    "server": [
+    ],
+    "mixins": [
+    ],
+    "client": [
+        "OggAudioStreamMixin",
+        "SoundBufferLibraryAccessor"
+    ],
+    "minVersion": "0.8"
+}

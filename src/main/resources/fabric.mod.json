@@ -17,6 +17,7 @@
         ]
     },
     "mixins": [
+        "ambientsounds.mixins.json"
     ],
     "depends": {
         "fabricloader": "${loader_version_range}",

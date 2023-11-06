@@ -1,19 +1,35 @@
 package team.creative.ambientsounds;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
+import com.mojang.blaze3d.audio.OggAudioStream;
+
+import net.minecraft.Util;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.client.sounds.AudioStream;
+import net.minecraft.client.sounds.LoopingAudioStream;
+import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import team.creative.ambientsounds.env.AmbientEnvironment;
+import team.creative.ambientsounds.mixin.SoundBufferLibraryAccessor;
+import team.creative.ambientsounds.sound.OggAudioStreamExtended;
+import team.creative.creativecore.client.sound.SpecialSoundInstance;
 import team.creative.creativecore.common.config.api.CreativeConfig;
+import team.creative.creativecore.common.util.mc.ResourceUtils;
 
 public class AmbientSound extends AmbientCondition {
     
@@ -262,7 +278,7 @@ public class AmbientSound extends AmbientCondition {
         return currentVolume * volumeSetting * env.dimension.volumeSetting * AmbientSounds.CONFIG.volume;
     }
     
-    public class SoundStream implements TickableSoundInstance {
+    public class SoundStream implements TickableSoundInstance, SpecialSoundInstance {
         
         private static final RandomSource rand = RandomSource.create();
         
@@ -407,6 +423,28 @@ public class AmbientSound extends AmbientCondition {
         @Override
         public boolean canStartSilent() {
             return true;
+        }
+        
+        @Override
+        public CompletableFuture<AudioStream> getAudioStream(SoundBufferLibrary loader, ResourceLocation id, boolean looping) {
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    Resource resource = ((SoundBufferLibraryAccessor) loader).getResourceManager().getResourceOrThrow(id);
+                    InputStream inputstream = resource.open();
+                    return looping ? new LoopingAudioStream(x -> {
+                        try {
+                            OggAudioStream stream = new OggAudioStream(x);
+                            if (AmbientSounds.CONFIG.playSoundWithOffset)
+                                ((OggAudioStreamExtended) stream).setPositionRandomly(ResourceUtils.length(PackType.CLIENT_RESOURCES, resource, id));
+                            return stream;
+                        } catch (Exception e2) {
+                            return new OggAudioStream(resource.open());
+                        }
+                    }, inputstream) : new OggAudioStream(inputstream);
+                } catch (IOException ioexception) {
+                    throw new CompletionException(ioexception);
+                }
+            }, Util.backgroundExecutor());
         }
     }
     

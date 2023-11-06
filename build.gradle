@@ -87,6 +87,12 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
+mixin {
+    add sourceSets.main, 'ambientsounds.mixin.refmap.json'
+     
+    config 'ambientsounds.mixins.json'
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
