@@ -252,10 +252,19 @@
         ],
         "category": "ambient"
     },
-    "animals.cicadas-desert": {
+    "animals.cicadas-desert1": {
         "sounds": [
             {
-                "name": "ambientsounds:animals/cicadas/cicadas-desert",
+                "name": "ambientsounds:animals/cicadas/cicadas-desert1",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
+    "animals.cicadas-desert2": {
+        "sounds": [
+            {
+                "name": "ambientsounds:animals/cicadas/cicadas-desert2",
                 "stream": true
             }
         ],

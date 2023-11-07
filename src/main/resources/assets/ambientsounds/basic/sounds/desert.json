@@ -2,7 +2,8 @@
     {
         "name": "cicadas-desert",
         "files": [
-            "ambientsounds:animals.cicadas-desert"
+            "ambientsounds:animals.cicadas-desert1",
+            "ambientsounds:animals.cicadas-desert2"
         ],
         "special-biomes": {
             "temperature": {
