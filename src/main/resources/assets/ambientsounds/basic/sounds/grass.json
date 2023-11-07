@@ -3,7 +3,8 @@
         "name": "cricket",
         "files": [
             "ambientsounds:animals.cricket",
-            "ambientsounds:animals.cricket2"
+            "ambientsounds:animals.cricket2",
+            "ambientsounds:animals.cricket3"
         ],
         "overall-raining": false,
         "length": {

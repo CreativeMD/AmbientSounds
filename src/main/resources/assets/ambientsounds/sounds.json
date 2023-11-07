@@ -306,6 +306,15 @@
         ],
         "category": "ambient"
     },
+    "animals.cricket3": {
+        "sounds": [
+            {
+                "name": "ambientsounds:animals/cricket/cricket3",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
     "animals.cricket-night": {
         "sounds": [
             {
