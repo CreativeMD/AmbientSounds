@@ -40,6 +40,8 @@ public class AmbientEntityCondition {
     @SerializedName("distance-z")
     public AmbientMinMaxFadeCondition distanceZ;
     
+    public AmbientMinMaxFadeCondition count;
+    
     @JsonAdapter(StringJson.class)
     public String[] name;
     @SerializedName("bad-name")
@@ -137,6 +139,8 @@ public class AmbientEntityCondition {
     public double value(AmbientEnvironment env) {
         double highest = 0;
         
+        int counted = 0;
+        
         for (Entity entity : env.entity.all()) {
             
             if (name != null && !checkEntityName(name, entity))
@@ -189,11 +193,16 @@ public class AmbientEntityCondition {
             if (y_rotation != null)
                 current *= y_rotation.volume(entity.getYRot());
             
-            if (current == 1)
+            counted++;
+            if (current == 1 && count == null)
                 return 1;
             
             highest = Math.max(current, highest);
         }
+        
+        if (count != null)
+            highest *= count.volume(counted);
+        
         return highest;
     }
     
