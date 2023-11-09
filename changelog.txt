@@ -1,2 +1,18 @@
+5.3.0
+Added sounds for mushroom fields
+Added new condition "entity" (which allows to define rules based on entities in the world)
+Added new cricket variant
+Added second cicadas-desert variant
+Added new feature to play sound files with a random offset (also has a config option)
+Added sound for when warden is around (will make all other sounds get quieter)
+Reworked volume calculation to differentiate between condition and setting volume
+Fixed forest sounds even in cold regions
+Fixed issue related to cold, highland and very_cold playing at the same time
+Fixed underwater sound not properly muting all other sounds
+Fixed mute value of sounds being dependent of user volume configuration
+Fixed missing mute property inheritance
+Fixed not detecting snow correctly
+Fixed playing sounds even though the game is paused
+
 5.2.24
 Replaced rain sound with two new ones which should solve the claim issue on youtube
