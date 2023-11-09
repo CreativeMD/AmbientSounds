@@ -29,7 +29,6 @@ public class AmbientSoundProperties {
     
     public Double mute;
     
-    //public AmbientMinMaxCondition offset;
     public AmbientMinMaxCondition pause;
     public AmbientMinMaxCondition length;
     
@@ -39,9 +38,7 @@ public class AmbientSoundProperties {
     public String category;
     
     public void init(AmbientEngine engine) {
-        if (mute == null)
-            mute = 0D;
-        else
+        if (mute != null)
             mute = Mth.clamp(mute, 0, 1);
     }
     
