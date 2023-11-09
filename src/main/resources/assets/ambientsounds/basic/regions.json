@@ -268,7 +268,8 @@
     {
         "name": "highland",
         "bad-regions": [
-            "rain"
+            "rain",
+            "very_cold"
         ],
         "biomes": [
             "extreme*hills",
@@ -468,6 +469,9 @@
     },
     {
         "name": "cold",
+        "bad-regions": [
+            "very_cold"
+        ],
         "variants": [
             {
                 "biomes": [
