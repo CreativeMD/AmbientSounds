@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.AmbientDimension;
 import team.creative.ambientsounds.AmbientEngine;
 import team.creative.ambientsounds.AmbientTickHandler;
+import team.creative.ambientsounds.AmbientVolume;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
-import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
 import team.creative.ambientsounds.mod.SereneSeasonsCompat;
 import team.creative.creativecore.common.util.type.list.Pair;
 
@@ -34,9 +34,9 @@ public class AmbientEnvironment {
     public TerrainEnvironment terrain = new TerrainEnvironment();
     public EntityEnvironment entity = new EntityEnvironment();
     
-    public double biomeVolume;
+    public AmbientVolume biomeVolume = AmbientVolume.SILENT;
     
-    public HashMap<String, Double> biomeTypeVolumes = new HashMap<>();
+    public HashMap<String, AmbientVolume> biomeTypeVolumes = new HashMap<>();
     
     public double absoluteHeight;
     public double relativeHeight;
@@ -116,13 +116,13 @@ public class AmbientEnvironment {
     public void collectPlayerDetails(List<Pair<String, Object>> details, Player player) {
         details.add(new Pair<>("underwater", underwater));
         details.add(new Pair<>("temp", temperature));
-        details.add(new Pair<>("height", "r:" + AmbientTickHandler.df.format(relativeHeight) + ",a:" + AmbientTickHandler.df.format(
-            terrain.averageHeight) + " (" + AmbientTickHandler.df.format(relativeMinHeight) + "," + AmbientTickHandler.df.format(relativeMaxHeight) + ")"));
+        details.add(new Pair<>("height", "r:" + AmbientTickHandler.DECIMAL_FORMAT.format(relativeHeight) + ",a:" + AmbientTickHandler.DECIMAL_FORMAT.format(
+            terrain.averageHeight) + " (" + AmbientTickHandler.DECIMAL_FORMAT.format(relativeMinHeight) + "," + AmbientTickHandler.DECIMAL_FORMAT.format(relativeMaxHeight) + ")"));
         
     }
     
     public void collectTerrainDetails(List<Pair<String, Object>> details) {
-        details.add(new Pair<>("features", terrain.airPocket.features.toString(AmbientTickHandler.df)));
+        details.add(new Pair<>("features", terrain.airPocket.features.toString(AmbientTickHandler.DECIMAL_FORMAT)));
         details.add(new Pair<>("light", terrain.airPocket.averageLight));
         details.add(new Pair<>("sky-light", terrain.airPocket.averageSkyLight));
         details.add(new Pair<>("air", terrain.airPocket.air));
@@ -130,7 +130,7 @@ public class AmbientEnvironment {
     
     public void collectBiomeDetails(List<Pair<String, Object>> details) {
         details.add(new Pair<>("b-volume", biomeVolume));
-        for (Pair<BiomeArea, BiomeStats> pair : biome)
+        for (Pair<BiomeArea, AmbientVolume> pair : biome)
             details.add(new Pair<>(pair.getKey().location.toString(), pair.getValue()));
     }
     

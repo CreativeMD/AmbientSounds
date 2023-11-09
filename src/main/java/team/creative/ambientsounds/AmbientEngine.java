@@ -163,9 +163,9 @@ public class AmbientEngine {
             
             engine.soundEngine = soundEngine;
             
-            AmbientSounds.LOGGER
-                    .info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} groups, {} regions, {} sounds, {} solids and {} biome types", engine.name, engine.version, engine.dimensions
-                            .size(), engine.features.size(), engine.groups.size(), engine.allRegions.size(), engine.sounds.size(), engine.solids.length, engine.biomeTypes.length);
+            AmbientSounds.LOGGER.info("Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} groups, {} regions, {} sounds, {} solids and {} biome types", engine.name,
+                engine.version, engine.dimensions.size(), engine.features.size(), engine.groups.size(), engine.allRegions.size(), engine.sounds.size(), engine.solids.length,
+                engine.biomeTypes.length);
             return engine;
         } finally {
             engineInput.close();
@@ -221,6 +221,8 @@ public class AmbientEngine {
     public transient int maxAirPocketCount;
     
     public transient AmbientBlockGroup considerSolid;
+    
+    public transient double squaredBiomeDistance;
     
     public AmbientRegion getRegion(String name) {
         return allRegions.get(name);
@@ -330,7 +332,6 @@ public class AmbientEngine {
     }
     
     public void init() {
-        
         airPocketDistanceFactor = new ArrayList<>();
         for (int i = 0; i < airPocketGroups.length; i++)
             for (int subDistance = 0; subDistance < airPocketGroups[i].distance; subDistance++)
@@ -347,6 +348,8 @@ public class AmbientEngine {
         considerSolid = new AmbientBlockGroup();
         if (solids != null)
             considerSolid.add(solids);
+        
+        squaredBiomeDistance = Math.pow(biomeScanCount * biomeScanDistance * 2, 2); // It is actually twice the distance, so the furthest away biome still has half of the volume
         
         onClientLoad();
     }

@@ -39,8 +39,8 @@ public class AmbientRegion extends AmbientCondition {
     
     public void load(AmbientEngine engine, Gson gson, ResourceManager manager) throws IOException {
         this.sounds = new LinkedHashMap<>();
-        for (Resource resource : manager
-                .getResourceStack(new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
+        for (Resource resource : manager.getResourceStack(
+            new ResourceLocation(AmbientSounds.MODID, engine.name + "/sounds/" + (dimension != null ? dimension.name + "." : "") + name + ".json"))) {
             InputStream input = resource.open();
             try {
                 try {
@@ -91,7 +91,7 @@ public class AmbientRegion extends AmbientCondition {
             return null;
         AmbientSelection selection = super.value(env);
         if (selection != null)
-            selection.volume *= volumeSetting;
+            selection.mulSetting(volumeSetting);
         return selection;
     }
     

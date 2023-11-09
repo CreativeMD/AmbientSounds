@@ -80,11 +80,11 @@ public class AmbientTickHandler {
         CreativeCore.CONFIG_HANDLER.load(AmbientSounds.MODID, Side.CLIENT);
     }
     
-    public static final DecimalFormat df = new DecimalFormat("0.##");
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.##");
     
     private String format(Object value) {
         if (value instanceof Double || value instanceof Float)
-            return df.format(value);
+            return DECIMAL_FORMAT.format(value);
         return value.toString();
     }
     
@@ -155,6 +155,7 @@ public class AmbientTickHandler {
                     if (sound.stream1 != null) {
                         details.add(new Pair<>("n", sound.stream1.location));
                         details.add(new Pair<>("v", sound.stream1.volume));
+                        details.add(new Pair<>("cv", sound.stream1.conditionVolume()));
                         details.add(new Pair<>("i", sound.stream1.index));
                         details.add(new Pair<>("p", sound.stream1.pitch));
                         details.add(new Pair<>("t", sound.stream1.ticksPlayed));
@@ -168,6 +169,7 @@ public class AmbientTickHandler {
                     if (sound.stream2 != null) {
                         details.add(new Pair<>("n", sound.stream2.location));
                         details.add(new Pair<>("v", sound.stream2.volume));
+                        details.add(new Pair<>("cv", sound.stream2.conditionVolume()));
                         details.add(new Pair<>("i", sound.stream2.index));
                         details.add(new Pair<>("p", sound.stream2.pitch));
                         details.add(new Pair<>("t", sound.stream2.ticksPlayed));

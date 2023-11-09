@@ -120,19 +120,18 @@ public class AmbientDimension {
         if (biomeSelector != null) {
             AmbientSelection selection = biomeSelector.value(env);
             if (selection != null)
-                env.biomeVolume = selection.getEntireVolume();
+                env.biomeVolume = selection;
             else
-                env.biomeVolume = 0;
+                env.biomeVolume = AmbientVolume.SILENT;
         }
         
         env.biomeTypeVolumes.clear();
         for (Entry<String, AmbientCondition> entry : biomeTypeSelectors.entrySet()) {
             AmbientSelection selection = entry.getValue().value(env);
             if (selection != null)
-                env.biomeTypeVolumes.put(entry.getKey(), selection.volume);
+                env.biomeTypeVolumes.put(entry.getKey(), selection);
             else
-                env.biomeTypeVolumes.put(entry.getKey(), 0D);
-            
+                env.biomeTypeVolumes.put(entry.getKey(), AmbientVolume.SILENT);
         }
     }
     

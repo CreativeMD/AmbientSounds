@@ -12,23 +12,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import team.creative.ambientsounds.AmbientEngine;
-import team.creative.ambientsounds.AmbientTickHandler;
+import team.creative.ambientsounds.AmbientVolume;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
-import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
 import team.creative.creativecore.client.CreativeCoreClient;
 import team.creative.creativecore.common.util.type.list.Pair;
 import team.creative.creativecore.common.util.type.list.PairList;
 
-public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
+public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>> {
     
-    private final PairList<BiomeArea, BiomeStats> biomes = new PairList<>();
+    private final PairList<BiomeArea, AmbientVolume> biomes = new PairList<>();
     private double highestRainVolume;
     
     public BiomeEnvironment() {}
     
-    public BiomeEnvironment(AmbientEngine engine, Player player, Level level, double volume) {
+    public BiomeEnvironment(AmbientEngine engine, Player player, Level level, AmbientVolume volume) {
         highestRainVolume = 0;
-        if (volume > 0.0) {
+        if (volume.volume() > 0.0) {
             BlockPos center = BlockPos.containing(player.getEyePosition(CreativeCoreClient.getFrameTime()));
             MutableBlockPos pos = new MutableBlockPos();
             for (int x = -engine.biomeScanCount; x <= engine.biomeScanCount; x++) {
@@ -36,15 +35,17 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
                     pos.set(center.getX() + x * engine.biomeScanDistance, center.getY(), center.getZ() + z * engine.biomeScanDistance);
                     Holder<Biome> holder = level.getBiome(pos);
                     
-                    float biomeVolume = (float) ((1 - Math.sqrt(center.distSqr(pos)) / (engine.biomeScanCount * engine.biomeScanDistance * 2)) * volume);
+                    float biomeConditionVolume = (float) ((1 - center.distSqr(pos) / engine.squaredBiomeDistance) * volume.conditionVolume());
+                    
                     if (level.isRaining() && holder.value().getPrecipitationAt(pos) == Precipitation.RAIN)
-                        highestRainVolume = Math.max(highestRainVolume, biomeVolume);
+                        highestRainVolume = Math.max(highestRainVolume, biomeConditionVolume * volume.settingVolume());
+                    
                     BiomeArea area = new BiomeArea(level, holder, pos);
-                    Pair<BiomeArea, BiomeStats> before = biomes.getPair(area);
+                    Pair<BiomeArea, AmbientVolume> before = biomes.getPair(area);
                     if (before == null)
-                        biomes.add(area, new BiomeStats(biomeVolume));
-                    else
-                        before.value.volume = Math.max(before.value.volume, biomeVolume);
+                        biomes.add(area, new AmbientVolume(biomeConditionVolume, volume.settingVolume()));
+                    else if (before.value.conditionVolume() < biomeConditionVolume)
+                        before.value.setConditionVolumeDirect(biomeConditionVolume);
                 }
             }
             
@@ -53,7 +54,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
     }
     
     @Override
-    public Iterator<Pair<BiomeArea, BiomeStats>> iterator() {
+    public Iterator<Pair<BiomeArea, AmbientVolume>> iterator() {
         return biomes.iterator();
     }
     
@@ -92,29 +93,6 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, BiomeStats>> {
             return biome.hashCode();
         }
         
-    }
-    
-    public static class BiomeStats implements Comparable<BiomeStats> {
-        
-        private double volume;
-        
-        public BiomeStats(double volume) {
-            this.volume = volume;
-        }
-        
-        public double volume(AmbientEnvironment env, String type) {
-            return volume * env.biomeTypeVolumes.getOrDefault(type, 1D);
-        }
-        
-        @Override
-        public int compareTo(BiomeStats o) {
-            return Double.compare(volume, o.volume);
-        }
-        
-        @Override
-        public String toString() {
-            return AmbientTickHandler.df.format(volume);
-        }
     }
     
 }

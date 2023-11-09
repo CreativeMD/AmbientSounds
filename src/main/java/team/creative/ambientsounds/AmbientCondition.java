@@ -9,7 +9,6 @@ import net.minecraft.util.Mth;
 import team.creative.ambientsounds.entity.AmbientEntityCondition;
 import team.creative.ambientsounds.env.AmbientEnvironment;
 import team.creative.ambientsounds.env.BiomeEnvironment.BiomeArea;
-import team.creative.ambientsounds.env.BiomeEnvironment.BiomeStats;
 import team.creative.creativecore.common.util.type.list.Pair;
 
 public class AmbientCondition extends AmbientSoundProperties {
@@ -139,9 +138,12 @@ public class AmbientCondition extends AmbientSoundProperties {
         if (storming != null && env.thundering != storming)
             return null;
         
+        if (badFeatures != null && env.terrain.airPocket.volume(badFeatures) > 0)
+            return null;
+        
         AmbientSelection selection = new AmbientSelection(this);
         
-        selection.volume *= env.night ? nightVolume : dayVolume;
+        selection.mulCondition(env.night ? nightVolume : dayVolume);
         
         if (badRegionList != null)
             for (AmbientRegion region : badRegionList)
@@ -149,27 +151,27 @@ public class AmbientCondition extends AmbientSoundProperties {
                     return null;
                 
         if (regionList != null) {
-            Double highest = null;
+            AmbientVolume highest = null;
             for (AmbientRegion region : regionList) {
                 AmbientSelection subSelection = region.value(env);
                 
-                if (subSelection != null)
-                    if (highest == null)
-                        highest = subSelection.volume;
-                    else
-                        highest = Math.max(subSelection.volume, highest);
+                if (subSelection != null && (highest == null || subSelection.volume() > highest.volume()))
+                    highest = subSelection;
+                
+                if (highest != null && highest.volume() == 1)
+                    break;
             }
             
             if (highest == null)
                 return null;
             
-            selection.volume *= highest;
+            selection.mulVolume(highest);
         }
         
         if (biomes != null || badBiomes != null) {
-            double highest = -1;
+            AmbientVolume highest = null;
             
-            for (Pair<BiomeArea, BiomeStats> pair : env.biome) {
+            for (Pair<BiomeArea, AmbientVolume> pair : env.biome) {
                 
                 if (biomes != null && !pair.key.checkBiome(biomes))
                     continue;
@@ -177,26 +179,30 @@ public class AmbientCondition extends AmbientSoundProperties {
                 if (badBiomes != null && pair.key.checkBiome(badBiomes))
                     return null;
                 
-                double value = pair.value.volume(env, biomeType);
-                if (highest == -1 || highest < value)
-                    highest = value;
+                AmbientVolume volume = pair.value.copy();
+                volume.mulVolume(env.biomeTypeVolumes.getOrDefault(biomeType, AmbientVolume.MAX));
+                if (highest == null || highest.volume() < volume.volume())
+                    highest = volume;
+                
+                if (highest != null && highest.volume() == 1)
+                    break;
             }
             
-            if (highest == -1 && biomes != null)
+            if (highest == null && biomes != null)
                 return null;
-            else if (highest != -1)
-                selection.volume *= highest;
+            else if (highest != null)
+                selection.mulVolume(highest);
         }
         
         if (overallRaining != null && overallRaining)
-            selection.volume *= env.rainSurfaceVolume;
+            selection.mulCondition(env.rainSurfaceVolume);
         
         if (underwater != null) {
             double volume = underwater.volume(env.underwater);
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (relativeHeight != null) {
@@ -204,7 +210,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (minHeightRelative != null) {
@@ -212,7 +218,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (maxHeightRelative != null) {
@@ -220,7 +226,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (absoluteHeight != null) {
@@ -228,7 +234,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (light != null) {
@@ -236,7 +242,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (skyLight != null) {
@@ -244,7 +250,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (air != null) {
@@ -252,18 +258,15 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
-        
-        if (badFeatures != null && env.terrain.airPocket.volume(badFeatures) > 0)
-            return null;
         
         if (features != null) {
             double volume = env.terrain.airPocket.volume(features);
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (temperature != null) {
@@ -271,14 +274,14 @@ public class AmbientCondition extends AmbientSoundProperties {
             if (volume <= 0)
                 return null;
             
-            selection.volume *= volume;
+            selection.mulCondition(volume);
         }
         
         if (entity != null) {
-            double entityVolume = entity.value(env);
-            if (entityVolume <= 0)
+            double volume = entity.value(env);
+            if (volume <= 0)
                 return null;
-            selection.volume *= entityVolume;
+            selection.mulCondition(volume);
         }
         
         if (variants != null) {
@@ -286,7 +289,7 @@ public class AmbientCondition extends AmbientSoundProperties {
             
             for (AmbientCondition condition : variants) {
                 AmbientSelection subSelection = condition.value(env);
-                if (subSelection != null && (bestCondition == null || bestCondition.volume < subSelection.volume))
+                if (subSelection != null && (bestCondition == null || bestCondition.volume() < subSelection.volume()))
                     bestCondition = subSelection;
             }
             

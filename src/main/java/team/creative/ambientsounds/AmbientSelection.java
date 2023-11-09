@@ -2,26 +2,35 @@ package team.creative.ambientsounds;
 
 import java.lang.reflect.Field;
 
-public class AmbientSelection {
+public class AmbientSelection extends AmbientVolume {
     
-    public double volume;
     public final AmbientCondition condition;
-    
     public AmbientSelection subSelection = null;
     
     public AmbientSelection(AmbientCondition condition) {
-        this.volume = condition.volume;
+        super(1, condition.volume);
         this.condition = condition;
     }
     
-    public double getEntireVolume() {
-        return subSelection != null ? subSelection.getEntireVolume() * volume : volume;
+    @Override
+    public double conditionVolume() {
+        return subSelection != null ? subSelection.conditionVolume() * super.conditionVolume() : super.conditionVolume();
     }
     
-    public AmbientSelection getLast() {
+    @Override
+    public double settingVolume() {
+        return subSelection != null ? subSelection.settingVolume() * super.settingVolume() : super.settingVolume();
+    }
+    
+    @Override
+    public double volume() {
+        return subSelection != null ? subSelection.volume() * super.volume() : super.volume();
+    }
+    
+    public AmbientSelection last() {
         if (subSelection == null)
             return this;
-        return subSelection.getLast();
+        return subSelection.last();
     }
     
     public AmbientSoundProperties getProperties() {

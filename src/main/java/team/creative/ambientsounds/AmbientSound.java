@@ -47,7 +47,8 @@ public class AmbientSound extends AmbientCondition {
     
     protected transient boolean active;
     
-    protected transient float aimedVolume;
+    protected transient float cachedAimedVolume;
+    protected transient AmbientVolume aimedVolume;
     protected transient float currentVolume;
     protected transient float aimedPitch;
     protected transient int transition;
@@ -99,10 +100,10 @@ public class AmbientSound extends AmbientCondition {
     
     public boolean fastTick(AmbientEnvironment env) {
         
-        if (currentVolume < aimedVolume)
-            currentVolume += Math.min(currentPropertries.getFadeInVolume(engine), aimedVolume - currentVolume);
-        else if (currentVolume > aimedVolume)
-            currentVolume -= Math.min(currentPropertries.getFadeOutVolume(engine), currentVolume - aimedVolume);
+        if (currentVolume < cachedAimedVolume)
+            currentVolume += Math.min(currentPropertries.getFadeInVolume(engine), cachedAimedVolume - currentVolume);
+        else if (currentVolume > cachedAimedVolume)
+            currentVolume -= Math.min(currentPropertries.getFadeOutVolume(engine), currentVolume - cachedAimedVolume);
         
         if (isPlaying()) {
             
@@ -135,7 +136,7 @@ public class AmbientSound extends AmbientCondition {
                             transitionTime = currentPropertries.transition != null ? currentPropertries.transition : 60;
                         }
                     } else {
-                        int fadeOutTime = (int) Math.ceil(aimedVolume / currentPropertries.getFadeOutVolume(engine));
+                        int fadeOutTime = (int) Math.ceil(cachedAimedVolume / currentPropertries.getFadeOutVolume(engine));
                         
                         if (stream1.remaining() <= 0) { // Exceeded length
                             engine.soundEngine.stop(stream1);
@@ -180,7 +181,7 @@ public class AmbientSound extends AmbientCondition {
                 pauseTimer--;
         }
         
-        return aimedVolume > 0 || currentVolume > 0;
+        return cachedAimedVolume > 0 || currentVolume > 0;
     }
     
     @Override
@@ -195,19 +196,24 @@ public class AmbientSound extends AmbientCondition {
             AmbientSelection soundSelection = value(env);
             
             if (soundSelection != null) {
-                AmbientSelection last = selection.getLast();
+                AmbientSelection last = selection.last();
                 last.subSelection = soundSelection;
-                aimedVolume = (float) selection.getEntireVolume();
+                cachedAimedVolume = (float) selection.volume();
+                aimedVolume = selection;
                 currentPropertries = selection.getProperties();
                 last.subSelection = null;
                 
                 aimedPitch = Mth.clamp(currentPropertries.getPitch(env), 0.5F, 2.0F);
-            } else
-                aimedVolume = 0;
-        } else
-            aimedVolume = 0;
+            } else {
+                aimedVolume = AmbientVolume.SILENT;
+                cachedAimedVolume = 0;
+            }
+        } else {
+            aimedVolume = AmbientVolume.SILENT;
+            cachedAimedVolume = 0;
+        }
         
-        return aimedVolume > 0 || currentVolume > 0;
+        return cachedAimedVolume > 0 || currentVolume > 0;
     }
     
     protected SoundStream play(int index, AmbientEnvironment env) {
@@ -313,8 +319,12 @@ public class AmbientSound extends AmbientCondition {
             return duration - ticksPlayed;
         }
         
+        public double conditionVolume() {
+            return Mth.clamp(currentVolume / cachedAimedVolume, 0, 1) * aimedVolume.conditionVolume();
+        }
+        
         public double mute() {
-            return AmbientSound.this.currentPropertries.mute * volume;
+            return AmbientSound.this.currentPropertries.mute != null ? AmbientSound.this.currentPropertries.mute * conditionVolume() : 0;
         }
         
         public void onStart() {
@@ -341,7 +351,8 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public String toString() {
-            return "l:" + location + ",v:" + (Math.round(volume * 100D) / 100D) + ",i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
+            return "l:" + location + ",v:" + AmbientTickHandler.DECIMAL_FORMAT.format(volume) + "(" + AmbientTickHandler.DECIMAL_FORMAT.format(
+                conditionVolume()) + "),i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
         }
         
         @Override
