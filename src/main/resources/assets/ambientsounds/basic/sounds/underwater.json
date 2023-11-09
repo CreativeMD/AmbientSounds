@@ -1,6 +1,7 @@
 [
     {
         "name": "underwater",
+        "mute": 0.6,
         "files": [
             "ambientsounds:water.underwater"
         ]
@@ -8,7 +9,6 @@
     {
         "name": "underwater-deep",
         "fade-volume": 0.05,
-        "mute": 1,
         "underwater": {
             "min": 7
         },
