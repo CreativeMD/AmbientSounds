@@ -537,6 +537,15 @@
         ],
         "category": "ambient"
     },
+    "animals.warden": {
+        "sounds": [
+            {
+                "name": "ambientsounds:animals/special/warden",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
     "suspense.nether": {
         "sounds": [
             {

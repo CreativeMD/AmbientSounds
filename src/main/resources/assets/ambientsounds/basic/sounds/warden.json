@@ -1,0 +1,10 @@
+[
+    {
+        "name": "warden",
+        "mute": 0.8,
+        "fade-volume": 0.01,
+        "files": [
+            "ambientsounds:animals.warden"
+        ]
+    }
+]
