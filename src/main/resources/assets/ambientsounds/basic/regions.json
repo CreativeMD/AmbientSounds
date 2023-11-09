@@ -173,15 +173,15 @@
             "jungle",
             "rain"
         ],
+        "temperature": {
+            "min": 0.2,
+            "max": 1.5
+        },
         "variants": [
             {
                 "regions": [
                     "surface"
-                ],
-                "temperature": {
-                    "min": 0.2,
-                    "max": 1.5
-                }
+                ]
             },
             {
                 "biomes": [
