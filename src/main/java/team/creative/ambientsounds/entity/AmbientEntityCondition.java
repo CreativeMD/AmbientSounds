@@ -85,16 +85,6 @@ public class AmbientEntityCondition {
     public AmbientMinMaxFadeCondition y_rotation;
     
     public void init(AmbientEngine engine) {
-        
-        if (distance != null) { // Square Distance to save performance
-            if (distance.min != null)
-                distance.min *= distance.min;
-            if (distance.max != null)
-                distance.max *= distance.max;
-            if (distance.fade != null)
-                distance.fade *= distance.fade;
-        }
-        
         if (type != null) {
             parsedType = new ArrayList<>();
             for (String entityType : type) {
@@ -176,7 +166,7 @@ public class AmbientEntityCondition {
             double current = 1;
             
             if (distance != null)
-                current *= distance.volume(env.entity.squaredDistance(entity));
+                current *= distance.volume(Math.sqrt(env.entity.squaredDistance(entity)));
             
             if (distanceX != null)
                 current *= distanceX.volume(entity.position().x - env.entity.x());
