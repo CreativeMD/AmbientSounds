@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Random;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -16,13 +17,12 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.mojang.blaze3d.audio.OggAudioStream;
 
-import net.minecraft.util.RandomSource;
 import team.creative.ambientsounds.sound.OggAudioStreamExtended;
 
 @Mixin(OggAudioStream.class)
 public abstract class OggAudioStreamMixin implements OggAudioStreamExtended {
     
-    private static final RandomSource RANDOM = RandomSource.create();
+    private static final Random RANDOM = new Random();
     
     @Shadow
     private long handle;
