@@ -88,7 +88,7 @@ jar {
 jar.finalizedBy('reobfJar')
 
 mixin {
-    add sourceSets.main, 'ambientsounds.mixin.refmap.json'
+    add sourceSets.main, 'ambientsounds.mixins.refmap.json'
      
     config 'ambientsounds.mixins.json'
 }
