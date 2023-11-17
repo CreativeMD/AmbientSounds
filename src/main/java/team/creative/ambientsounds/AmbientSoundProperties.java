@@ -28,6 +28,8 @@ public class AmbientSoundProperties {
     public Double fadeOutPitch;
     
     public Double mute;
+    @SerializedName("mute-resistant")
+    public boolean muteResistant = false;
     
     public AmbientMinMaxCondition pause;
     public AmbientMinMaxCondition length;

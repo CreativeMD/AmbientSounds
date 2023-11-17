@@ -327,6 +327,10 @@ public class AmbientSound extends AmbientCondition {
             return AmbientSound.this.currentPropertries.mute != null ? AmbientSound.this.currentPropertries.mute * conditionVolume() : 0;
         }
         
+        public boolean muteResistant() {
+            return AmbientSound.this.currentPropertries.muteResistant;
+        }
+        
         public void onStart() {
             this.finished = false;
             playedOnce = false;
