@@ -15,6 +15,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.client.sounds.AudioStream;
 import net.minecraft.client.sounds.LoopingAudioStream;
+import net.minecraft.client.sounds.LoopingAudioStream.AudioStreamProvider;
 import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.client.sounds.WeighedSoundEvents;
@@ -446,14 +447,21 @@ public class AmbientSound extends AmbientCondition {
                 try {
                     Resource resource = ((SoundBufferLibraryAccessor) loader).getResourceManager().getResourceOrThrow(id);
                     InputStream inputstream = resource.open();
-                    return looping ? new LoopingAudioStream(x -> {
-                        try {
-                            OggAudioStream stream = new OggAudioStream(x);
-                            if (AmbientSounds.CONFIG.playSoundWithOffset)
-                                ((OggAudioStreamExtended) stream).setPositionRandomly(ResourceUtils.length(PackType.CLIENT_RESOURCES, resource, id));
-                            return stream;
-                        } catch (Exception e2) {
-                            return new OggAudioStream(resource.open());
+                    return looping ? new LoopingAudioStream(new AudioStreamProvider() {
+                        
+                        boolean first = true;
+                        
+                        @Override
+                        public AudioStream create(InputStream inputstream) throws IOException {
+                            try {
+                                OggAudioStream stream = new OggAudioStream(inputstream);
+                                if (first && AmbientSounds.CONFIG.playSoundWithOffset)
+                                    ((OggAudioStreamExtended) stream).setPositionRandomly(ResourceUtils.length(PackType.CLIENT_RESOURCES, resource, id));
+                                first = false;
+                                return stream;
+                            } catch (Exception e2) {
+                                return new OggAudioStream(resource.open());
+                            }
                         }
                     }, inputstream) : new OggAudioStream(inputstream);
                 } catch (IOException ioexception) {
