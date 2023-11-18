@@ -57,7 +57,7 @@ public class AmbientSoundEngine {
                     } else if (!sound.hasPlayedOnce() && playing)
                         sound.setPlayedOnce();
                     
-                    if (mute == null || (sound.mute() >= mute && sound.muteResistant()))
+                    if (mute == null || sound.mute() >= mute || sound.muteResistant())
                         sound.generatedVoume = (float) sound.volume;
                     else
                         sound.generatedVoume = (float) (sound.volume * (1 - mute));
