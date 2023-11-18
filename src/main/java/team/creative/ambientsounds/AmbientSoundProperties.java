@@ -31,6 +31,9 @@ public class AmbientSoundProperties {
     @SerializedName("mute-resistant")
     public boolean muteResistant = false;
     
+    @SerializedName("random-offset")
+    public boolean randomOffset = true;
+    
     public AmbientMinMaxCondition pause;
     public AmbientMinMaxCondition length;
     

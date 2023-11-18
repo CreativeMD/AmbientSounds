@@ -455,7 +455,7 @@ public class AmbientSound extends AmbientCondition {
                         public AudioStream create(InputStream inputstream) throws IOException {
                             try {
                                 OggAudioStream stream = new OggAudioStream(inputstream);
-                                if (first && AmbientSounds.CONFIG.playSoundWithOffset)
+                                if (first && currentPropertries.randomOffset && AmbientSounds.CONFIG.playSoundWithOffset)
                                     ((OggAudioStreamExtended) stream).setPositionRandomly(ResourceUtils.length(PackType.CLIENT_RESOURCES, resource, id));
                                 first = false;
                                 return stream;
