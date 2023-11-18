@@ -1,3 +1,6 @@
+5.3.3
+Fixed mute-resistant not being considered correctly
+
 5.3.2
 Fixed looping sound with random offset
 Added property mute-resistant (boolean, default: false)
