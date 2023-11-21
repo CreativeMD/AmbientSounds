@@ -179,13 +179,15 @@ public class AmbientCondition extends AmbientSoundProperties {
                 if (badBiomes != null && pair.key.checkBiome(badBiomes))
                     return null;
                 
-                AmbientVolume volume = pair.value.copy();
-                volume.mulVolume(env.biomeTypeVolumes.getOrDefault(biomeType, AmbientVolume.MAX));
-                if (highest == null || highest.volume() < volume.volume())
-                    highest = volume;
-                
-                if (highest != null && highest.volume() == 1)
-                    break;
+                if (biomes != null) {
+                    AmbientVolume volume = pair.value.copy();
+                    volume.mulVolume(env.biomeTypeVolumes.getOrDefault(biomeType, AmbientVolume.MAX));
+                    if (highest == null || highest.volume() < volume.volume())
+                        highest = volume;
+                    
+                    if (highest != null && highest.volume() == 1)
+                        break;
+                }
             }
             
             if (highest == null && biomes != null)
