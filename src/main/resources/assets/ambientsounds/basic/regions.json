@@ -74,6 +74,9 @@
     },
     {
         "name": "cave",
+        "bad-biomes": [
+            "alexscaves"
+        ],
         "relative-height": {
             "max": -10,
             "fade": 5
