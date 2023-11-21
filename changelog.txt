@@ -1,3 +1,7 @@
+5.3.5
+Stopped playing ambience in alexcaves
+Fixed bad-biomes property applies biome volume
+
 5.3.4
 Added property random-offset (boolean, default: true)
 
