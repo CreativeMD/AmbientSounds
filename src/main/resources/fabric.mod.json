@@ -1,15 +1,15 @@
 {
     "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${mod_version}",
-    "name": "${mod_name}",
-    "description": "${mod_description}",
+    "id": "ambientsounds",
+    "version": "5.3.5",
+    "name": "AmbientSounds",
+    "description": "Expands minecraft's ambient sounds.",
     "authors": [
         "CreativeMD",
         "AriaFreeze"
     ],
-    "license": "${mod_license}",
-    "icon": "${mod_id}.png",
+    "license": "LGPL-3.0-only",
+    "icon": "ambientsounds.png",
     "environment": "client",
     "entrypoints": {
         "client": [
@@ -20,9 +20,9 @@
         "ambientsounds.mixins.json"
     ],
     "depends": {
-        "fabricloader": "${loader_version_range}",
+        "fabricloader": ">=0.14.0",
         "fabric-api": "*",
-        "minecraft": "${minecraft_version_range}",
-        "creativecore": ">=${creativecore_version}"
+        "minecraft": ">=1.20",
+        "creativecore": ">=2.11.9"
     }
 }

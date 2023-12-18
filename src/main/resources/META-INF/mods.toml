@@ -1,35 +1,35 @@
 modLoader="javafml"
-loaderVersion="${loader_version_range}"
-issueTrackerURL="https://github.com/${github_project}/issues"
-license="${mod_license}"
+loaderVersion="[46,)"
+issueTrackerURL="https://github.com/CreativeMD/AmbientSounds/issues"
+license="LGPL-3.0-only"
 
 [[mods]]
-	modId="${mod_id}"
-	logoFile="${mod_id}.png"
-	version="${mod_version}"
-	displayName="${mod_name}"
-	side="CLIENT"
-	displayURL="${mod_display_url}"
-	authors="${mod_authors}"
-	description='''${mod_description}'''
-	
-[[dependencies.${mod_id}]]
+    modId="ambientsounds"
+    logoFile="ambientsounds.png"
+    version="5.3.5"
+    displayName="AmbientSounds"
+    displayURL="https://modrinth.com/mod/ambientsounds"
+    authors="CreativeMD"
+    description='''Expands minecraft's ambient sounds.'''
+
+[[dependencies.ambientsounds]]
     modId="forge"
     mandatory=true
-    versionRange="${forge_version_range}"
+    versionRange="[46,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.${mod_id}]]
+[[dependencies.ambientsounds]]
     modId="minecraft"
     mandatory=true
-    versionRange="${minecraft_version_range}"
+    versionRange="[1.20,1.21)"
     ordering="NONE"
     side="BOTH"
-	
-[[dependencies.${mod_id}]]
-	modId="creativecore"
-	mandatory=true
-	ordering="NONE"
-	side="BOTH"
-	versionRange="${creativecore_version}"
+
+[[dependencies.ambientsounds]]
+   modId="creativecore"
+   mandatory=true
+   ordering="NONE"
+   side="BOTH"
+   versionRange="2.11.9"
+
