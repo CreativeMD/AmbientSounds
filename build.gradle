@@ -1,11 +1,10 @@
 plugins {
     id 'eclipse'
     id 'idea'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'com.diffplug.eclipse.apt'
-    id 'org.spongepowered.mixin'
     id 'com.modrinth.minotaur' version '2.+'
     id 'com.matthewprenger.cursegradle' version '1.4+'
+    id 'net.neoforged.gradle.userdev' version '7.0.+'
 }
 
 group= "team.creative" + project.mod_id
@@ -14,43 +13,29 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 project.evaluationDependsOn(":CreativeCore")
 
-minecraft {
-    mappings channel: 'official', version: "${project.property 'minecraft_version'}"
+runs {  
+    configureEach {
+        workingDirectory project.file('run')
+        systemProperty 'forge.logging.console.level', 'debug'
+        
+        modSource project.sourceSets.main
+        modSource project(":CreativeCore").sourceSets.main
+    }
     
-    runs {
-        client {
-			taskName "ambientsounds"
-            workingDirectory project.file('run')
-            
-			property 'forge.logging.console.level', 'debug'
-			arg '--mixin.config'
-            arg 'creativecore.mixins.json'
-            arg '--mixin.config'
-            arg 'creativecore.forge.mixins.json'
-			
-            mods {
-				creativecore {
-                    source project(':CreativeCore').sourceSets.main
-                }
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
+    client {
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.property 'minecraft_version'}-${project.property 'forge_version'}"
-	
-	implementation project(':CreativeCore')
-	
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation "net.neoforged:neoforge:${forge_version}"
+    
+    implementation project(':CreativeCore')
 }
 
 modDependencies = [
-    [ modId: "creativecore", mandatory: true, ordering: "NONE", side: "BOTH", versionRange: creativecore_version ]
+    [ modId: "creativecore", mandatory: true, ordering: "NONE", side: "BOTH", versionRange: "[" + creativecore_version + ",)" ]
 ]
+modMixins = [ "ambientsounds.mixins.json" ]
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -66,14 +51,6 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-}
-
-jar.finalizedBy('reobfJar')
-
-mixin {
-    add sourceSets.main, 'ambientsounds.mixins.refmap.json'
-     
-    config 'ambientsounds.mixins.json'
 }
 
 tasks.withType(JavaCompile).configureEach {

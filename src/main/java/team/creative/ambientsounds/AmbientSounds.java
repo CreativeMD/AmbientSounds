@@ -12,7 +12,7 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.Mod;
 import team.creative.creativecore.CreativeCore;
 import team.creative.creativecore.ICreativeLoader;
 import team.creative.creativecore.client.ClientLoader;

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[46,)"
+loaderVersion="[1,)"
 issueTrackerURL="https://github.com/CreativeMD/AmbientSounds/issues"
 license="LGPL-3.0-only"
 
@@ -13,16 +13,18 @@ license="LGPL-3.0-only"
     description='''Expands minecraft's ambient sounds.'''
 
 [[dependencies.ambientsounds]]
-    modId="forge"
+    modId="neoforge"
     mandatory=true
-    versionRange="[46,)"
+    type="required"
+    versionRange="[20.4,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.ambientsounds]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20,1.21)"
+    type="required"
+    versionRange="[1.20.4,1.21)"
     ordering="NONE"
     side="BOTH"
 
@@ -31,5 +33,8 @@ license="LGPL-3.0-only"
    mandatory=true
    ordering="NONE"
    side="BOTH"
-   versionRange="2.11.9"
+   versionRange="[2.11.9,)"
+
+[[mixins]]
+   config="ambientsounds.mixins.json"
 
