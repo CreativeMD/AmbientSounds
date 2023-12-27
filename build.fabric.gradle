@@ -10,9 +10,6 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
-    maven {
-        url = "https://maven.minecraftforge.net/"
-    }
 }
 
 dependencies {
@@ -29,107 +26,6 @@ modDependencies = [
     creativecore: ">=" + creativecore_version
 ]
 
-def targetJavaVersion = 17
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release = targetJavaVersion
-    }
-
-    options.compilerArgs += ["-Xmaxerrs", "1000"];
-}
-
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-    archivesBaseName = project.mod_name
-}
-
-remapJar {
-	archiveFileName = project.mod_name + "_FABRIC_v" + project.mod_version + "_mc" + project.minecraft_version + ".jar"
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}" }
-    }
-}
-
 loom.mixin {
     defaultRefmapName = "ambientsounds.mixins.refmap.json"
-}
-
-String getChangelogText() {
-    String result = ''
-    boolean first = true
-    file('changelog.txt').readLines().find {
-        if (first) {
-            if (it.equals(project.mod_version)) {
-                first = false
-            }
-            return false
-        } else if (!it?.trim()) {
-            return true
-        } else {
-            result += "* " + it + "\n"
-            return false
-        }
-    }
-    
-    return result
-}
-
-task upload(type: GradleBuild) {
-    description 'Uploads new version to modrinth and curseforge.'
-    group = 'publishing'
-    tasks = ['modrinth', 'curseforge']
-}
-
-gradle.taskGraph.whenReady {
-    if (it.hasTask(tasks.modrinth) || it.hasTask(tasks.curseforge)) {
-        if (!getChangelogText()?.trim()) {
-            throw new GradleException('No changelog provided')
-        }
-    }
-}
-
-tasks.modrinth.enabled = System.getenv("MODRINTH_TOKEN") != null
-tasks.modrinth.group = 'publishing'
-
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = project.mod_id
-    versionNumber = project.mod_version
-    versionType = project.release_type
-    uploadFile = remapJar
-    gameVersions = [ project.minecraft_version ]
-    loaders = [ "fabric" ]
-    changelog = getChangelogText()
-    dependencies {
-        required.project "fabric-api"
-        required.project "creativecore"
-    }
-}
-
-tasks.curseforge.enabled = System.getenv("CURSEFORGE_TOKEN") != null
-tasks.curseforge.group = 'publishing'
-
-curseforge {
-    apiKey = System.getenv("CURSEFORGE_TOKEN")
-    project {
-        id = project.curse_id
-        changelogType = "markdown"
-        changelog = getChangelogText()
-        addGameVersion project.minecraft_version
-        addGameVersion "Fabric"
-        releaseType = project.release_type
-        mainArtifact(remapJar) {
-        }
-        relations {
-            requiredLibrary "fabric-api"
-            requiredLibrary "creativecore"
-        }
-    }
 }

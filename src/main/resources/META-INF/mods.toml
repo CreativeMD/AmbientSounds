@@ -14,7 +14,6 @@ license="LGPL-3.0-only"
 
 [[dependencies.ambientsounds]]
     modId="neoforge"
-    mandatory=true
     type="required"
     versionRange="[20.4,)"
     ordering="NONE"
@@ -22,7 +21,6 @@ license="LGPL-3.0-only"
 
 [[dependencies.ambientsounds]]
     modId="minecraft"
-    mandatory=true
     type="required"
     versionRange="[1.20.4,1.21)"
     ordering="NONE"
@@ -30,7 +28,7 @@ license="LGPL-3.0-only"
 
 [[dependencies.ambientsounds]]
    modId="creativecore"
-   mandatory=true
+   type="required"
    ordering="NONE"
    side="BOTH"
    versionRange="[2.11.9,)"
