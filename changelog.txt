@@ -1,3 +1,6 @@
+5.3.7
+Fixed not detecting rain when standing inside half slab
+
 5.3.6
 Fixed creativecore dependency not working properly for forge
 Fixed playing seagulls at night
