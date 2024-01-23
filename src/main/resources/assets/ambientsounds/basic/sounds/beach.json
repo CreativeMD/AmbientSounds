@@ -11,6 +11,8 @@
         "files": [
             "ambientsounds:animals.seagull"
         ],
+        "night": 0,
+        "day": 1,
         "volume": 0.4,
         "pause": {
             "min": 750,
@@ -22,6 +24,8 @@
         "files": [
             "ambientsounds:animals.seagull-long"
         ],
+        "night": 0,
+        "day": 1,
         "length": {
             "min": 30,
             "max": 600
