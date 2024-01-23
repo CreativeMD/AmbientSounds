@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "ambientsounds",
-    "version": "5.3.5",
+    "version": "5.3.6",
     "name": "AmbientSounds",
     "description": "Expands minecraft's ambient sounds.",
     "authors": [

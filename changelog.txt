@@ -1,3 +1,10 @@
+5.3.6
+Fixed creativecore dependency not working properly for forge
+Fixed playing seagulls at night
+Fixed not playing desert sounds in gravel desert (from terralith)
+Fixed playing storm.close even if not being close to rain
+Lowered sound volume of cicadas-desert2
+
 5.3.5
 Stopped playing ambience in alexcaves
 Fixed bad-biomes property applies biome volume
