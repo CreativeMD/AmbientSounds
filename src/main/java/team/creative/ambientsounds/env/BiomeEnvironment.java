@@ -76,7 +76,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
         
         public boolean checkBiome(String[] names) {
             for (String name : names)
-                if (location.getPath().matches(".*" + name.replace("*", ".*") + ".*"))
+                if (location.toString().matches(".*" + name.replace("*", ".*") + ".*"))
                     return true;
             return false;
         }
