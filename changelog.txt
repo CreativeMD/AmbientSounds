@@ -1,3 +1,6 @@
+5.3.8
+Fixed biome check ignoring location namespace
+
 5.3.7
 Fixed not detecting rain when standing inside half slab
 
