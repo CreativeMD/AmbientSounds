@@ -31,7 +31,8 @@
     "solids": [
         "t->doors",
         "t->impermeable",
-        "t->stairs"
+        "t->stairs",
+        "t->glass_panes"
     ],
     "biome-types": [
         "surface",
