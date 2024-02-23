@@ -1,3 +1,6 @@
+5.3.9
+Fixed glass panes not being considered as a solid block
+
 5.3.8
 Fixed biome check ignoring location namespace
 

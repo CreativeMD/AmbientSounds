@@ -1,6 +1,6 @@
 {
     "name": "basic",
-    "version": "2.3.3",
+    "version": "2.3.4",
     "environment-tick-time": 40,
     "sound-tick-time": 4,
     "block-scan-distance": 40,
