@@ -21,7 +21,12 @@
                 "ambientsounds:animals.cicadas-desert1",
                 "ambientsounds:animals.cicadas-desert2"
             ],
-            "time": "day",
+            "day": 1,
+            "time": [
+                "day",
+                "night"
+            ],
+            "night": "0.1"
             "length": {
                 "min": 300,
                 "max": 600
