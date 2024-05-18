@@ -1,7 +1,7 @@
 {
     "name": "forest.cold",
-    "features": [
-        "tree"
+    "biomes": [
+        "#minecraft:is_forest"
     ],
     "bad-regions": [
         "rain"
