@@ -1,35 +1,7 @@
 {
     "name": "plains",
-    "features": [
-        "grass"
-    ],
-    "bad-regions": [
-        "ocean",
-        "forest",
-        "savanna",
-        "swamp",
-        "highland",
-        "nether",
-        "rain"
-    ],
-    "temperature": {
-        "min": 0.2
-    },
     "biomes": [
-        "plains",
-        "chaparral",
-        "field",
-        "flower",
-        "grass",
-        "oasis",
-        "tundra",
-        "mushroom*fields",
-        "darklands",
-        "badlands",
-        "pasture",
-        "rocky plateau",
-        "tropics plains",
-        "mycelium"
+        "#forge:is_plains"
     ],
     "sounds": [
         {
