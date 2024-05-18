@@ -3,30 +3,9 @@
     "variants": [
         {
             "features": [
-                "sand",
-                "water"
-            ]
-        },
-        {
-            "biomes": [
-                "gravel_desert"
+                "#minecraft:is_desert"
             ]
         }
-    ],
-    "bad-regions": [
-        "beach"
-    ],
-    "biomes": [
-        "desert",
-        "quagmire",
-        "petrified forest",
-        "menelaus",
-        "dry scrub",
-        "sands"
-    ],
-    "bad-biomes": [
-        "lush desert",
-        "ocean"
     ],
     "sound-collections": [
         "wind"
