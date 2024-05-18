@@ -3,6 +3,9 @@
     "regions": [
         "surface"
     ],
+    "bad_regions": [
+        "rain"
+    ],
     "biomes": [
         "#forge:is_mushroom"
     ],
