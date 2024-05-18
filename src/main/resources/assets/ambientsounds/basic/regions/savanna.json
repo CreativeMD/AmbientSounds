@@ -51,29 +51,6 @@
             }
         },
         {
-            "name": "cicadas-desert",
-            "category": "cicadas",
-            "files": [
-                "ambientsounds:animals.cicadas-desert1",
-                "ambientsounds:animals.cicadas-desert2"
-            ],
-            "special-biomes": {
-                "temperature": {
-                    "min": 0.8
-                }
-            },
-            "day": 1,
-            "night": 0,
-            "length": {
-                "min": 400,
-                "max": 900
-            },
-            "pause": {
-                "min": 500,
-                "max": 1000
-            }
-        },
-        {
             "name": "cicadas-night",
             "category": "cicadas",
             "files": [
