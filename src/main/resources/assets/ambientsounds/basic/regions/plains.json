@@ -3,6 +3,9 @@
     "regions": [
         "surface"
     ],
+    "regions": [
+        "surface"
+    ],
     "biomes": [
         "#forge:is_plains"
     ],
