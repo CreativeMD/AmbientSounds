@@ -1,7 +1,7 @@
 {
-    "name": "snowy",
+    "name": "wasteland",
     "features": [
-        "#forge:is_snowy"
+        "#forge:is_wasteland"
     ],
     "sounds": [
         {
@@ -10,9 +10,6 @@
             "files": [
                 "ambientsounds:wind.heavy-wind"
             ],
-            "air": {
-                "min": 0.6
-            },
             "volume": 0.5
         }
     ]
