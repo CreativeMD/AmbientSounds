@@ -3,8 +3,6 @@
     "dimension-names": [
         "minecraft:the_nether"
     ],
-    "rain": false,
-    "storm": false,
     "biome-selector": {
         "always": false
     },
