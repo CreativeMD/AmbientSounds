@@ -1,40 +1,10 @@
 {
     "name": "taiga",
-    "features": [
-        "tree"
-    ],
-    "temperature": {
-        "min": 0.2
-    },
     "bad-regions": [
         "rain"
     ],
     "biomes": [
-        "#is_taiga",
-        "taiga",
-        "grove",
-        "jade cliffs",
-        "shield",
-        "coniferous forest",
-        "land of lakes",
-        "snowy*forest",
-        "temperate rainforest",
-        "seasonal forest",
-        "spruce",
-        "meneglin",
-        "redwood",
-        "dead forest",
-        "ominous woods",
-        "autumnal forest",
-        "boreal forest",
-        "maple wood",
-        "meadow",
-        "thornlands",
-        "twilight highlands",
-        "mirage_isles",
-        "yosemite_lowlands",
-        "yosemite_cliffs",
-        "yellowstone"
+        "#minecraft:is_taiga"
     ],
     "sounds": [
         {
