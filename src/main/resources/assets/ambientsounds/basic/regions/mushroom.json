@@ -12,11 +12,7 @@
             ],
             "volume": 0.5,
             "day": 1,
-            "night": 0.1,
-            "time": [
-                "day",
-                "night"
-            ],
+            "night": 0.1
         },
         {
             "name": "special-mushroom-fields",
@@ -26,7 +22,7 @@
             ],
             "volume": 0.5,
             "day": 1,
-            "night": "0.2",
+            "night": 0.2,
             "length": {
                 "min": 40,
                 "max": 120
