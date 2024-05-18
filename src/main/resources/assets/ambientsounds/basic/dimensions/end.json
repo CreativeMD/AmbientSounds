@@ -1,11 +1,8 @@
 {
     "name": "end",
     "dimension-names": [
-        "the*end"
+        "minecraft:the_end"
     ],
-    "rain": false,
-    "storm": false,
-    "average-height": 0,
     "biome-selector": {
         "always": false
     },
