@@ -1,8 +1,5 @@
 {
     "name": "jungle",
-    "regions": [
-        "surface"
-    ],
     "biomes": [
         "#minecraft:is_jungle",
     ],
