@@ -12,10 +12,14 @@
             "volume": 0.3,
             "sound-collections": [
                 "suspense",
-                "files": [
+                "sounds": [
+                {
+                    "name": "end",
+                    "files": [
                         "ambientsounds:suspense.end"
                     ],
                     "volume": 0.1
+                }
             ]
         }
     ]
