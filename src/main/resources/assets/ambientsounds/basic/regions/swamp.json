@@ -13,8 +13,8 @@
             "files": [
                 "ambientsounds:animals.cricket-swamp"
             ],
+            "overall-raining": false,
             "volume": 0.3,
-            "overall-raining": false
         },
         {
             "name": "cricket-warm-night",
