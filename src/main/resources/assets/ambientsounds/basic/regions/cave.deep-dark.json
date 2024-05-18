@@ -3,9 +3,6 @@
     "regions": [
         "#forge:is_cave"
     ],
-    "features": [
-        "sculk"
-    ],
     "sounds": [
         {
             "name": "deep-dark",
