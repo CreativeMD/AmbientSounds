@@ -15,7 +15,7 @@
                 "ambientsounds:animals.cicadas-desert2"
             ],
             "day": 1,
-            "night": "0.1"
+            "night": 0.1,
             "time": [
                 "day",
                 "night"
