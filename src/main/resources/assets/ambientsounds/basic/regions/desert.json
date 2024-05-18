@@ -1,11 +1,7 @@
 {
     "name": "desert",
-    "variants": [
-        {
-            "features": [
-                "#minecraft:is_desert"
-            ]
-        }
+    "biomes": [
+        "#minecraft:is_desert"
     ],
     "sound-collections": [
         "wind"
