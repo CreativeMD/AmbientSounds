@@ -1,7 +1,7 @@
 {
     "name": "cave.deep-dark",
     "regions": [
-        "cave"
+        "#forge:is_cave"
     ],
     "features": [
         "sculk"
