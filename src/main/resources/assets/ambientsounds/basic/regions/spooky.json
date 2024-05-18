@@ -3,9 +3,6 @@
     "biomes": [
         "#forge:is_spooky"
     ],
-    "bad-regions": [
-        "rain"
-    ],
     "sounds": [
         {
             "name": "bird-ambience-spooky",
@@ -15,6 +12,7 @@
                 "ambientsounds:animals.bird-ambience-spooky2",
                 "ambientsounds:animals.bird-ambience-spooky3"
             ],
+            "overall-raining": false,
             "transition": 500,
             "length": {
                 "min": 1500,
