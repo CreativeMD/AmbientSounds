@@ -1,6 +1,6 @@
 {
     "name": "cave.lush",
-    "regions": [
+    "biomes": [
         "#forge:is_cave"
     ],
     "biome-type": "underground",
