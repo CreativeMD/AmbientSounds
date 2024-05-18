@@ -1,5 +1,8 @@
 {
     "name": "swamp",
+    "bad-regions": [
+        "rain"
+    ],
     "biomes": [
         "#forge:is_swamp"
     ],
