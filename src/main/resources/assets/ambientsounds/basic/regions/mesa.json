@@ -3,6 +3,9 @@
     "biomes": [
         "#minecraft:is_badlands"
     ],
+    "sound-collections": [
+        "wind"
+    ],
     "sounds": [
         {
             "name": "wind-mesa",
@@ -10,6 +13,23 @@
             "files": [
                 "ambientsounds:wind.mesa"
             ]
+        },
+        {
+            "name": "cicadas-desert",
+            "category": "cicadas",
+            "files": [
+                "ambientsounds:animals.cicadas-desert1",
+                "ambientsounds:animals.cicadas-desert2"
+            ],
+            "time": "day",
+            "length": {
+                "min": 300,
+                "max": 600
+            },
+            "pause": {
+                "min": 200,
+                "max": 500
+            }
         }
     ]
 }
