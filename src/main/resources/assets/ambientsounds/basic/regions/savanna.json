@@ -8,8 +8,7 @@
     ],
     "biomes": [
         "#minecraft:is_savanna"
-    ],
-    
+    ], 
     "sounds": [
         {
             "name": "cricket",
