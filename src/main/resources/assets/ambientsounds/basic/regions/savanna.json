@@ -1,18 +1,7 @@
 {
     "name": "savanna",
-    "bad-regions": [
-        "rain"
-    ],
     "biomes": [
-        "#is_savanna",
-        "savanna",
-        "heathland",
-        "prairie",
-        "brushland",
-        "lush desert",
-        "outback",
-        "shrubland",
-        "spiny forest"
+        "#minecraft:is_savanna"
     ],
     "sounds": [
         {
