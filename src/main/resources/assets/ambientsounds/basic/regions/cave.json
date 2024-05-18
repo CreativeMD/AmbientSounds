@@ -7,16 +7,6 @@
         "max": 0,
         "fade": 2
     },
-    "variants": [
-        {
-            "bad-regions": [
-                "cave.deep-dark"
-            ]
-        },
-        {
-            "volume": 0.25
-        }
-    ],
     "sounds": [
         {
             "name": "cave",
