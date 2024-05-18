@@ -1,30 +1,11 @@
 {
     "name": "highland",
-    "bad-regions": [
-        "rain",
-        "very_cold",
-        "mesa"
+    "regions": [
+        "surface"
     ],
     "biomes": [
-        "#is_hill",
-        "#is_mountain",
-        "extreme*hills",
-        "alps",
-        "crag",
-        "highland",
-        "mountain",
-        "volcanic island",
-        "mountains",
-        "cliffs",
-        "defiled hills",
-        "volcanic island",
-        "final plateau",
-        "twilight glaciers",
-        "magnetic*hills",
-        "alpine",
-        "peaks",
-        "caldera",
-        "spires"
+        "#minecraft:is_hill",
+        "#minecraft:is_mountain"
     ],
     "sounds": [
         {
