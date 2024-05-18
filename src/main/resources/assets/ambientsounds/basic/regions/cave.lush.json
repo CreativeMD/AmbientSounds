@@ -3,11 +3,6 @@
     "biomes": [
         "#forge:is_cave"
     ],
-    "biome-type": "underground",
-    "min-height-relative": {
-        "max": -2,
-        "fade": 2
-    },
     "features": [
         "lush"
     ],
