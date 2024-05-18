@@ -2,11 +2,7 @@
     "name": "storm.away",
     "storming": true,
     "bad-regions": [
-        "cold"
-    ],
-    "regions": [
-        "cave",
-        "sky"
+        "#forge:is_cold"
     ],
     "relative-height": {
         "min": -30,
