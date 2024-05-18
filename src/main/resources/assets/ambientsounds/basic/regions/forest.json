@@ -1,8 +1,5 @@
 {
     "name": "forest",
-    "bad-regions": [
-        "rain"
-    ],
     "biomes": [
         "#minecraft:is_forest"
     ],
@@ -23,6 +20,7 @@
                 "ambientsounds:animals.bird-ambience10",
                 "ambientsounds:animals.bird-ambience11"
             ],
+            "overall-raining": false,
             "length": {
                 "min": 2000,
                 "max": 3000
@@ -35,6 +33,7 @@
             "files": [
                 "ambientsounds:animals.crow"
             ],
+            "overall-raining": false,
             "pause": {
                 "min": 800,
                 "max": 4000
@@ -48,6 +47,7 @@
             "files": [
                 "ambientsounds:animals.owl"
             ],
+            "overall-raining": false,
             "pause": {
                 "min": 400,
                 "max": 5000
