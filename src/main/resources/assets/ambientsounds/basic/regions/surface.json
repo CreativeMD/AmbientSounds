@@ -1,8 +1,8 @@
 {
     "name": "surface",
     "relative-height": {
-        "min": -10,
-        "max": 20,
+        "min": 64,
+        "max": 256,
         "fade": 10
     }
 }
