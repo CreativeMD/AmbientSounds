@@ -28,6 +28,18 @@
                 "min": 400,
                 "max": 5000
             }
-        }
+        },
+        {
+            "name": "wolf",
+            "category": "animal",
+            "files": [
+                "ambientsounds:animals.wolf"
+            ],
+            "pause": {
+                "min": 100,
+                "max": 600
+            },
+            "day": 0
+        },
     ]
 }
