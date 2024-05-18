@@ -3,24 +3,6 @@
     "features": [
         "#forge:is_snowy"
     ],
-    "variants": [
-        {
-            "biomes": [
-                "frozen",
-                "ice",
-                "cold",
-                "arctic",
-                "glacier",
-                "snow"
-            ]
-        },
-        {
-            "temperature": {
-                "max": 0,
-                "min": -5
-            }
-        }
-    ],
     "sounds": [
         {
             "name": "heavy-wind",
