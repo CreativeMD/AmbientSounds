@@ -1,5 +1,8 @@
 {
     "name": "desert",
+    "regions": [
+        "surface"
+    ]
     "biomes": [
         "#minecraft:is_desert"
     ],
