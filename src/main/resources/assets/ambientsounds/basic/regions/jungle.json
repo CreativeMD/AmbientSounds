@@ -42,6 +42,20 @@
                 "max": 2000
             },
             "transition": 200
+        },
+        {
+            "name": "frog",
+            "category": "animal",
+            "files": [
+                "ambientsounds:animals.frog1",
+                "ambientsounds:animals.frog2"
+            ],
+            "pause": {
+                "min": 100,
+                "max": 750
+            },
+            "day": 0.05,
+            "night": 0.15
         }
     ]
 }
