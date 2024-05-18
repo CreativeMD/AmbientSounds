@@ -38,12 +38,12 @@
                 "min": 400,
                 "max": 700
             },
+            "transition": 200,
             "features": [
                 "water",
                 "lush",
                 "dripstone"
-            ],
-            "transition": 200
+            ]
         },
         {
             "name": "cave-deep",
@@ -60,10 +60,7 @@
                 "min": 400,
                 "max": 700
             },
-            "transition": 200,
-            "bad-regions": [
-                "cave.deep-dark"
-            ]
+            "transition": 200
         },
         {
             "name": "cave-large",
@@ -85,6 +82,36 @@
             },
             "transition": 200,
             "volume": 0.5
-        }
+        },
+        {
+            "name": "cave-lush",
+            "category": "cave",
+            "files": [
+                "ambientsounds:cave.cave-lush"
+            ],
+            "length": {
+                "min": 100,
+                "max": 500
+            },
+            "pause": {
+                "min": 250,
+                "max": 500
+            },
+            "volume": 0.4,
+            "features": [
+                "lush"
+            ],
+        },
+        {
+            "name": "cave-deep-dark",
+            "category": "cave",
+            "files": [
+                "ambientsounds:cave.deep-dark"
+            ],
+            "volume": 1,
+            "features": [
+                "sculk"
+            ]
+        },
     ]
 }
