@@ -12,7 +12,7 @@
     "sounds": [
         {
             "name": "cicadas-desert",
-            "category": "cicadas-day",
+            "category": "cicadas",
             "files": [
                 "ambientsounds:animals.cicadas-desert1",
                 "ambientsounds:animals.cicadas-desert2"
