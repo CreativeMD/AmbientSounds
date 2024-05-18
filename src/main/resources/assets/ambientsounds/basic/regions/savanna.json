@@ -12,7 +12,6 @@
                 "ambientsounds:animals.cricket2",
                 "ambientsounds:animals.cricket3"
             ],
-            "overall-raining": false,
             "length": {
                 "min": 1000,
                 "max": 1500
@@ -26,7 +25,6 @@
             "files": [
                 "ambientsounds:animals.cicadas"
             ],
-            "overall-raining": false,
             "day": 0.15,
             "night": 0.01,
             "length": {
@@ -45,7 +43,6 @@
                 "ambientsounds:animals.cicadas-desert1",
                 "ambientsounds:animals.cicadas-desert2"
             ],
-            "overall-raining": false,
             "special-biomes": {
                 "temperature": {
                     "min": 0.8
@@ -69,7 +66,6 @@
                 "ambientsounds:animals.cricket-warm-night",
                 "ambientsounds:animals.cricket-warm-night2"
             ],
-            "overall-raining": false,
             "length": {
                 "min": 1000,
                 "max": 1500
