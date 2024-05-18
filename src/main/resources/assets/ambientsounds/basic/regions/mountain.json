@@ -4,6 +4,9 @@
         "#minecraft:is_hill",
         "#minecraft:is_mountain"
     ],
+    "sound-collections": [
+        "wind"
+    ],
     "sounds": [
         {
             "name": "heavy-wind",
