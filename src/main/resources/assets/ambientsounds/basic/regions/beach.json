@@ -2,6 +2,7 @@
     "name": "beach",
     "biomes": [
         "#minecraft:is_beach",
+    ],
     "temperature": {
         "min": 0
     },
