@@ -1,14 +1,7 @@
 {
     "name": "beach",
     "biomes": [
-        "#is_beach",
-        "beach",
-        "shore",
-        "tropics beach"
-    ],
-    "bad-biomes": [
-        "gravel_beach"
-    ],
+        "#minecraft:is_beach",
     "temperature": {
         "min": 0
     },
