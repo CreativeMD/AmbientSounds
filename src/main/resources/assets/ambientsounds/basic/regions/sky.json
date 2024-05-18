@@ -1,16 +1,10 @@
 {
     "name": "sky",
-    "relative-height": {
-        "min": 15,
-        "fade": 20
-    },
     "absolute-height": {
+        "min": 246,
         "max": 4000,
         "fade": 20
     },
-    "bad-regions": [
-        "#minecraft:is_end"
-    ],
     "sound-collections": [
         "wind"
     ]
