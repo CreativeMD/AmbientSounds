@@ -5,16 +5,8 @@
     ],
     "variants": [
         {
-            "biomes": [
-                "frozen",
-                "ice",
-                "cold",
-                "arctic",
-                "glacier",
-                "snow"
-            ],
-            "bad-biomes": [
-                "arctic peaks"
+            "features": [
+                "#forge:is_cold"
             ]
         },
         {
