@@ -1,8 +1,5 @@
 {
     "name": "savanna",
-    "regions": [
-        "surface"
-    ],
     "biomes": [
         "#minecraft:is_savanna"
     ], 
