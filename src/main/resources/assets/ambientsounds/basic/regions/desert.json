@@ -14,6 +14,7 @@
                 "ambientsounds:animals.cicadas-desert1",
                 "ambientsounds:animals.cicadas-desert2"
             ],
+            "overall-raining": false,
             "day": 1,
             "night": 0.1,
             "length": {
