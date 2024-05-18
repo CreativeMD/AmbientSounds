@@ -17,6 +17,17 @@
                 "max": 3000
             },
             "transition": 400
+        },
+        {
+            "name": "owl",
+            "category": "bird_night",
+            "files": [
+                "ambientsounds:animals.owl"
+            ],
+            "pause": {
+                "min": 400,
+                "max": 5000
+            }
         }
     ]
 }
