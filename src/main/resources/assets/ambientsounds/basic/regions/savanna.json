@@ -1,8 +1,15 @@
 {
     "name": "savanna",
+    "regions": [
+        "surface"
+    ],
+    "bad_regions": [
+        "rain"
+    ],
     "biomes": [
         "#minecraft:is_savanna"
     ],
+    
     "sounds": [
         {
             "name": "cricket",
