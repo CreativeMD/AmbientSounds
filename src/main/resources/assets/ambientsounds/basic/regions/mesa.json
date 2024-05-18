@@ -1,8 +1,5 @@
 {
     "name": "mesa",
-    "regions": [
-        "surface"
-    ],
     "biomes": [
         "#minecraft:is_badlands"
     ],
