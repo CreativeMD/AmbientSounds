@@ -4,7 +4,7 @@
         "#forge:is_cave"
     ]
     "absolute-height": {
-        "max": -64,
+        "max": 0,
         "fade": 5
     },
     "sounds": [
