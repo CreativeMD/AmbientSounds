@@ -1,20 +1,9 @@
 {
     "name": "twilightforest",
     "dimension-names": [
-        "twilightforest"
+        "twilightforest:twilightforest"
     ],
-    "surface-selector": {
-        "regions": [
-            "surface"
-        ]
-    },
-    "regions": [
-        {
-            "name": "unknown",
-            "volume": 0.2,
-            "sound-collections": [
-                "suspense"
-            ]
-        }
-    ]
+    "biome-selector": {
+        "always": true
+    }
 }
