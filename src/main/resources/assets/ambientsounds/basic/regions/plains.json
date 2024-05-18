@@ -1,5 +1,8 @@
 {
     "name": "plains",
+    "bad-regions": [
+        "rain"
+    ],
     "biomes": [
         "#forge:is_plains"
     ],
