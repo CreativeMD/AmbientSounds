@@ -1,7 +1,7 @@
 {
     "name": "aether",
     "dimension-names": [
-        "aether:aether"
+        "aether:the_aether"
     ],
     "biome-selector": {
         "always": true
