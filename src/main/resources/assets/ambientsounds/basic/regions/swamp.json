@@ -4,30 +4,8 @@
         "rain"
     ],
     "biomes": [
-        "swamp",
-        "bayou",
-        "bog",
-        "marsh",
-        "moor",
-        "fen",
-        "mystic grove",
-        "bamboo marsh",
-        "silkglades",
-        "sludgepit",
-        "wetland",
-        "quagmire",
-        "dead forest",
-        "patchy islands",
-        "deep waters",
-        "coarse islands",
-        "erebus",
-        "fungal forest",
-        "tyros swamp"
+        "#forge:is_swamp"
     ],
-    "temperature": {
-        "min": 0.5,
-        "max": 2
-    },
     "sounds": [
         {
             "name": "cricket-swamp",
