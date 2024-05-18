@@ -1,5 +1,8 @@
 {
     "name": "taiga",
+    "bad-regions": [
+        "rain"
+    ],
     "biomes": [
         "#minecraft:is_taiga"
     ],
