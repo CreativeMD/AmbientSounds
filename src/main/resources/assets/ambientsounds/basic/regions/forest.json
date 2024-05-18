@@ -9,6 +9,7 @@
     "sounds": [
         {
             "name": "bird-ambience",
+            "category": "bird_day",
             "files": [
                 "ambientsounds:animals.bird-ambience1",
                 "ambientsounds:animals.bird-ambience2",
@@ -27,10 +28,10 @@
                 "max": 3000
             },
             "transition": 400,
-            "category": "bird_day"
         },
         {
             "name": "owl",
+            "category": "bird_night",
             "files": [
                 "ambientsounds:animals.owl"
             ],
@@ -38,7 +39,6 @@
                 "min": 400,
                 "max": 5000
             },
-            "category": "bird_night"
         }
     ]
 }
