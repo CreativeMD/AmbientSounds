@@ -1,8 +1,5 @@
 {
     "name": "plains",
-    "bad-regions": [
-        "rain"
-    ],
     "biomes": [
         "#forge:is_plains"
     ],
@@ -15,6 +12,7 @@
                 "ambientsounds:animals.cricket2",
                 "ambientsounds:animals.cricket3"
             ],
+            "overall-raining": false,
             "length": {
                 "min": 1000,
                 "max": 1500
@@ -32,6 +30,7 @@
                 "ambientsounds:animals.cricket-night4",
                 "ambientsounds:animals.cricket-night5"
             ],
+            "overall-raining": false,
             "length": {
                 "min": 1000,
                 "max": 1500
@@ -45,6 +44,7 @@
             "files": [
                 "ambientsounds:animals.cicadas-night"
             ],
+            "overall-raining": false,
             "time": "night",
             "volume": 0.3
         }
