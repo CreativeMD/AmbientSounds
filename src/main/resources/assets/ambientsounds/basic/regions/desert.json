@@ -17,11 +17,6 @@
                 "ambientsounds:animals.cicadas-desert1",
                 "ambientsounds:animals.cicadas-desert2"
             ],
-            "special-biomes": {
-                "temperature": {
-                    "min": 0.8
-                }
-            },
             "time": "day",
             "length": {
                 "min": 300,
