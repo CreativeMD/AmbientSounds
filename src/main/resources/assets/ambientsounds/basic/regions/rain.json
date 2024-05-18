@@ -2,7 +2,10 @@
     "name": "rain",
     "overall-raining": true,
     "bad-regions": [
-        "#forge:is_cold"
+        "#forge:is_cold",
+        "#forge:is_desert",
+        "#minecraft:is_badlands",
+        "#minecraft:is_savanna"
     ],
     "sounds": [
         {
