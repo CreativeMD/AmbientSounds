@@ -1,8 +1,5 @@
 {
     "name": "cold",
-    "regions": [
-        "surface"
-    ]
     "biomes": [
         "#forge:is_cold"
     ],
