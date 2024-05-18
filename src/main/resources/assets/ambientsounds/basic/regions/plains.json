@@ -1,8 +1,5 @@
 {
     "name": "plains",
-    "regions": [
-        "surface"
-    ],
     "biomes": [
         "#forge:is_plains"
     ],
