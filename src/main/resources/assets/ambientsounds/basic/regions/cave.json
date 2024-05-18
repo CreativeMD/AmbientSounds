@@ -3,16 +3,10 @@
     "regions": [
         "#forge:is_cave"
     ],
-    "min-height-relative": {
-        "max": -2,
+    "absolute-height": {
+        "max": 0,
         "fade": 2
     },
-    "features": [
-        "rock",
-        "lush",
-        "dripstone",
-        "sculk"
-    ],
     "variants": [
         {
             "bad-regions": [
