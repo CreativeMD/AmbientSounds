@@ -9,7 +9,7 @@
         "fade": 20
     },
     "bad-regions": [
-        "end"
+        "#minecraft:is_end"
     ],
     "sound-collections": [
         "wind"
