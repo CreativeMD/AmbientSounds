@@ -1,9 +1,6 @@
 {
     "name": "storm",
     "storming": true,
-    "bad-regions": [
-        "#forge:is_cold"
-    ],
     "sounds": [
         {
             "name": "storm-away",
