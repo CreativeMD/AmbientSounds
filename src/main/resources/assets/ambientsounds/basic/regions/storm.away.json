@@ -4,10 +4,6 @@
     "bad-regions": [
         "#forge:is_cold"
     ],
-    "relative-height": {
-        "min": -30,
-        "fade": 20
-    },
     "sounds": [
         {
             "name": "storm-away",
