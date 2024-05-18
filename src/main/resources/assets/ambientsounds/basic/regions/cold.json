@@ -1,8 +1,5 @@
 {
     "name": "cold",
-    "bad-regions": [
-        "#forge:is_cold"
-    ],
     "variants": [
         {
             "features": [
