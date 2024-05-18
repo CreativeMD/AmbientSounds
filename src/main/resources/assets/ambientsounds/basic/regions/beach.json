@@ -3,9 +3,6 @@
     "biomes": [
         "#minecraft:is_beach",
     ],
-    "temperature": {
-        "min": 0
-    },
     "sounds": [
         {
             "name": "beach",
