@@ -3,9 +3,6 @@
     "regions": [
         "surface"
     ],
-    "bad_regions": [
-        "rain"
-    ],
     "biomes": [
         "#minecraft:is_jungle",
     ],
