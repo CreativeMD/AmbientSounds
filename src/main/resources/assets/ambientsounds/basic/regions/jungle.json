@@ -1,31 +1,8 @@
 {
     "name": "jungle",
     "biomes": [
-        "#is_jungle",
-        "jungle",
-        "sacred springs",
-        "tropical",
-        "bamboo forest",
-        "bambona beach",
-        "encalyptus forest",
-        "overgrown cliffs",
-        "tropics",
-        "tyros"
+        "#minecraft:is_jungle",
     ],
-    "bad-biomes": [
-        "tropics plains",
-        "tropics beach",
-        "tyros swamp",
-        "subtropical forest",
-        "tropical*extreme hills",
-        "rain"
-    ],
-    "features": [
-        "tree"
-    ],
-    "temperature": {
-        "min": 0.5
-    },
     "sounds": [
         {
             "name": "cricket-jungle",
