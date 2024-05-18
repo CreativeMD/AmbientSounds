@@ -1,5 +1,5 @@
 {
-    "name": "surface",
+    "name": "overworld",
     "surface-selector": {
         "regions": [
             "surface"
