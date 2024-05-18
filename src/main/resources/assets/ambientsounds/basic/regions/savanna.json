@@ -20,6 +20,38 @@
             "volume": 0.25
         },
         {
+            "name": "cricket-night",
+            "category": "cricket_night",
+            "files": [
+                "ambientsounds:animals.cricket-night",
+                "ambientsounds:animals.cricket-night2",
+                "ambientsounds:animals.cricket-night3",
+                "ambientsounds:animals.cricket-night4",
+                "ambientsounds:animals.cricket-night5"
+            ],
+            "overall-raining": false,
+            "length": {
+                "min": 1000,
+                "max": 1500
+            },
+            "transition": 100,
+            "volume": 0.3
+        },
+        {
+            "name": "cricket-warm-night",
+            "category": "cricket_night",
+            "files": [
+                "ambientsounds:animals.cricket-warm-night",
+                "ambientsounds:animals.cricket-warm-night2"
+            ],
+            "length": {
+                "min": 1000,
+                "max": 1500
+            },
+            "transition": 100,
+            "volume": 0.3
+        },
+        {
             "name": "cicadas",
             "category": "cicadas",
             "files": [
@@ -60,17 +92,12 @@
             }
         },
         {
-            "name": "cricket-warm-night",
-            "category": "cricket_night",
+            "name": "cicadas-night",
+            "category": "cicadas",
             "files": [
-                "ambientsounds:animals.cricket-warm-night",
-                "ambientsounds:animals.cricket-warm-night2"
+                "ambientsounds:animals.cicadas-night"
             ],
-            "length": {
-                "min": 1000,
-                "max": 1500
-            },
-            "transition": 100,
+            "overall-raining": false,
             "volume": 0.3
         },
         {
