@@ -1,5 +1,8 @@
 {
     "name": "underworld",
+    "biomes":[
+        "#forge:is_cave"
+    ]
     "absolute-height": {
         "max": -64,
         "fade": 5
