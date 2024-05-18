@@ -15,7 +15,6 @@
                 "ambientsounds:animals.cricket2",
                 "ambientsounds:animals.cricket3"
             ],
-            "overall-raining": false,
             "length": {
                 "min": 1000,
                 "max": 1500
@@ -33,7 +32,6 @@
                 "ambientsounds:animals.cricket-night4",
                 "ambientsounds:animals.cricket-night5"
             ],
-            "overall-raining": false,
             "length": {
                 "min": 1000,
                 "max": 1500
