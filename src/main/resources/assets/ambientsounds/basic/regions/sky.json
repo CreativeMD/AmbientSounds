@@ -1,7 +1,7 @@
 {
     "name": "sky",
     "absolute-height": {
-        "min": 246,
+        "min": 256,
         "max": 4000,
         "fade": 20
     },
