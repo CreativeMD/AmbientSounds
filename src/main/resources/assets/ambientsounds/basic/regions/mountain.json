@@ -14,6 +14,9 @@
             "files": [
                 "ambientsounds:wind.heavy-wind"
             ],
+            "air": {
+                "min": 0.6
+            },
             "volume": 0.5
         },
         {
@@ -25,6 +28,9 @@
             "air": {
                 "min": 0.6
             },
+            "features": [
+                "tree"
+            ],
             "volume": 0.5
         }
     ]
