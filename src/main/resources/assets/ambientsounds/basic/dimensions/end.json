@@ -6,21 +6,16 @@
     "biome-selector": {
         "always": false
     },
-    "regions": [
+    "sound-collections": [
+        "suspense",
+    ],
+    "sounds": [
         {
-            "name": "unknown",
-            "volume": 0.3,
-            "sound-collections": [
-                "suspense",
-                "sounds": [
-                {
-                    "name": "end",
-                    "files": [
-                        "ambientsounds:suspense.end"
-                    ],
-                    "volume": 0.1
-                }
-            ]
+            "name": "end",
+            "files": [
+                "ambientsounds:suspense.end"
+            ],
+            "volume": 0.1
         }
     ]
 }
