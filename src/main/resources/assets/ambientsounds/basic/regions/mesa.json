@@ -1,15 +1,13 @@
 {
     "name": "mesa",
+    "regions": [
+        "surface"
+    ],
+    "bad_regions": [
+        "rain"
+    ],
     "biomes": [
-        "#is_badlands",
-        "mesa",
-        "badlands",
-        "lush desert",
-        "outback",
-        "wasteland",
-        "steppe",
-        "arid highland",
-        "canyon"
+        "#minecraft:is_badlands"
     ],
     "sounds": [
         {
