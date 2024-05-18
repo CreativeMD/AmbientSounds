@@ -6,4 +6,20 @@
     "sound-collections": [
         "wind"
     ]
+    "sounds": [
+        {
+            "name": "wind-in-leaves",
+            "category": "wind",
+            "files": [
+                "ambientsounds:wind.wind-in-leaves"
+            ],
+            "air": {
+                "min": 0.6
+            },
+            "features": [
+                "tree"
+            ],
+            "volume": 0.5
+        }
+    ]
 }
