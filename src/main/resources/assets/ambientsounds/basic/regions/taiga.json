@@ -19,6 +19,19 @@
             "transition": 400
         },
         {
+            "name": "crow",
+            "category": "bird",
+            "files": [
+                "ambientsounds:animals.crow"
+            ],
+            "pause": {
+                "min": 800,
+                "max": 4000
+            },
+            "day": 1,
+            "night": 0.2
+        },
+        {
             "name": "owl",
             "category": "bird_night",
             "files": [
