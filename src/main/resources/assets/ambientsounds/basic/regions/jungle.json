@@ -3,9 +3,6 @@
     "biomes": [
         "#minecraft:is_jungle",
     ],
-    "bad-regions": [
-        "rain"
-    ],
     "sounds": [
         {
             "name": "cricket-jungle",
