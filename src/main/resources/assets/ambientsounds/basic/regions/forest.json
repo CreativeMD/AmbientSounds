@@ -1,8 +1,8 @@
 {
     "name": "forest",
-    "regions": [
-        "surface"
-    ]
+    "bad-regions": [
+        "rain"
+    ],
     "biomes": [
         "#minecraft:is_forest"
     ],
