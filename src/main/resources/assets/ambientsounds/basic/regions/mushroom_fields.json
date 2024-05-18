@@ -1,5 +1,8 @@
 {
     "name": "mushroom_fields",
+    "regions": [
+        "surface"
+    ],
     "biomes": [
         "#forge:is_mushroom"
     ],
