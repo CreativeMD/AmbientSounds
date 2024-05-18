@@ -39,6 +39,24 @@
             "volume": 0.3
         },
         {
+            "name": "cicadas",
+            "category": "cicadas",
+            "files": [
+                "ambientsounds:animals.cicadas"
+            ],
+            "overall-raining": false,
+            "day": 0.15,
+            "night": 0.01,
+            "length": {
+                "min": 100,
+                "max": 300
+            },
+            "pause": {
+                "min": 100,
+                "max": 600
+            }
+        },
+        {
             "name": "cicadas-night",
             "category": "cicadas",
             "files": [
