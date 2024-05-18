@@ -1,8 +1,5 @@
 {
-    "name": "highland",
-    "regions": [
-        "surface"
-    ],
+    "name": "mountain",
     "biomes": [
         "#minecraft:is_hill",
         "#minecraft:is_mountain"
