@@ -2,7 +2,6 @@
     "name": "sky",
     "absolute-height": {
         "min": 256,
-        "max": 4000,
         "fade": 20
     },
     "sound-collections": [
