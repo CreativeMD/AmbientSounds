@@ -1,6 +1,6 @@
 {
     "name": "cave.ambience",
-    "regions": [
+    "biomes": [
         "#forge:is_cave"
     ],
     "absolute-height": {
