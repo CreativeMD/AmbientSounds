@@ -16,10 +16,6 @@
             ],
             "day": 1,
             "night": 0.1,
-            "time": [
-                "day",
-                "night"
-            ],
             "length": {
                 "min": 300,
                 "max": 600
