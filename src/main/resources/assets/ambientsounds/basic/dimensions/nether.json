@@ -6,18 +6,16 @@
     "biome-selector": {
         "always": false
     },
-    "regions": [
+    "sound-collections": [
+        "suspense",
+    ],
+    "sounds": [
         {
-            "name": "suspense",
-            "sounds": [
-                {
-                    "name": "nether",
-                    "files": [
-                        "ambientsounds:suspense.nether"
-                    ],
-                    "volume": 0.1
-                }
-            ]
+            "name": "nether",
+            "files": [
+                "ambientsounds:suspense.nether"
+            ],
+            "volume": 0.1
         }
     ]
 }
