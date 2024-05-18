@@ -1,8 +1,5 @@
 {
     "name": "mushroom",
-    "bad-regions": [
-        "rain"
-    ],
     "biomes": [
         "#forge:is_mushroom"
     ],
@@ -13,6 +10,7 @@
             "files": [
                 "ambientsounds:animals.cicadas-mushroom-fields"
             ],
+            "overall-raining": false,
             "volume": 0.5,
             "day": 1,
             "night": 0.1
@@ -23,6 +21,7 @@
             "files": [
                 "ambientsounds:animals.special-mushroom-fields"
             ],
+            "overall-raining": false,
             "volume": 0.5,
             "day": 1,
             "night": 0.2,
