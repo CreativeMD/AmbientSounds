@@ -4,7 +4,7 @@
         "surface"
     ],
     "bad-regions": [
-        "cold"
+        "#forge:is_cold"
     ],
     "variants": [
         {
