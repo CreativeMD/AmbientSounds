@@ -2,9 +2,6 @@
     "name": "storm.close",
     "storming": true,
     "overall-raining": true,
-    "regions": [
-        "surface"
-    ],
     "bad-regions": [
         "forge:is_cold"
     ],
