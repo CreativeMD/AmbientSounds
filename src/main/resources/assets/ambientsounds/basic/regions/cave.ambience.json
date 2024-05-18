@@ -1,8 +1,7 @@
 {
     "name": "cave.ambience",
     "regions": [
-        "cave",
-        "underworld"
+        "#forge:is_cave"
     ],
     "min-height-relative": {
         "max": -2,
