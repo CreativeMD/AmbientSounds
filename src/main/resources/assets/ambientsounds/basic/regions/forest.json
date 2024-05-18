@@ -1,12 +1,11 @@
 {
     "name": "forest",
+    "regions": [
+        "surface"
+    ]
     "biomes": [
         "#minecraft:is_forest"
     ],
-    "temperature": {
-        "min": 0.2,
-        "max": 1.5
-    },
     "sounds": [
         {
             "name": "bird-ambience",
