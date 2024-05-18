@@ -1,7 +1,7 @@
 {
     "name": "overworld",
     "dimension-names": [
-        "overworld"
+        "minecraft:overworld"
     ],
     "biome-selector": {
         "always": true
