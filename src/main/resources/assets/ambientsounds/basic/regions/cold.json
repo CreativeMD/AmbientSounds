@@ -1,17 +1,7 @@
 {
     "name": "cold",
-    "variants": [
-        {
-            "features": [
-                "#forge:is_cold"
-            ]
-        },
-        {
-            "temperature": {
-                "max": 0,
-                "min": -5
-            }
-        }
+    "biomes": [
+        "#forge:is_cold"
     ],
     "sound-collections": [
         "wind"
