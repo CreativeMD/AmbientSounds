@@ -1,53 +1,12 @@
 {
     "name": "forest",
-    "features": [
-        "tree"
-    ],
-    "bad-regions": [
-        "taiga",
-        "forest.roofed",
-        "jungle",
-        "rain"
+    "biomes": [
+        "#minecraft:is_forest"
     ],
     "temperature": {
         "min": 0.2,
         "max": 1.5
     },
-    "variants": [
-        {
-            "regions": [
-                "surface"
-            ]
-        },
-        {
-            "biomes": [
-                "#is_forest",
-                "forest",
-                "blossom",
-                "mangrove",
-                "woods",
-                "orchard",
-                "origin island",
-                "thicket",
-                "woodland",
-                "grove",
-                "origin valley",
-                "rainforest",
-                "lush hills",
-                "orchad",
-                "valley",
-                "origin island",
-                "birch hills",
-                "twilight clearing"
-            ]
-        },
-        {
-            "regions": [
-                "swamp"
-            ],
-            "volume": 0.3
-        }
-    ],
     "sounds": [
         {
             "name": "bird-ambience",
