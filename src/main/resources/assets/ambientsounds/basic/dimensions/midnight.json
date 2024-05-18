@@ -1,9 +1,0 @@
-{
-    "name": "midnight",
-    "dimension-names": [
-        "midnight"
-    ],
-    "biome-selector": {
-        "always": false
-    }
-}
