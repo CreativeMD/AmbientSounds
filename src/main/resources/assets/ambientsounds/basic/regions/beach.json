@@ -17,6 +17,7 @@
             "files": [
                 "ambientsounds:animals.seagull"
             ],
+            "overall-raining": false,
             "volume": 0.4,
             "pause": {
                 "min": 750,
@@ -29,6 +30,7 @@
             "files": [
                 "ambientsounds:animals.seagull-long"
             ],
+            "overall-raining": false,
             "length": {
                 "min": 30,
                 "max": 600
