@@ -1,7 +1,7 @@
 {
     "name": "very_cold",
     "features": [
-        "ice"
+        "#forge:is_snowy"
     ],
     "variants": [
         {
@@ -12,9 +12,6 @@
                 "arctic",
                 "glacier",
                 "snow"
-            ],
-            "bad-biomes": [
-                "arctic peaks"
             ]
         },
         {
