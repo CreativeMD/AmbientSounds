@@ -3,6 +3,9 @@
     "features": [
         "#forge:is_wasteland"
     ],
+    "sound-collections": [
+        "wind"
+    ]
     "sounds": [
         {
             "name": "heavy-wind",
