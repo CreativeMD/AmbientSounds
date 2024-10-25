@@ -1,3 +1,10 @@
+6.1.3
+Added min count to grass, ice, rock and sand feature to prevent it from being active too early
+Fixed not playing sky wind sound
+Fixed relative min and max height calculations being off
+Normalized bird, cricket and cave sounds
+Updated way of sorting biomes and muting sounds
+
 6.1.1
 Fix async engine reloading (Thanks to Steveplays28)
 Adapted CreativeCore 2.12.14
