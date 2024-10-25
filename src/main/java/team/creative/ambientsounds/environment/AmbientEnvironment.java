@@ -58,8 +58,8 @@ public class AmbientEnvironment {
         
         this.absoluteHeight = player.getEyeY();
         this.relativeHeight = absoluteHeight - terrain.averageHeight;
-        this.relativeMinHeight = absoluteHeight - terrain.minHeight;
-        this.relativeMaxHeight = absoluteHeight - terrain.maxHeight;
+        this.relativeMinHeight = absoluteHeight - terrain.maxHeight;
+        this.relativeMaxHeight = absoluteHeight - terrain.minHeight;
         
         this.temperature = SereneSeasonsCompat.getTemperature(player);
         
