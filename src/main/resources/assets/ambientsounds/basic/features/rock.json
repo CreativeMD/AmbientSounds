@@ -3,6 +3,7 @@
     "groups": [
         "rock"
     ],
+    "low-count": 40,
     "low-weight": 0.6,
     "high-weight": 0.75
 }

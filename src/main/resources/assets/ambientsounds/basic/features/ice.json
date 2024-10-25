@@ -3,6 +3,7 @@
     "groups": [
         "ice"
     ],
+    "low-count": 20,
     "low-weight": 0.1,
     "high-weight": 0.3
 }

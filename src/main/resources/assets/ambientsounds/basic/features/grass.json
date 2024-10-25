@@ -3,6 +3,7 @@
     "groups": [
         "grass"
     ],
+    "low-count": 30,
     "low-weight": 0.2,
     "high-weight": 0.4
 }
