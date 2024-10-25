@@ -1,5 +1,6 @@
 package team.creative.ambientsounds.environment;
 
+import java.util.Comparator;
 import java.util.Iterator;
 
 import net.minecraft.core.BlockPos;
@@ -50,7 +51,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
                 }
             }
             
-            biomes.sort((x, y) -> y.value.compareTo(x.value));
+            biomes.sort(Comparator.comparingDouble((Pair<BiomeArea, AmbientVolume> x) -> x.value.volume()).reversed());
         }
     }
     

@@ -8,6 +8,7 @@ import java.util.List;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleMap.Entry;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleRBTreeMap;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleSortedMap;
+import it.unimi.dsi.fastutil.doubles.DoubleComparators;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.sounds.SoundManager;
 import team.creative.ambientsounds.sound.AmbientSound.SoundStream;
@@ -32,7 +33,7 @@ public class AmbientSoundEngine {
         // Is still playing
         synchronized (sounds) {
             try {
-                Double2DoubleSortedMap mutes = new Double2DoubleRBTreeMap((x, y) -> y.compareTo(x));
+                Double2DoubleSortedMap mutes = new Double2DoubleRBTreeMap(DoubleComparators.OPPOSITE_COMPARATOR);
                 for (SoundStream sound : sounds) {
                     double soundMute = sound.mute();
                     if (soundMute > 0)

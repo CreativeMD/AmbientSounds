@@ -2,7 +2,7 @@ package team.creative.ambientsounds.condition;
 
 import team.creative.creativecore.client.render.text.DebugTextRenderer;
 
-public class AmbientVolume implements Comparable<AmbientVolume> {
+public class AmbientVolume {
     
     public static final AmbientVolume SILENT = new AmbientVolume(0, 0) {
         
@@ -71,11 +71,6 @@ public class AmbientVolume implements Comparable<AmbientVolume> {
     
     public double volume() {
         return settingVolume * conditionVolume;
-    }
-    
-    @Override
-    public int compareTo(AmbientVolume o) {
-        return Double.compare(volume(), o.volume());
     }
     
     @Override
