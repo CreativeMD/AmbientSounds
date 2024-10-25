@@ -3,9 +3,6 @@
         {
             "name": "light-wind",
             "category": "wind",
-            "regions": [
-                "surface"
-            ],
             "files": [
                 "ambientsounds:wind.light-wind",
                 "ambientsounds:wind.light-wind2",
