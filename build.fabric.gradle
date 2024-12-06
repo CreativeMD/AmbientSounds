@@ -84,7 +84,7 @@ String getChangelogText() {
 task upload(type: GradleBuild) {
     description 'Uploads new version to modrinth and curseforge.'
     group = 'publishing'
-    tasks = ['modrinth', 'curseforge']
+    tasks = ['curseforge', 'modrinth']
 }
 
 gradle.taskGraph.whenReady {
