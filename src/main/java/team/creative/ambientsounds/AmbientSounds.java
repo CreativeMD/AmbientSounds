@@ -12,8 +12,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -65,25 +64,19 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClientRenderGui(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
-        loader.registerClientStarted(() -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            ReloadableResourceManager reloadableResourceManager = (ReloadableResourceManager) minecraft.getResourceManager();
+        loader.registerReloadListener(ResourceLocation.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
+            @SuppressWarnings("NullableProblems")
+            @Override
+            protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+                AmbientSounds.reloadAsync();
+                return null;
+            }
             
-            reloadableResourceManager.registerReloadListener(new SimplePreparableReloadListener<Void>() {
-                @SuppressWarnings("NullableProblems")
-                @Override
-                protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-                    AmbientSounds.reloadAsync();
-                    return null;
-                }
-                
-                @Override
-                protected void apply(@Nullable Void object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-                    // NO-OP
-                }
-            });
+            @Override
+            protected void apply(@Nullable Void object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+                // NO-OP
+            }
         });
-        
         CreativeCoreClient.registerClientConfig(MODID);
     }
     
