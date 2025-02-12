@@ -1,3 +1,6 @@
+6.1.5
+Fixed crash with newest NeoForge version
+
 6.1.4
 Fixed not playing jungle sounds in rainforest biomes
 
