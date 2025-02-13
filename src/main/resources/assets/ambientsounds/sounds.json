@@ -600,6 +600,15 @@
         ],
         "category": "ambient"
     },
+    "suspense.pale-garden": {
+        "sounds": [
+            {
+                "name": "ambientsounds:suspense/pale-garden",
+                "stream": true
+            }
+        ],
+        "category": "ambient"
+    },
     "cave.cave1": {
         "sounds": [
             {
