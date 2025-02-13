@@ -7,7 +7,8 @@
         "taiga",
         "forest.roofed",
         "jungle",
-        "rain"
+        "rain",
+        "pale-garden"
     ],
     "temperature": {
         "min": 0.2,
