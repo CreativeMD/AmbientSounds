@@ -4,5 +4,14 @@
         "lush"
     ],
     "low-count": 20,
-    "high-count": 50
+    "high-count": 50,
+    "and": [
+        {
+            "groups": [
+                "rock"
+            ],
+            "low-weight": 0.1,
+            "high-weight": 0.25
+        }
+    ]
 }
