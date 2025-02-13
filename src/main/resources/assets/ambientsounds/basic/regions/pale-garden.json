@@ -1,0 +1,29 @@
+{
+    "name": "forest",
+    "features": [
+        "tree"
+    ],
+     "biomes": [
+        "pale*garden"
+    ],
+    "sounds": [
+        {
+            "name": "pale-garden-ambience",
+            "files": [
+                "ambientsounds:suspense.pale-garden"
+            ],
+            "category": "suspense"
+        },
+        {
+            "name": "owl",
+            "files": [
+                "ambientsounds:animals.owl"
+            ],
+            "pause": {
+                "min": 400,
+                "max": 5000
+            },
+            "category": "bird_night"
+        }
+    ]
+}
