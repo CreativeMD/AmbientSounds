@@ -1,3 +1,8 @@
+6.1.6
+Made lush require a few rocks to be active (fixes unwanted situations of cave sounds playing)
+Made dripstone require a few rocks to be active (fixes unwanted situations of cave sounds playing)
+Added pale garden ambience
+
 6.1.5
 Fixed crash with newest NeoForge version
 
