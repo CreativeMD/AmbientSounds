@@ -1,3 +1,7 @@
+6.1.6
+Made lush require a few rocks to be active (fixes unwanted situations of cave sounds playing)
+Made dripstone require a few rocks to be active (fixes unwanted situations of cave sounds playing)
+
 6.1.4
 Fixed not playing jungle sounds in rainforest biomes
 
