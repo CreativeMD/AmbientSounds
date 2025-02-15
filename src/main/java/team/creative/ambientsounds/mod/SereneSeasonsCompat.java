@@ -18,7 +18,7 @@ public class SereneSeasonsCompat {
         Method temp = null;
         try {
             Class clazz = Class.forName("sereneseasons.season.SeasonHooks");
-            temp = ReflectionHelper.findMethod(clazz, "getBiomeTemperature", Level.class, Holder.class, BlockPos.class);
+            temp = ReflectionHelper.findMethod(clazz, "getBiomeTemperature", Level.class, Holder.class, BlockPos.class, int.class);
         } catch (Exception e) {}
         getBiomeTemperature = temp;
     }
@@ -28,7 +28,7 @@ public class SereneSeasonsCompat {
         Holder<Biome> biome = level.getBiome(player.blockPosition());
         if (getBiomeTemperature != null)
             try {
-                return (float) getBiomeTemperature.invoke(null, level, biome, player.blockPosition());
+                return (float) getBiomeTemperature.invoke(null, level, biome, player.blockPosition(), level.getSeaLevel());
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
