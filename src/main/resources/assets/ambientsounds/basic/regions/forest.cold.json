@@ -4,7 +4,8 @@
         "tree"
     ],
     "bad-regions": [
-        "rain"
+        "rain",
+        "pale-garden"
     ],
     "regions": [
         "surface"
