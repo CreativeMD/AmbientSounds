@@ -19,7 +19,8 @@
         "tyros swamp",
         "subtropical forest",
         "tropical*extreme hills",
-        "rain"
+        "rain",
+        "pale-garden"
     ],
     "features": [
         "tree"

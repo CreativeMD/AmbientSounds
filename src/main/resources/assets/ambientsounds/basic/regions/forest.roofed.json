@@ -1,7 +1,8 @@
 {
     "name": "forest.roofed",
     "bad-regions": [
-        "rain"
+        "rain",
+        "pale-garden"
     ],
     "biomes": [
         "roofed*forest",
