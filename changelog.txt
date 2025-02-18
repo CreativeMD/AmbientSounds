@@ -1,3 +1,7 @@
+6.1.7
+Fixed Serene Seasons Compatibility (thanks to ethhics)
+Made jungle, forest.cold, forest.roofed and taiga not play near pale garden
+
 6.1.6
 Made lush require a few rocks to be active (fixes unwanted situations of cave sounds playing)
 Made dripstone require a few rocks to be active (fixes unwanted situations of cave sounds playing)
