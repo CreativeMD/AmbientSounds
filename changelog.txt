@@ -1,3 +1,6 @@
+6.1.7
+Adapted to CreativeCore 2.13.0
+
 6.1.6
 Made lush require a few rocks to be active (fixes unwanted situations of cave sounds playing)
 Made dripstone require a few rocks to be active (fixes unwanted situations of cave sounds playing)
