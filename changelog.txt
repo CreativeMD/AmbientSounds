@@ -1,3 +1,8 @@
+6.1.8
+Added pattern matching for silent dimension configuration
+Made ocean feature require a lot more water (fixes whale sound in small rivers)
+Adapted to CreativeCore 2.13.0
+
 6.1.7
 Fixed Serene Seasons Compatibility (thanks to ethhics)
 Made jungle, forest.cold, forest.roofed and taiga not play near pale garden
