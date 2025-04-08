@@ -325,9 +325,10 @@ public class AmbientEngine {
     
     public AmbientDimension getDimension(Level level) {
         String dimensionTypeName = level.dimension().location().toString();
-        if (silentDimensions.contains(dimensionTypeName))
-            return silentDim;
-        
+        for (int i = 0; i < silentDimensions.size(); i++)
+            if (dimensionTypeName.matches(".*" + silentDimensions.get(i).toLowerCase().replace("*", ".*").replace("?", "\\?") + ".*"))
+                return silentDim;
+            
         for (AmbientDimension dimension : dimensions.values())
             if (dimension.is(level))
                 return dimension;
