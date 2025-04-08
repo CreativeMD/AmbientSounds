@@ -1,3 +1,7 @@
+6.1.8
+Added pattern matching for silent dimension configuration
+Made ocean feature require a lot more water (fixes whale sound in small rivers)
+
 6.1.7
 Adapted to CreativeCore 2.13.0
 
