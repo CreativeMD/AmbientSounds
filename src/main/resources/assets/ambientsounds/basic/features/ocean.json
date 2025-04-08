@@ -3,6 +3,6 @@
     "groups": [
         "water"
     ],
-    "low-count": 1000,
-    "high-count": 10000
+    "low-count": 10000,
+    "high-count": 17000
 }
