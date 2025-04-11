@@ -109,7 +109,7 @@ public class AmbientEntityCondition {
             parsedNbt = new ArrayList<>();
             for (String tag : nbt)
                 try {
-                    parsedNbt.add(TagParser.parseTag(tag));
+                    parsedNbt.add(TagParser.parseCompoundFully(tag));
                 } catch (CommandSyntaxException e) {
                     e.printStackTrace();
                 }
@@ -119,7 +119,7 @@ public class AmbientEntityCondition {
             parsedBadNbt = new ArrayList<>();
             for (String tag : badNbt)
                 try {
-                    parsedBadNbt.add(TagParser.parseTag(tag));
+                    parsedBadNbt.add(TagParser.parseCompoundFully(tag));
                 } catch (CommandSyntaxException e) {
                     e.printStackTrace();
                 }

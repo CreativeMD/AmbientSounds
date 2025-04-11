@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,8 +20,14 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
@@ -28,6 +35,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.AmbientSounds;
 import team.creative.ambientsounds.block.AmbientBlockGroup;
@@ -53,7 +61,7 @@ public class AmbientEngine {
     public static final String BLOCKGROUPS_LOCATION = "blockgroups";
     public static final String FEATURES_LOCATION = "features";
     
-    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new Serializer()).create();
     
     private static String loadedEngine;
     
@@ -73,27 +81,27 @@ public class AmbientEngine {
             if (!engine.name.equals(name))
                 throw new Exception("Invalid engine name");
             
-            engine.dimensions = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION), AmbientDimension.class, x -> x.stack,
-                (dimension, dimensionName, json) -> {
-                    dimension.name = dimensionName;
-                    dimension.load(engine, GSON, manager, json);
-                    
-                    if (dimension.loadedRegions != null) {
-                        int i = 0;
-                        for (AmbientRegion region : dimension.loadedRegions.values()) {
-                            if (engine.checkRegion(dimension, i, region))
-                                engine.addRegion(region);
-                            i++;
-                        }
+            engine.dimensions = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION), AmbientDimension.class, x -> x.stack, (
+                    dimension, dimensionName, json) -> {
+                dimension.name = dimensionName;
+                dimension.load(engine, GSON, manager, json);
+                
+                if (dimension.loadedRegions != null) {
+                    int i = 0;
+                    for (AmbientRegion region : dimension.loadedRegions.values()) {
+                        if (engine.checkRegion(dimension, i, region))
+                            engine.addRegion(region);
+                        i++;
                     }
-                });
+                }
+            });
             
-            engine.generalRegions = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION), AmbientRegion.class, x -> x.stack,
-                (region, regionName, json) -> {
-                    region.name = regionName;
-                    region.load(engine, GSON, manager);
-                    engine.addRegion(region);
-                });
+            engine.generalRegions = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION), AmbientRegion.class, x -> x.stack, (region,
+                    regionName, json) -> {
+                region.name = regionName;
+                region.load(engine, GSON, manager);
+                engine.addRegion(region);
+            });
             
             engine.blockGroups = new LinkedHashMap<>();
             String blockGroupPath = name + "/" + BLOCKGROUPS_LOCATION;
@@ -123,8 +131,8 @@ public class AmbientEngine {
             engine.soundCategories = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + SOUNDCATEGORIES_LOCATION), AmbientSoundCategory.class,
                 x -> x.stack, (soundCategory, soundCategoryName, json) -> soundCategory.name = soundCategoryName);
             
-            engine.features = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION), AmbientFeature.class, x -> x.stack,
-                (feature, featureName, json) -> feature.name = featureName);
+            engine.features = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION), AmbientFeature.class, x -> x.stack, (feature,
+                    featureName, json) -> feature.name = featureName);
             
             engine.silentDim = new AmbientDimension();
             engine.silentDim.name = "silent";
@@ -156,7 +164,8 @@ public class AmbientEngine {
         }
     }
     
-    public static <T> LinkedHashMap<String, T> loadMultiple(ResourceManager manager, ResourceLocation path, Class<T> clazz, Function<T, AmbientStackType> type, AmbientLoader<T> setNameAndInit) throws IOException {
+    public static <T> LinkedHashMap<String, T> loadMultiple(ResourceManager manager, ResourceLocation path, Class<T> clazz, Function<T, AmbientStackType> type,
+            AmbientLoader<T> setNameAndInit) throws IOException {
         LinkedHashMap<String, T> map = new LinkedHashMap<>();
         int substring = path.getPath().length() + 1;
         Map<ResourceLocation, List<Resource>> files = manager.listResourceStacks(path.getPath(), x -> x.getNamespace().equals(path.getNamespace()));
@@ -486,6 +495,18 @@ public class AmbientEngine {
     
     public AmbientSoundCategory getSoundCategory(String name) {
         return soundCategories.get(name);
+    }
+    
+    public static class Serializer implements JsonDeserializer<ResourceLocation>, JsonSerializer<ResourceLocation> {
+        @Override
+        public ResourceLocation deserialize(JsonElement p_135851_, Type p_135852_, JsonDeserializationContext p_135853_) throws JsonParseException {
+            return ResourceLocation.parse(GsonHelper.convertToString(p_135851_, "location"));
+        }
+        
+        @Override
+        public JsonElement serialize(ResourceLocation p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
+            return new JsonPrimitive(p_135855_.toString());
+        }
     }
     
 }
