@@ -6,7 +6,6 @@ import java.util.Iterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -42,7 +41,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
                     if (level.isRaining() && holder.value().getPrecipitationAt(pos, level.getSeaLevel()) == Precipitation.RAIN)
                         highestRainVolume = Math.max(highestRainVolume, biomeConditionVolume * volume.settingVolume());
                     
-                    BiomeArea area = new BiomeArea(level, holder, pos);
+                    BiomeArea area = new BiomeArea(holder, pos);
                     Pair<BiomeArea, AmbientVolume> before = biomes.getPair(area);
                     if (before == null)
                         biomes.add(area, new AmbientVolume(biomeConditionVolume, volume.settingVolume()));
@@ -75,9 +74,9 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
         public final ResourceLocation location;
         public final BlockPos pos;
         
-        public BiomeArea(Level level, Holder<Biome> biome, BlockPos pos) {
+        public BiomeArea(Holder<Biome> biome, BlockPos pos) {
             this.biome = biome;
-            this.location = level.registryAccess().lookupOrThrow(Registries.BIOME).getKey(biome.value());
+            this.location = biome.unwrapKey().get().location();
             this.pos = pos;
         }
         
