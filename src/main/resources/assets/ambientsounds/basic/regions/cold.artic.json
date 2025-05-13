@@ -34,6 +34,9 @@
             "air": {
                 "min": 0.6
             },
+            "regions": [
+                "surface"
+            ],
             "volume": 0.5
         }
     ]
