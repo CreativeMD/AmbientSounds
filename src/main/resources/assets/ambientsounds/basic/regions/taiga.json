@@ -35,7 +35,9 @@
         "mirage_isles",
         "yosemite_lowlands",
         "yosemite_cliffs",
-        "yellowstone"
+        "yellowstone",
+        "crimson_tundra",
+        "shield"
     ],
     "sounds": [
         {
