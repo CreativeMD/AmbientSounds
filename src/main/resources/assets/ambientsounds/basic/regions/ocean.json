@@ -9,7 +9,8 @@
         "kelp forest",
         "lake",
         "stream",
-        "sea"
+        "sea",
+        "lush_stacks"
     ],
     "features": [
         "water"

@@ -10,7 +10,8 @@
         "swamp",
         "highland",
         "nether",
-        "rain"
+        "rain",
+        "taiga"
     ],
     "temperature": {
         "min": 0.2
@@ -29,7 +30,11 @@
         "pasture",
         "rocky plateau",
         "tropics plains",
-        "mycelium"
+        "mycelium",
+        "firecracker_chaparral",
+        "pumpkin_valley",
+        "bayou",
+        "skyrise_vale"
     ],
     "sounds": [
         {
