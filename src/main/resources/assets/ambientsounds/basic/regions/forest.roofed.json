@@ -6,7 +6,11 @@
     "biomes": [
         "roofed*forest",
         "dark_forest",
-        "blooming_valley"
+        "blooming_valley",
+        "forgotten_forest",
+        "weeping_witch_forest",
+        "enchanted_tangle",
+        "ebony_woods"
     ],
     "sounds": [
         {
