@@ -1,3 +1,6 @@
+6.1.12
+Reverted Compressed ogg audios to ~160 kbps VBR
+
 6.1.11
 Fixed not playing sounds when using biomeswevegone (Thanks to MylesGit)
 Fixed not playing anything in Terralith:Shield
