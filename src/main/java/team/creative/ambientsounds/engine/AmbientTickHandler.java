@@ -95,6 +95,9 @@ public class AmbientTickHandler {
     public void onRender(Object object) {
         if (showDebugInfo && engine != null && !mc.isPaused() && environment != null && mc.level != null) {
             GuiGraphics graphics = (GuiGraphics) object;
+            
+            graphics.nextStratum();
+            
             DebugTextRenderer text = new DebugTextRenderer();
             
             engine.collectDetails(text);

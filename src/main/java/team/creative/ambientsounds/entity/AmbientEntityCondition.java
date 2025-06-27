@@ -21,10 +21,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.TagValueOutput;
 import team.creative.ambientsounds.condition.AmbientCondition.AmbientMinMaxFadeCondition;
 import team.creative.ambientsounds.engine.AmbientEngine;
 import team.creative.ambientsounds.environment.AmbientEnvironment;
@@ -197,7 +199,9 @@ public class AmbientEntityCondition {
     }
     
     private boolean hasNbt(List<CompoundTag> nbt, Entity entity) {
-        CompoundTag tag = entity.saveWithoutId(new CompoundTag());
+        TagValueOutput tagvalueoutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
+        entity.saveWithoutId(tagvalueoutput);
+        var tag = tagvalueoutput.buildResult();
         for (CompoundTag check : nbt)
             if (NbtUtils.compareNbt(check, tag, true))
                 return true;
