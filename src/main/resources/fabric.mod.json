@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "ambientsounds",
-    "version": "6.1.10",
+    "version": "6.1.11",
     "name": "AmbientSounds",
     "description": "Expands minecraft's ambient sounds.",
     "authors": [
@@ -23,6 +23,6 @@
         "fabricloader": ">=0.16.14",
         "fabric-api": "*",
         "minecraft": ">=1.21.6",
-        "creativecore": ">=2.13.0"
+        "creativecore": ">=2.14.0"
     }
 }
