@@ -1,8 +1,8 @@
 {
     "pack": {
         "description": "AmbientSounds resources",
-        "pack_format": 63,
-        "forge:resource_pack_format": 63,
-        "forge:data_pack_format": 80
+        "pack_format": 64,
+        "forge:resource_pack_format": 64,
+        "forge:data_pack_format": 81
     }
 }
