@@ -3,8 +3,7 @@
     "variants": [
         {
             "features": [
-                "sand",
-                "water"
+                "sand"
             ]
         },
         {
@@ -22,7 +21,8 @@
         "petrified forest",
         "menelaus",
         "dry scrub",
-        "sands"
+        "sands",
+        "drylands"
     ],
     "bad-biomes": [
         "lush desert",
