@@ -87,9 +87,15 @@ public class AmbientSound extends AmbientCondition {
     
     protected transient boolean active;
     
-    protected transient float cachedAimedVolume;
+    protected transient float cachedAimedConditionVolume;
+    /** defines the aimed output position which includes all settings and is the effective value of the sound (ignoring transition volume and the mute factor) */
+    protected transient float cachedAimedOutputVolume;
     protected transient AmbientVolume aimedVolume;
-    protected transient float currentVolume;
+    
+    protected transient float currentConditionVolume;
+    /** defines the current volume including all settings and is the effective value of the sound (ignoring transition volume and the mute factor) */
+    protected transient float currentOutputVolume;
+    
     protected transient float aimedPitch;
     protected transient int transition;
     protected transient int transitionTime;
@@ -152,17 +158,21 @@ public class AmbientSound extends AmbientCondition {
     }
     
     public boolean fastTick(AmbientEnvironment env) {
+        if (currentConditionVolume < cachedAimedConditionVolume)
+            currentConditionVolume += Math.min(currentPropertries.getFadeInVolume(engine), cachedAimedConditionVolume - currentConditionVolume);
+        else if (currentConditionVolume > cachedAimedConditionVolume)
+            currentConditionVolume -= Math.min(currentPropertries.getFadeOutVolume(engine), currentConditionVolume - cachedAimedConditionVolume);
         
-        if (currentVolume < cachedAimedVolume)
-            currentVolume += Math.min(currentPropertries.getFadeInVolume(engine), cachedAimedVolume - currentVolume);
-        else if (currentVolume > cachedAimedVolume)
-            currentVolume -= Math.min(currentPropertries.getFadeOutVolume(engine), currentVolume - cachedAimedVolume);
+        if (currentOutputVolume < cachedAimedOutputVolume)
+            currentOutputVolume += Math.min(currentPropertries.getFadeInVolume(engine), cachedAimedOutputVolume - currentOutputVolume);
+        else if (currentOutputVolume > cachedAimedOutputVolume)
+            currentOutputVolume -= Math.min(currentPropertries.getFadeOutVolume(engine), currentOutputVolume - cachedAimedOutputVolume);
         
         if (isPlaying()) {
             
             if (inTransition()) { // Two files are played
-                stream1.volume = Math.max(0, Math.min(stream1.volume, getCombinedVolume(env) * (1D - (double) transition / transitionTime)));
-                stream2.volume = Math.min(getCombinedVolume(env), getCombinedVolume(env) * ((double) transition / transitionTime));
+                stream1.transitionVolume = (1D - (double) transition / transitionTime);
+                stream2.transitionVolume = (double) transition / transitionTime;
                 
                 if (transition >= transitionTime) {
                     engine.soundEngine.stop(stream1);
@@ -178,7 +188,7 @@ public class AmbientSound extends AmbientCondition {
                 else if (stream1.duration > 0 && currentPropertries.length == null)
                     stream1.duration = -1;
                 
-                stream1.volume = getCombinedVolume(env);
+                stream1.transitionVolume = 1;
                 
                 if (currentPropertries.length != null) { // If the sound has a length
                     
@@ -189,14 +199,14 @@ public class AmbientSound extends AmbientCondition {
                             transitionTime = currentPropertries.transition != null ? currentPropertries.transition : 60;
                         }
                     } else {
-                        int fadeOutTime = (int) Math.ceil(cachedAimedVolume / currentPropertries.getFadeOutVolume(engine));
+                        int fadeOutTime = (int) Math.ceil(cachedAimedConditionVolume / currentPropertries.getFadeOutVolume(engine));
                         
                         if (stream1.remaining() <= 0) { // Exceeded length
                             engine.soundEngine.stop(stream1);
                             stream1 = null;
                             pauseTimer = -1;
                         } else if (fadeOutTime > stream1.remaining()) // about to exceed length -> fade out
-                            stream1.volume = getCombinedVolume(env) * stream1.remaining() / fadeOutTime;
+                            stream1.transitionVolume = stream1.remaining() / fadeOutTime;
                     }
                 }
             }
@@ -233,7 +243,7 @@ public class AmbientSound extends AmbientCondition {
                 pauseTimer--;
         }
         
-        return cachedAimedVolume > 0 || currentVolume > 0;
+        return isAudible();
     }
     
     @Override
@@ -254,6 +264,10 @@ public class AmbientSound extends AmbientCondition {
         return value;
     }
     
+    public boolean isAudible() {
+        return cachedAimedConditionVolume > 0 || currentConditionVolume > 0 || currentOutputVolume > 0;
+    }
+    
     public boolean tick(AmbientEnvironment env, AmbientSelection selection) {
         if (selection != null) {
             AmbientSelection soundSelection = value(env);
@@ -261,26 +275,29 @@ public class AmbientSound extends AmbientCondition {
             if (soundSelection != null) {
                 AmbientSelection last = selection.last();
                 last.subSelection = soundSelection;
-                cachedAimedVolume = (float) selection.volume();
+                
                 aimedVolume = selection;
+                cachedAimedConditionVolume = (float) selection.conditionVolume();
+                cachedAimedOutputVolume = (float) (selection.volume() * aimedVolume.settingVolume() * volumeSetting * env.dimension.volumeSetting * AmbientSounds.CONFIG.volume);
+                
                 currentPropertries = selection.getProperties();
                 last.subSelection = null;
                 
                 aimedPitch = Mth.clamp(currentPropertries.getPitch(env), 0.5F, 2.0F);
             } else {
                 aimedVolume = AmbientVolume.SILENT;
-                cachedAimedVolume = 0;
+                cachedAimedConditionVolume = cachedAimedOutputVolume = 0;
             }
         } else {
             aimedVolume = AmbientVolume.SILENT;
-            cachedAimedVolume = 0;
+            cachedAimedConditionVolume = cachedAimedOutputVolume = 0;
         }
         
-        return cachedAimedVolume > 0 || currentVolume > 0;
+        return isAudible();
     }
     
     protected SoundStream play(int index, AmbientEnvironment env) {
-        SoundStream stream = new SoundStream(index, env);
+        SoundStream stream = new SoundStream(index);
         stream.pitch = aimedPitch;
         if (currentPropertries.length != null)
             stream.duration = (int) currentPropertries.length.randomValue();
@@ -290,13 +307,12 @@ public class AmbientSound extends AmbientCondition {
     }
     
     protected SoundStream play(int index, AmbientEnvironment env, double volume) {
-        SoundStream stream = new SoundStream(index, env);
+        SoundStream stream = new SoundStream(index);
         stream.pitch = aimedPitch;
         if (currentPropertries.length != null)
             stream.duration = (int) currentPropertries.length.randomValue();
         
-        stream.volume = volume;
-        stream.generatedVoume = (float) volume;
+        stream.effectiveVolume = (float) stream.combinedVolume();
         engine.soundEngine.play(stream);
         return stream;
     }
@@ -343,10 +359,6 @@ public class AmbientSound extends AmbientCondition {
         return currentPropertries.length != null || (currentPropertries.pause == null && files.length == 1);
     }
     
-    public double getCombinedVolume(AmbientEnvironment env) {
-        return currentVolume * volumeSetting * env.dimension.volumeSetting * AmbientSounds.CONFIG.volume;
-    }
-    
     public class SoundStream implements TickableSoundInstance, SpecialSoundInstance {
         
         private static final RandomSource rand = RandomSource.create();
@@ -354,10 +366,13 @@ public class AmbientSound extends AmbientCondition {
         public final int index;
         public final ResourceLocation location;
         
-        public float generatedVoume;
+        /** effective volume is the volume that is actually played. It includes condition, transition and setting volume and the mute factor is also applied */
+        public float effectiveVolume;
+        
+        public double transitionVolume = 1;
+        
         public WeighedSoundEvents soundeventaccessor;
         
-        public double volume;
         public double pitch;
         public int duration = -1;
         public int ticksPlayed = 0;
@@ -366,12 +381,11 @@ public class AmbientSound extends AmbientCondition {
         private boolean playedOnce;
         public final SoundSource category;
         
-        public SoundStream(int index, AmbientEnvironment env) {
+        public SoundStream(int index) {
             this.index = index;
             this.location = AmbientSound.this.files[index];
-            this.volume = AmbientSound.this.getCombinedVolume(env);
             this.category = getSoundSource(currentPropertries.channel);
-            this.generatedVoume = (float) volume;
+            this.effectiveVolume = (float) combinedVolume();
         }
         
         public boolean loop() {
@@ -383,7 +397,12 @@ public class AmbientSound extends AmbientCondition {
         }
         
         public double conditionVolume() {
-            return Mth.clamp(currentVolume / cachedAimedVolume, 0, 1) * aimedVolume.conditionVolume();
+            return currentConditionVolume;
+        }
+        
+        /** includes condition, transition and setting volume. Used before mute factor is applied */
+        public double combinedVolume() {
+            return currentOutputVolume * transitionVolume;
         }
         
         public double mute() {
@@ -465,7 +484,7 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public float getVolume() {
-            return generatedVoume;
+            return effectiveVolume;
         }
         
         @Override
@@ -540,7 +559,7 @@ public class AmbientSound extends AmbientCondition {
         public void collectDetails(DebugTextRenderer text) {
             text.text("[");
             text.detail("n", location);
-            text.detail("v", volume);
+            text.detail("v", effectiveVolume);
             text.detail("cv", conditionVolume());
             text.detail("i", index);
             text.detail("p", pitch);
