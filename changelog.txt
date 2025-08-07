@@ -1,3 +1,10 @@
+6.2.0
+Added drylands to the desert biome list
+Fixed desert region required water to played
+Fixed random crash occuring from time to time (caused by random generator not being available on different threads)
+Fixed unwanted volume jumps by separating condition and output volume
+Fixed bird-ambience2.ogg (thanks to HowardCLH)
+
 6.1.11
 Fixed not playing sounds when using biomeswevegone (Thanks to MylesGit)
 Fixed not playing anything in Terralith:Shield
