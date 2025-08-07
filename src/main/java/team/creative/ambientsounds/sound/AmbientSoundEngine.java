@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.doubles.Double2DoubleSortedMap;
 import it.unimi.dsi.fastutil.doubles.DoubleComparators;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.sounds.SoundManager;
+import team.creative.ambientsounds.environment.AmbientEnvironment;
 import team.creative.ambientsounds.sound.AmbientSound.SoundStream;
 
 public class AmbientSoundEngine {
@@ -29,7 +30,7 @@ public class AmbientSoundEngine {
         return mc.getSoundManager();
     }
     
-    public void tick() {
+    public void tick(AmbientEnvironment env) {
         // Is still playing
         synchronized (sounds) {
             try {
@@ -61,7 +62,7 @@ public class AmbientSoundEngine {
                         sound.setPlayedOnce();
                     
                     if (mutes.isEmpty())
-                        sound.generatedVoume = (float) sound.volume;
+                        sound.effectiveVolume = (float) sound.combinedVolume();
                     else {
                         double mute = 0;
                         for (Entry muteEntry : mutes.double2DoubleEntrySet()) {
@@ -70,7 +71,7 @@ public class AmbientSoundEngine {
                             else
                                 break;
                         }
-                        sound.generatedVoume = (float) (sound.volume * (1 - mute));
+                        sound.effectiveVolume = (float) (sound.combinedVolume() * (1 - mute));
                     }
                     
                 }
