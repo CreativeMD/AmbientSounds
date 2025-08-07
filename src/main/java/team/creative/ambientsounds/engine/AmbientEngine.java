@@ -465,7 +465,7 @@ public class AmbientEngine {
     }
     
     public void fastTick(AmbientEnvironment env) {
-        soundEngine.tick();
+        soundEngine.tick(env);
         
         if (!activeRegions.isEmpty()) {
             for (Iterator<AmbientRegion> iterator = activeRegions.iterator(); iterator.hasNext();) {
