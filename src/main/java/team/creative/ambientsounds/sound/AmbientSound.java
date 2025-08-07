@@ -362,7 +362,7 @@ public class AmbientSound extends AmbientCondition {
     
     public class SoundStream implements TickableSoundInstance, SpecialSoundInstance {
         
-        private static final RandomSource rand = RandomSource.create();
+        private static final RandomSource rand = RandomSource.createNewThreadLocalInstance();
         
         public final int index;
         public final ResourceLocation location;
