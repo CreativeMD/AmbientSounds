@@ -195,7 +195,7 @@ public class AmbientSound extends AmbientCondition {
                     if (currentPropertries.pause == null && files.length > 1) { // Continuous transition
                         if (stream1.remaining() <= 0) {
                             transition = 0;
-                            stream2 = play(getRandomFileExcept(stream1.index), env, 0);
+                            stream2 = playTransition(getRandomFileExcept(stream1.index), env);
                             transitionTime = currentPropertries.transition != null ? currentPropertries.transition : 60;
                         }
                     } else {
@@ -307,12 +307,13 @@ public class AmbientSound extends AmbientCondition {
         return stream;
     }
     
-    protected SoundStream play(int index, AmbientEnvironment env, double volume) {
+    protected SoundStream playTransition(int index, AmbientEnvironment env) {
         SoundStream stream = new SoundStream(index);
         stream.pitch = aimedPitch;
         if (currentPropertries.length != null)
             stream.duration = (int) currentPropertries.length.randomValue();
         
+        stream.transitionVolume = 0;
         stream.effectiveVolume = (float) stream.combinedVolume();
         engine.soundEngine.play(stream);
         return stream;
