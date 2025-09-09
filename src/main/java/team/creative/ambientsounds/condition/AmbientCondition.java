@@ -31,8 +31,10 @@ public class AmbientCondition extends AmbientSoundProperties {
     public String biomeType;
     
     public String[] biomes;
+    protected transient BiomeCondition[] biomesCompiled;
     @SerializedName("bad-biomes")
     public String[] badBiomes;
+    protected transient BiomeCondition[] badBiomesCompiled;
     
     public Boolean raining;
     @SerializedName("overall-raining")
@@ -91,6 +93,9 @@ public class AmbientCondition extends AmbientSoundProperties {
             for (int i = 0; i < variants.length; i++)
                 variants[i].init(engine);
             
+        biomesCompiled = BiomeCondition.of(biomes);
+        badBiomesCompiled = BiomeCondition.of(badBiomes);
+        
         if (regions != null) {
             regionList = new ArrayList<>();
             
@@ -186,10 +191,10 @@ public class AmbientCondition extends AmbientSoundProperties {
             
             for (Pair<BiomeArea, AmbientVolume> pair : env.biome) {
                 
-                if (biomes != null && !pair.key.checkBiome(biomes))
+                if (biomes != null && !pair.key.checkBiome(biomesCompiled))
                     continue;
                 
-                if (badBiomes != null && pair.key.checkBiome(badBiomes))
+                if (badBiomes != null && pair.key.checkBiome(badBiomesCompiled))
                     return null;
                 
                 if (biomes != null) {

@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import team.creative.ambientsounds.condition.AmbientVolume;
+import team.creative.ambientsounds.condition.BiomeCondition;
 import team.creative.ambientsounds.engine.AmbientEngine;
 import team.creative.ambientsounds.environment.BiomeEnvironment.BiomeArea;
 import team.creative.creativecore.client.CreativeCoreClient;
@@ -80,20 +81,21 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
             this.pos = pos;
         }
         
-        public boolean checkBiome(String[] names) {
-            for (String name : names)
-                if (name.startsWith("#")) {
-                    if (biome.tags().anyMatch(x -> x.location().toString().matches(".*" + name.substring(1).replace("*", ".*") + ".*")))
+        public boolean checkBiome(BiomeCondition[] conditions) {
+            for (BiomeCondition condition : conditions) {
+                if (condition.tag()) {
+                    if (biome.tags().anyMatch(x -> condition.pattern().matcher(x.location().toString()).matches()))
                         return true;
-                } else if (location.toString().matches(".*" + name.replace("*", ".*") + ".*"))
+                } else if (condition.pattern().matcher(location.toString()).matches())
                     return true;
+            }
             return false;
         }
         
         @Override
         public boolean equals(Object object) {
-            if (object instanceof BiomeArea)
-                return ((BiomeArea) object).biome.equals(biome);
+            if (object instanceof BiomeArea a)
+                return a.biome.equals(biome);
             return false;
         }
         
