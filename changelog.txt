@@ -1,3 +1,6 @@
+6.2.2
+Fixed crash on fabric when playing sound
+
 6.2.1
 Added performance improvement for biome tags check
 Fixed sound after transition playing with full volume for a split second (this bug has occurred in the past and got fixed, but due to the recent changes it reappeared)
