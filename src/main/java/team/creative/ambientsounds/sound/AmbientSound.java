@@ -372,7 +372,7 @@ public class AmbientSound extends AmbientCondition {
         
         public double transitionVolume = 1;
         
-        public WeighedSoundEvents soundeventaccessor;
+        public Sound sound;
         
         public double pitch;
         public int duration = -1;
@@ -448,9 +448,18 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public WeighedSoundEvents resolve(SoundManager sndHandler) {
-            soundeventaccessor = sndHandler.getSoundEvent(location);
-            return soundeventaccessor;
+        public WeighedSoundEvents resolve(SoundManager soundManager) {
+            if (this.location.equals(SoundManager.INTENTIONALLY_EMPTY_SOUND_LOCATION)) {
+                this.sound = SoundManager.INTENTIONALLY_EMPTY_SOUND;
+                return SoundManager.INTENTIONALLY_EMPTY_SOUND_EVENT;
+            }
+            WeighedSoundEvents weighedSoundEvents = soundManager.getSoundEvent(this.location);
+            if (weighedSoundEvents == null)
+                this.sound = SoundManager.EMPTY_SOUND;
+            else
+                this.sound = weighedSoundEvents.getSound(rand);
+            
+            return weighedSoundEvents;
         }
         
         @Override
@@ -475,7 +484,7 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public Sound getSound() {
-            return soundeventaccessor.getSound(rand);
+            return sound;
         }
         
         @Override
