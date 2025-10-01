@@ -6,7 +6,7 @@ license="LGPL-3.0-only"
 [[mods]]
     modId="ambientsounds"
     logoFile="ambientsounds.png"
-    version="6.2.1"
+    version="6.2.2"
     displayName="AmbientSounds"
     displayURL="https://modrinth.com/mod/ambientsounds"
     authors="CreativeMD"
@@ -16,14 +16,14 @@ license="LGPL-3.0-only"
 [[dependencies.ambientsounds]]
     modId="neoforge"
     type="required"
-    versionRange="[21.6,)"
+    versionRange="[21.9,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.ambientsounds]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.6,1.22)"
+    versionRange="[1.21.9,1.22)"
     ordering="NONE"
     side="BOTH"
 

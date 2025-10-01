@@ -223,7 +223,7 @@ public class AmbientEntityCondition {
     }
     
     private boolean checkEntityName(String[] name, Entity entity) {
-        if (entity instanceof Player p && ArrayUtils.contains(name, p.getGameProfile().getName()))
+        if (entity instanceof Player p && ArrayUtils.contains(name, p.getGameProfile().name()))
             return true;
         if (ArrayUtils.contains(name, entity.getStringUUID()))
             return true;
