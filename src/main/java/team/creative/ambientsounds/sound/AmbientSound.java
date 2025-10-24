@@ -278,7 +278,7 @@ public class AmbientSound extends AmbientCondition {
                 
                 aimedVolume = selection;
                 cachedAimedConditionVolume = (float) selection.conditionVolume();
-                cachedAimedOutputVolume = (float) (selection.volume() * aimedVolume.settingVolume() * volumeSetting * env.dimension.volumeSetting * AmbientSounds.CONFIG.volume);
+                cachedAimedOutputVolume = (float) (aimedVolume.volume() * volumeSetting * env.dimension.volumeSetting * AmbientSounds.CONFIG.volume);
                 
                 currentPropertries = selection.getProperties();
                 last.subSelection = null;
