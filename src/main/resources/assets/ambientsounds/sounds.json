@@ -855,7 +855,7 @@
     "wind.light-wind3": {
         "sounds": [
             {
-                "name": "ambientsounds:wind/light-wind2",
+                "name": "ambientsounds:wind/light-wind3",
                 "stream": true
             }
         ],
