@@ -96,8 +96,10 @@ public class TerrainEnvironment {
     public void collectDetails(DebugTextRenderer text) {
         text.detail("features", airPocket.features.toString(DebugTextRenderer.DECIMAL_FORMAT));
         text.detail("light", airPocket.averageLight);
+        text.detail("block-light", airPocket.averageBlockLight);
         text.detail("sky-light", airPocket.averageSkyLight);
         text.detail("air", airPocket.air);
+        text.detail("sky", airPocket.sky);
     }
     
 }

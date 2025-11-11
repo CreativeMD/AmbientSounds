@@ -280,10 +280,26 @@ public class AmbientEngine {
     
     @SerializedName("air-pocket-count")
     public int airPocketCount = 50000;
-    @SerializedName("air-pocket-distance")
-    public int airPocketDistance = 25;
     @SerializedName("air-pocket-groups")
     public AirPocketGroup[] airPocketGroups = new AirPocketGroup[0];
+    
+    @SerializedName("air-distance")
+    public int airDistance = 25;
+    @SerializedName("air-sky-distance")
+    public int airSkyDistance = 13;
+    @SerializedName("air-sky-weight")
+    public double airSkyWeight = 50;
+    @SerializedName("air-min")
+    public double airMin = 0.1;
+    @SerializedName("air-max")
+    public double airMax = 0.5;
+    
+    @SerializedName("sky-distance")
+    public double skyDistance = 20;
+    @SerializedName("sky-min-count")
+    public int skyMinCount = 10;
+    @SerializedName("sky-max-count")
+    public int skyMaxCount = 100;
     
     public String[] solids = {};
     
@@ -344,6 +360,16 @@ public class AmbientEngine {
         }
     }
     
+    public void consumeSoundCollections(String[] groups, Consumer<AmbientSound> consumer) {
+        for (int i = 0; i < groups.length; i++) {
+            AmbientSoundCollection group = soundCollections.get(groups[i]);
+            if (group == null || group.sounds == null)
+                continue;
+            for (AmbientSound sound : group.sounds)
+                consumer.accept(sound);
+        }
+    }
+    
     public int airPocketVolume(int r) {
         int res = 0;
         for (int i = r; r > 0; r--) {
@@ -361,23 +387,13 @@ public class AmbientEngine {
         return res;
     }
     
-    public void consumeSoundCollections(String[] groups, Consumer<AmbientSound> consumer) {
-        for (int i = 0; i < groups.length; i++) {
-            AmbientSoundCollection group = soundCollections.get(groups[i]);
-            if (group == null || group.sounds == null)
-                continue;
-            for (AmbientSound sound : group.sounds)
-                consumer.accept(sound);
-        }
-    }
-    
     public void init() throws AmbientEngineLoadException {
         airPocketDistanceFactor = new ArrayList<>();
         for (int i = 0; i < airPocketGroups.length; i++)
             for (int subDistance = 0; subDistance < airPocketGroups[i].distance; subDistance++)
                 airPocketDistanceFactor.add(airPocketGroups[i].weight);
             
-        maxAirPocketCount = airPocketVolume(airPocketDistance);
+        maxAirPocketCount = airPocketVolume(airDistance);
         
         for (Entry<String, AmbientSoundCollection> group : soundCollections.entrySet())
             if (group.getValue().sounds != null)

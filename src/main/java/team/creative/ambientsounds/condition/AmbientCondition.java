@@ -53,14 +53,18 @@ public class AmbientCondition extends AmbientSoundProperties {
     @SerializedName("max-height-relative")
     public AmbientMinMaxFadeCondition maxHeightRelative;
     
+    @SerializedName("light")
     public AmbientMinMaxFadeCondition light;
-    
+    @SerializedName("block-light")
+    public AmbientMinMaxFadeCondition blockLight;
     @SerializedName("sky-light")
     public AmbientMinMaxFadeCondition skyLight;
     
     public AmbientMinMaxFadeCondition air;
     
     public AmbientMinMaxFadeCondition temperature;
+    
+    public AmbientMinMaxFadeCondition sky;
     
     public String[] features;
     @SerializedName("bad-features")
@@ -265,6 +269,14 @@ public class AmbientCondition extends AmbientSoundProperties {
             selection.mulCondition(volume);
         }
         
+        if (blockLight != null) {
+            double volume = blockLight.volume(env.terrain.airPocket.averageBlockLight);
+            if (volume <= 0)
+                return null;
+            
+            selection.mulCondition(volume);
+        }
+        
         if (skyLight != null) {
             double volume = skyLight.volume(env.terrain.airPocket.averageSkyLight);
             if (volume <= 0)
@@ -275,6 +287,14 @@ public class AmbientCondition extends AmbientSoundProperties {
         
         if (air != null) {
             double volume = air.volume(env.terrain.airPocket.air);
+            if (volume <= 0)
+                return null;
+            
+            selection.mulCondition(volume);
+        }
+        
+        if (sky != null) {
+            double volume = sky.volume(env.terrain.airPocket.sky);
             if (volume <= 0)
                 return null;
             
