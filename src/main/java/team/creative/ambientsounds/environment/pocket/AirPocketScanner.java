@@ -32,12 +32,15 @@ public class AirPocketScanner extends Thread {
     private List<HashMap<BlockPosInspection, BlockPosInspection>> toScan = new ArrayList<>();
     private final HashMapDouble<BlockState> foundCount = new HashMapDouble<>();
     private QuadBitSet sky = new QuadBitSet();
+    private QuadBitSet skyTested = new QuadBitSet();
+    private int skyCounter = 0;
     private MutableBlockPos mutable = new MutableBlockPos();
     
     private double distributionCounter;
     private int totalSize = 0;
     private int currentDistance = 0;
     private int lightValueCounter = 0;
+    private int blockLightValueCounter = 0;
     private int skyLightValueCounter = 0;
     private int faceCounter = 0;
     private int air;
@@ -84,7 +87,7 @@ public class AirPocketScanner extends Thread {
         }
         
         consumer.accept(
-            new AirPocket(engine, distribution, lightValueCounter / (double) faceCounter, skyLightValueCounter / (double) faceCounter, air / (double) engine.maxAirPocketCount));
+            new AirPocket(engine, distribution, lightValueCounter / (double) faceCounter, blockLightValueCounter / (double) faceCounter, skyLightValueCounter / (double) faceCounter, air / (double) engine.maxAirPocketCount, skyCounter));
     }
     
     protected HashMap<BlockPosInspection, BlockPosInspection> getOrCreate(int distance) {
@@ -108,10 +111,22 @@ public class AirPocketScanner extends Thread {
     
     protected void scan(Level level, int distance, BlockPosInspection pos) {
         BlockState state = level.getBlockState(pos);
+        
+        if (!skyTested.get(pos.getX(), pos.getZ()) && pos.isUp()) {
+            skyTested.set(pos.getX(), pos.getZ());
+            if (canSeeSkyConsiderSolids(level, pos)) {
+                sky.set(pos.getX(), pos.getZ());
+                if (distance < engine.skyDistance)
+                    skyCounter += engine.skyDistance - distance;
+                if (distance < engine.airSkyDistance)
+                    air += (1 - (distance / engine.airSkyDistance)) * engine.airSkyWeight;
+            }
+        }
+        
         if (hearThrough(level, state, pos)) {
             if (!state.isAir())
                 findState(state, distance);
-            if (distance < engine.airPocketDistance && air < engine.maxAirPocketCount)
+            if (distance < engine.airDistance)
                 air++;
             distance++;
             if (sky.get(pos.getX(), pos.getZ()) && sky.get(pos.getX() - 1, pos.getZ()) && sky.get(pos.getX(), pos.getZ() - 1) && sky.get(pos.getX() + 1, pos.getZ()) && sky.get(pos
@@ -140,15 +155,13 @@ public class AirPocketScanner extends Thread {
                 totalSize++;
             }
         } else {
-            if (!sky.get(pos.getX(), pos.getZ()) && pos.isUp() && canSeeSkyConsiderSolids(level, pos)) {
-                sky.set(pos.getX(), pos.getZ());
-                if (distance < engine.airPocketDistance)
-                    air = engine.maxAirPocketCount;
-            }
             for (Direction direction : pos) {
                 BlockPos other = pos.relative(direction);
-                lightValueCounter += level.getLightEmission(other);
-                skyLightValueCounter += level.getBrightness(LightLayer.SKY, other);
+                int blockLight = level.getBrightness(LightLayer.BLOCK, other);
+                int skyLight = level.getBrightness(LightLayer.SKY, other);
+                lightValueCounter += Math.max(blockLight, skyLight);
+                blockLightValueCounter += blockLight;
+                skyLightValueCounter += skyLight;
                 faceCounter++;
             }
             findState(state, distance);
