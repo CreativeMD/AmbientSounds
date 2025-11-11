@@ -1,3 +1,11 @@
+6.3.0
+Fixed light only considering block light
+Added blockLight condition
+Added sky condition
+Added better air and sky calculations
+Made cave sounds not play when the player is not underground
+Made cave sounds depend on sky light
+
 6.2.3
 Made owl sound play more often
 Fixed light-wind3 not playing correctly
