@@ -1,3 +1,8 @@
+6.2.4
+Made owl sound play more often
+Fixed light-wind3 not playing correctly
+Added lush_stacks from biomeswevegone to highlands
+
 6.2.3
 Fixed applying volume setting twice which caused some sounds to be silent
 
