@@ -9,7 +9,6 @@
     "biome-scan-distance": 5,
     "biome-scan-count": 3,
     "air-pocket-count": 50000,
-    "air-pocket-distance": 13,
     "air-pocket-groups": [
         {
             "distance": 5,
@@ -28,6 +27,14 @@
             "weight": 1
         }
     ],
+    "air-distance": 60,
+    "air-sky-distance": 13,
+    "air-sky-weight": 50,
+    "air-min": 0.01,
+    "air-max": 0.07,
+    "sky-distance": 20,
+    "sky-min-count": 20,
+    "sky-max-count": 100,
     "solids": [
         "#minecraft:doors",
         "#minecraft:impermeable",

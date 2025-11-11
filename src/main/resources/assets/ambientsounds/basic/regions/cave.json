@@ -3,6 +3,14 @@
     "bad-biomes": [
         "alexscaves"
     ],
+    "sky-light": {
+        "max": 5,
+        "fade": 2
+    },
+    "sky": {
+        "max": 0.5,
+        "fade": 0.1
+    },
     "relative-height": {
         "max": -10,
         "fade": 5
