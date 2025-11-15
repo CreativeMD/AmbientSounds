@@ -1,3 +1,6 @@
+6.3.1
+Added slabs to considered solid list
+
 6.3.0
 Fixed light only considering block light
 Added blockLight condition
