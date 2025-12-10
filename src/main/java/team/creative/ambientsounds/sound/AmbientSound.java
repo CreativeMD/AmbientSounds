@@ -13,7 +13,6 @@ import java.util.concurrent.CompletionException;
 
 import com.google.gson.annotations.JsonAdapter;
 
-import net.minecraft.Util;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
@@ -24,12 +23,13 @@ import net.minecraft.client.sounds.LoopingAudioStream.AudioStreamProvider;
 import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.client.sounds.WeighedSoundEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import team.creative.ambientsounds.AmbientSounds;
 import team.creative.ambientsounds.condition.AmbientCondition;
 import team.creative.ambientsounds.condition.AmbientSelection;
@@ -77,7 +77,7 @@ public class AmbientSound extends AmbientCondition {
     public transient double volumeSetting = 1;
     public String name;
     public transient String fullName;
-    public ResourceLocation[] files;
+    public Identifier[] files;
     public double[] chances;
     @JsonAdapter(StringJson.class)
     public String[] category;
@@ -365,7 +365,7 @@ public class AmbientSound extends AmbientCondition {
         private static final RandomSource rand = RandomSource.createNewThreadLocalInstance();
         
         public final int index;
-        public final ResourceLocation location;
+        public final Identifier identifier;
         
         /** effective volume is the volume that is actually played. It includes condition, transition and setting volume and the mute factor is also applied */
         public float effectiveVolume;
@@ -384,7 +384,7 @@ public class AmbientSound extends AmbientCondition {
         
         public SoundStream(int index) {
             this.index = index;
-            this.location = AmbientSound.this.files[index];
+            this.identifier = AmbientSound.this.files[index];
             this.category = getSoundSource(currentPropertries.channel);
             this.effectiveVolume = (float) combinedVolume();
         }
@@ -438,7 +438,7 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public String toString() {
-            return "l:" + location + ",v:" + DebugTextRenderer.DECIMAL_FORMAT.format(volume) + "(" + DebugTextRenderer.DECIMAL_FORMAT.format(
+            return "l:" + identifier + ",v:" + DebugTextRenderer.DECIMAL_FORMAT.format(volume) + "(" + DebugTextRenderer.DECIMAL_FORMAT.format(
                 conditionVolume()) + "),i:" + index + ",p:" + pitch + ",t:" + ticksPlayed + ",d:" + duration;
         }
         
@@ -449,11 +449,11 @@ public class AmbientSound extends AmbientCondition {
         
         @Override
         public WeighedSoundEvents resolve(SoundManager soundManager) {
-            if (this.location.equals(SoundManager.INTENTIONALLY_EMPTY_SOUND_LOCATION)) {
+            if (this.identifier.equals(SoundManager.INTENTIONALLY_EMPTY_SOUND_LOCATION)) {
                 this.sound = SoundManager.INTENTIONALLY_EMPTY_SOUND;
                 return SoundManager.INTENTIONALLY_EMPTY_SOUND_EVENT;
             }
-            WeighedSoundEvents weighedSoundEvents = soundManager.getSoundEvent(this.location);
+            WeighedSoundEvents weighedSoundEvents = soundManager.getSoundEvent(this.identifier);
             if (weighedSoundEvents == null)
                 this.sound = SoundManager.EMPTY_SOUND;
             else
@@ -488,8 +488,8 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public ResourceLocation getLocation() {
-            return location;
+        public Identifier getIdentifier() {
+            return identifier;
         }
         
         @Override
@@ -533,7 +533,7 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public CompletableFuture<AudioStream> getAudioStream(SoundBufferLibrary loader, ResourceLocation id, boolean looping) {
+        public CompletableFuture<AudioStream> getAudioStream(SoundBufferLibrary loader, Identifier id, boolean looping) {
             return CompletableFuture.supplyAsync(() -> {
                 try {
                     Resource resource = ((SoundBufferLibraryAccessor) loader).getResourceManager().getResourceOrThrow(id);
@@ -568,7 +568,7 @@ public class AmbientSound extends AmbientCondition {
         
         public void collectDetails(DebugTextRenderer text) {
             text.text("[");
-            text.detail("n", location);
+            text.detail("n", identifier);
             text.detail("v", effectiveVolume);
             text.detail("cv", conditionVolume());
             text.detail("i", index);

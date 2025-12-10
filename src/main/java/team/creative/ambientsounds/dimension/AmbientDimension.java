@@ -88,7 +88,7 @@ public class AmbientDimension {
     }
     
     public boolean is(Level level) {
-        String dimensionTypeName = level.dimension().location().toString();
+        String dimensionTypeName = level.dimension().identifier().toString();
         
         if (badDimensionNames != null)
             for (int j = 0; j < badDimensionNames.length; j++)

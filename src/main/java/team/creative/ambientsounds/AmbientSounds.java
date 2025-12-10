@@ -11,10 +11,10 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.Util;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
@@ -64,7 +64,7 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClientRenderGui(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
-        loader.registerReloadListener(ResourceLocation.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
+        loader.registerReloadListener(Identifier.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
             @SuppressWarnings("NullableProblems")
             @Override
             protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {

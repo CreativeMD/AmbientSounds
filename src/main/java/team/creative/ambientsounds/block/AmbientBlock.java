@@ -3,7 +3,7 @@ package team.creative.ambientsounds.block;
 import java.util.Optional;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,8 +42,8 @@ public abstract class AmbientBlock {
     
     private static AmbientBlock parseFirst(String data) {
         if (data.startsWith("#"))
-            return new AmbientBlockTag(TagKey.create(Registries.BLOCK, ResourceLocation.parse(data.substring(1))));
-        return new AmbientBlockBlock(ResourceLocation.parse(data));
+            return new AmbientBlockTag(TagKey.create(Registries.BLOCK, Identifier.parse(data.substring(1))));
+        return new AmbientBlockBlock(Identifier.parse(data));
     }
     
     public abstract boolean is(BlockState state);
@@ -65,9 +65,9 @@ public abstract class AmbientBlock {
     
     public static class AmbientBlockBlock extends AmbientBlock {
         
-        public final ResourceLocation block;
+        public final Identifier block;
         
-        public AmbientBlockBlock(ResourceLocation block) {
+        public AmbientBlockBlock(Identifier block) {
             this.block = block;
         }
         

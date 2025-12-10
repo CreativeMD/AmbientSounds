@@ -14,7 +14,7 @@ import com.jcraft.jogg.Packet;
 import com.jcraft.jogg.Page;
 
 import net.minecraft.client.sounds.JOrbisAudioStream;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import team.creative.ambientsounds.AmbientSounds;
 import team.creative.ambientsounds.sound.OggAudioStreamExtended;
 
@@ -32,7 +32,7 @@ public abstract class OggAudioStreamMixin implements OggAudioStreamExtended {
     private InputStream input;
     
     @Override
-    public boolean setPositionRandomly(long length, ResourceLocation id) throws IOException {
+    public boolean setPositionRandomly(long length, Identifier id) throws IOException {
         if (length == 0)
             return true;
         int skipped = RANDOM.nextInt((int) (length - length / 4));

@@ -20,7 +20,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -90,7 +90,7 @@ public class AmbientEntityCondition {
         if (type != null) {
             parsedType = new ArrayList<>();
             for (String entityType : type) {
-                ResourceLocation location = ResourceLocation.parse(entityType);
+                Identifier location = Identifier.parse(entityType);
                 var result = BuiltInRegistries.ENTITY_TYPE.getOptional(location);
                 if (result.isPresent())
                     parsedType.add(result.get());
@@ -100,7 +100,7 @@ public class AmbientEntityCondition {
         if (badType != null) {
             parsedBadType = new ArrayList<>();
             for (String entityType : badType) {
-                ResourceLocation location = ResourceLocation.parse(entityType);
+                Identifier location = Identifier.parse(entityType);
                 var result = BuiltInRegistries.ENTITY_TYPE.getOptional(location);
                 if (result.isPresent())
                     parsedBadType.add(result.get());

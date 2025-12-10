@@ -2,9 +2,9 @@ package team.creative.ambientsounds.sound;
 
 import java.io.IOException;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface OggAudioStreamExtended {
     
-    public boolean setPositionRandomly(long length, ResourceLocation id) throws IOException;
+    public boolean setPositionRandomly(long length, Identifier id) throws IOException;
 }

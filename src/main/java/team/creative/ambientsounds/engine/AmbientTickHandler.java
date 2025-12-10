@@ -102,7 +102,7 @@ public class AmbientTickHandler {
             
             engine.collectDetails(text);
             
-            text.detail("playing", engine.soundEngine.playingCount()).detail("dim-name", mc.level.dimension().location()).newLine();
+            text.detail("playing", engine.soundEngine.playingCount()).detail("dim-name", mc.level.dimension().identifier()).newLine();
             
             environment.collectLevelDetails(text);
             text.newLine();

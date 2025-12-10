@@ -20,9 +20,9 @@
         "ambientsounds.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.17.3",
+        "fabricloader": ">=0.18.2",
         "fabric-api": "*",
-        "minecraft": ">=1.21.9",
+        "minecraft": ">=1.21.11",
         "creativecore": ">=2.14.0"
     }
 }

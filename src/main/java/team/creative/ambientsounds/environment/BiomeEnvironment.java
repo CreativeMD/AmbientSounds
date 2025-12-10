@@ -6,7 +6,7 @@ import java.util.Iterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -66,18 +66,18 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
     
     public void collectDetails(DebugTextRenderer text) {
         for (Pair<BiomeArea, AmbientVolume> pair : this)
-            text.detail(pair.getKey().location.toString(), pair.getValue());
+            text.detail(pair.getKey().identifier.toString(), pair.getValue());
     }
     
     public static class BiomeArea {
         
         public final Holder<Biome> biome;
-        public final ResourceLocation location;
+        public final Identifier identifier;
         public final BlockPos pos;
         
         public BiomeArea(Holder<Biome> biome, BlockPos pos) {
             this.biome = biome;
-            this.location = biome.unwrapKey().get().location();
+            this.identifier = biome.unwrapKey().get().identifier();
             this.pos = pos;
         }
         
@@ -86,7 +86,7 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
                 if (condition.tag()) {
                     if (biome.tags().anyMatch(x -> condition.pattern().matcher(x.location().toString()).matches()))
                         return true;
-                } else if (condition.pattern().matcher(location.toString()).matches())
+                } else if (condition.pattern().matcher(identifier.toString()).matches())
                     return true;
             }
             return false;

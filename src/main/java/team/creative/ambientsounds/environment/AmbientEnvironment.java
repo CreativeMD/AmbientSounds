@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import team.creative.ambientsounds.condition.AmbientTime;
@@ -64,12 +65,13 @@ public class AmbientEnvironment {
         this.temperature = SereneSeasonsCompat.getTemperature(player);
         
         analyzeUnderwater(player, level);
-        analyzeTime(level, deltaTime);
+        analyzeTime(level, player, deltaTime);
         entity.analyzeFast(dimension, player, level, deltaTime);
     }
     
-    public void analyzeTime(Level level, float deltaTime) {
-        this.sunAngle = (Math.toDegrees(level.getSunAngle(deltaTime)) - 180) % 360;
+    public void analyzeTime(Level level, Player player, float deltaTime) {
+        
+        this.sunAngle = (Math.toDegrees(level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, player.position())) - 180) % 360;
         if (this.sunAngle < 0)
             this.sunAngle += 360;
         this.night = sunAngle < 90 || sunAngle > 270;

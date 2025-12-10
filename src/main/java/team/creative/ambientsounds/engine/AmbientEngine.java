@@ -32,7 +32,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -52,7 +52,7 @@ import team.creative.creativecore.client.render.text.DebugTextRenderer;
 
 public class AmbientEngine {
     
-    public static final ResourceLocation CONFIG_LOCATION = ResourceLocation.tryBuild(AmbientSounds.MODID, "config.json");
+    public static final Identifier CONFIG_LOCATION = Identifier.tryBuild(AmbientSounds.MODID, "config.json");
     public static final String ENGINE_LOCATION = "engine.json";
     public static final String DIMENSIONS_LOCATION = "dimensions";
     public static final String REGIONS_LOCATION = "regions";
@@ -61,7 +61,7 @@ public class AmbientEngine {
     public static final String BLOCKGROUPS_LOCATION = "blockgroups";
     public static final String FEATURES_LOCATION = "features";
     
-    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new Serializer()).create();
+    public static final Gson GSON = new GsonBuilder().registerTypeAdapter(Identifier.class, new Serializer()).create();
     
     private static String loadedEngine;
     
@@ -74,15 +74,15 @@ public class AmbientEngine {
     }
     
     public static AmbientEngine attemptToLoadEngine(AmbientSoundEngine soundEngine, ResourceManager manager, String name) throws Exception {
-        InputStream engineInput = manager.getResource(ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).orElseThrow().open();
+        InputStream engineInput = manager.getResource(Identifier.tryBuild(AmbientSounds.MODID, name + "/" + ENGINE_LOCATION)).orElseThrow().open();
         try {
             AmbientEngine engine = GSON.fromJson(JsonParser.parseString(IOUtils.toString(engineInput, Charsets.UTF_8)).getAsJsonObject(), AmbientEngine.class);
             
             if (!engine.name.equals(name))
                 throw new Exception("Invalid engine name");
             
-            engine.dimensions = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION), AmbientDimension.class, x -> x.stack, (
-                    dimension, dimensionName, json) -> {
+            engine.dimensions = loadMultiple(manager, Identifier.tryBuild(AmbientSounds.MODID, name + "/" + DIMENSIONS_LOCATION), AmbientDimension.class, x -> x.stack, (dimension,
+                    dimensionName, json) -> {
                 dimension.name = dimensionName;
                 dimension.load(engine, GSON, manager, json);
                 
@@ -96,7 +96,7 @@ public class AmbientEngine {
                 }
             });
             
-            engine.generalRegions = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION), AmbientRegion.class, x -> x.stack, (region,
+            engine.generalRegions = loadMultiple(manager, Identifier.tryBuild(AmbientSounds.MODID, name + "/" + REGIONS_LOCATION), AmbientRegion.class, x -> x.stack, (region,
                     regionName, json) -> {
                 region.name = regionName;
                 region.load(engine, GSON, manager);
@@ -106,8 +106,8 @@ public class AmbientEngine {
             engine.blockGroups = new LinkedHashMap<>();
             String blockGroupPath = name + "/" + BLOCKGROUPS_LOCATION;
             int blockGroupSubstring = blockGroupPath.length() + 1;
-            Map<ResourceLocation, List<Resource>> files = manager.listResourceStacks(blockGroupPath, x -> x.getNamespace().equals(AmbientSounds.MODID));
-            for (Entry<ResourceLocation, List<Resource>> file : files.entrySet()) {
+            Map<Identifier, List<Resource>> files = manager.listResourceStacks(blockGroupPath, x -> x.getNamespace().equals(AmbientSounds.MODID));
+            for (Entry<Identifier, List<Resource>> file : files.entrySet()) {
                 AmbientBlockGroup group = new AmbientBlockGroup();
                 String blockGroupName = file.getKey().getPath().substring(blockGroupSubstring).replace(".json", "");
                 for (Resource resource : file.getValue()) {
@@ -125,13 +125,13 @@ public class AmbientEngine {
                 engine.blockGroups.put(blockGroupName, group);
             }
             
-            engine.soundCollections = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + SOUNDCOLLECTIONS_LOCATION), AmbientSoundCollection.class,
+            engine.soundCollections = loadMultiple(manager, Identifier.tryBuild(AmbientSounds.MODID, name + "/" + SOUNDCOLLECTIONS_LOCATION), AmbientSoundCollection.class,
                 x -> x.stack, (soundGroup, soundGroupName, json) -> {});
             
-            engine.soundCategories = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + SOUNDCATEGORIES_LOCATION), AmbientSoundCategory.class,
+            engine.soundCategories = loadMultiple(manager, Identifier.tryBuild(AmbientSounds.MODID, name + "/" + SOUNDCATEGORIES_LOCATION), AmbientSoundCategory.class,
                 x -> x.stack, (soundCategory, soundCategoryName, json) -> soundCategory.name = soundCategoryName);
             
-            engine.features = loadMultiple(manager, ResourceLocation.tryBuild(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION), AmbientFeature.class, x -> x.stack, (feature,
+            engine.features = loadMultiple(manager, Identifier.tryBuild(AmbientSounds.MODID, name + "/" + FEATURES_LOCATION), AmbientFeature.class, x -> x.stack, (feature,
                     featureName, json) -> feature.name = featureName);
             
             engine.silentDim = new AmbientDimension();
@@ -164,12 +164,12 @@ public class AmbientEngine {
         }
     }
     
-    public static <T> LinkedHashMap<String, T> loadMultiple(ResourceManager manager, ResourceLocation path, Class<T> clazz, Function<T, AmbientStackType> type,
+    public static <T> LinkedHashMap<String, T> loadMultiple(ResourceManager manager, Identifier path, Class<T> clazz, Function<T, AmbientStackType> type,
             AmbientLoader<T> setNameAndInit) throws IOException {
         LinkedHashMap<String, T> map = new LinkedHashMap<>();
         int substring = path.getPath().length() + 1;
-        Map<ResourceLocation, List<Resource>> files = manager.listResourceStacks(path.getPath(), x -> x.getNamespace().equals(path.getNamespace()));
-        for (Entry<ResourceLocation, List<Resource>> file : files.entrySet()) {
+        Map<Identifier, List<Resource>> files = manager.listResourceStacks(path.getPath(), x -> x.getNamespace().equals(path.getNamespace()));
+        for (Entry<Identifier, List<Resource>> file : files.entrySet()) {
             T base = null;
             String name = file.getKey().getPath().substring(substring).replace(".json", "");
             for (Resource resource : file.getValue()) {
@@ -340,7 +340,7 @@ public class AmbientEngine {
     }
     
     public AmbientDimension getDimension(Level level) {
-        String dimensionTypeName = level.dimension().location().toString();
+        String dimensionTypeName = level.dimension().identifier().toString();
         for (int i = 0; i < silentDimensions.size(); i++)
             if (dimensionTypeName.matches(".*" + silentDimensions.get(i).toLowerCase().replace("*", ".*").replace("?", "\\?") + ".*"))
                 return silentDim;
@@ -514,14 +514,14 @@ public class AmbientEngine {
         return soundCategories.get(name);
     }
     
-    public static class Serializer implements JsonDeserializer<ResourceLocation>, JsonSerializer<ResourceLocation> {
+    public static class Serializer implements JsonDeserializer<Identifier>, JsonSerializer<Identifier> {
         @Override
-        public ResourceLocation deserialize(JsonElement p_135851_, Type p_135852_, JsonDeserializationContext p_135853_) throws JsonParseException {
-            return ResourceLocation.parse(GsonHelper.convertToString(p_135851_, "location"));
+        public Identifier deserialize(JsonElement p_135851_, Type p_135852_, JsonDeserializationContext p_135853_) throws JsonParseException {
+            return Identifier.parse(GsonHelper.convertToString(p_135851_, "location"));
         }
         
         @Override
-        public JsonElement serialize(ResourceLocation p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
+        public JsonElement serialize(Identifier p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
             return new JsonPrimitive(p_135855_.toString());
         }
     }
