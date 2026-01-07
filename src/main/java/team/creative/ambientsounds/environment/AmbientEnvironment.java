@@ -71,7 +71,7 @@ public class AmbientEnvironment {
     
     public void analyzeTime(Level level, Player player, float deltaTime) {
         
-        this.sunAngle = (Math.toDegrees(level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, player.position())) - 180) % 360;
+        this.sunAngle = level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, player.position()) - 180;
         if (this.sunAngle < 0)
             this.sunAngle += 360;
         this.night = sunAngle < 90 || sunAngle > 270;
