@@ -1,3 +1,9 @@
+6.3.2
+Added tidepools to beach region
+Added chaparral to savanna region
+Added support for region_unexplored, yungscavebiomes and galasphere blocks (thanks to Redls07)
+Removed rain from bad biomes in jungle
+
 6.3.1
 Added slabs to considered solid list
 
