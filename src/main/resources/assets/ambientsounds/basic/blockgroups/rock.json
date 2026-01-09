@@ -1,3 +1,19 @@
 [
-    "#minecraft:base_stone_overworld"
+    "#minecraft:base_stone_overworld",
+    "regions_unexplored:ash_vent",
+    "regions_unexplored:volcanic_ash",
+    "regions_unexplored:raw_redstone_block",
+    "regions_unexplored:viridescent_nylium",
+    "regions_unexplored:deepslate_viridescent_nylium",
+    "regions_unexplored:prismoss",
+    "regions_unexplored:deepslate_prismoss",
+    "yungscavebiomes:ancient_sand",
+    "yungscavebiomes:ancient_sandstone",
+    "yungscavebiomes:layered_ancient_sandstone",
+    "yungscavebiomes:brittle_ancient_sandstone",
+    "galosphere:lumiere_block",
+    "galosphere:allurite_block",
+    "galosphere:pink_salt",
+    "galosphere:pastel_pink_salt",
+    "galosphere:rose_pink_salt"
 ]
