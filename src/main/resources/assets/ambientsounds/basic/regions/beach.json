@@ -4,7 +4,8 @@
         "#is_beach",
         "beach",
         "shore",
-        "tropics beach"
+        "tropics beach",
+        "tidepools"
     ],
     "bad-biomes": [
         "gravel_beach"
