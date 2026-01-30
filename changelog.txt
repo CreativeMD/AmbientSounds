@@ -1,3 +1,7 @@
+6.3.4
+Added trapdoors to solids
+Fixed glass_panes not being considered solid (changed to common tag c:glass_panes, which will work on fabric as well)
+
 6.3.3
 Added pale garden ambience
 
