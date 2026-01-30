@@ -39,7 +39,7 @@
         "#minecraft:doors",
         "#minecraft:impermeable",
         "#minecraft:stairs",
-        "#minecraft:glass_panes",
+        "#c:glass_panes",
         "#minecraft:slabs",
         "#minecraft:trapdoors"
     ],
