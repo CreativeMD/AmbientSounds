@@ -41,7 +41,8 @@
         "#minecraft:stairs",
         "#minecraft:glass_panes",
         "#minecraft:walls",
-        "#minecraft:slabs"
+        "#minecraft:slabs",
+        "#minecraft:trapdoors"
     ],
     "biome-types": [
         "surface",
