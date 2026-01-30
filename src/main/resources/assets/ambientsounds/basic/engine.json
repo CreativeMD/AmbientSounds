@@ -40,7 +40,8 @@
         "#minecraft:impermeable",
         "#minecraft:stairs",
         "#minecraft:glass_panes",
-        "#minecraft:slabs"
+        "#minecraft:slabs",
+        "#minecraft:trapdoors"
     ],
     "biome-types": [
         "surface",
