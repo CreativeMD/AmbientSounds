@@ -8,6 +8,11 @@
         "CreativeMD",
         "AriaFreeze"
     ],
+    "contact": {
+        "sources": "https://github.com/CreativeMD/AmbientSounds",
+        "homepage": "https://modrinth.com/mod/appleskin",
+        "issues": "https://github.com/CreativeMD/AmbientSounds/issues"
+    },
     "license": "LGPL-3.0-only",
     "icon": "ambientsounds.png",
     "environment": "client",
