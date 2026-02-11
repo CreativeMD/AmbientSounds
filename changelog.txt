@@ -1,3 +1,6 @@
+6.3.5
+Added contact information to fabric.mod.json
+
 6.3.4
 Added trapdoors to solids
 Fixed glass_panes not being considered solid (changed to common tag c:glass_panes, which will work on fabric as well)
