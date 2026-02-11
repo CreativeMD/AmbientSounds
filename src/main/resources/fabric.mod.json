@@ -1,13 +1,18 @@
 {
     "schemaVersion": 1,
     "id": "ambientsounds",
-    "version": "6.3.4",
+    "version": "6.3.5",
     "name": "AmbientSounds",
     "description": "Expands minecraft's ambient sounds.",
     "authors": [
         "CreativeMD",
         "AriaFreeze"
     ],
+    "contact": {
+        "sources": "https://github.com/CreativeMD/AmbientSounds",
+        "homepage": "https://modrinth.com/mod/ambientsounds",
+        "issues": "https://github.com/CreativeMD/AmbientSounds/issues"
+    },
     "license": "LGPL-3.0-only",
     "icon": "ambientsounds.png",
     "environment": "client",
