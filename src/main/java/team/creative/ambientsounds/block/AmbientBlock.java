@@ -73,7 +73,7 @@ public abstract class AmbientBlock {
         
         @Override
         public boolean is(BlockState state) {
-            return state.getBlockHolder().is(block);
+            return state.typeHolder().is(block);
         }
         
     }

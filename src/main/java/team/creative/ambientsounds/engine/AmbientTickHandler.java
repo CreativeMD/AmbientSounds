@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -94,7 +94,7 @@ public class AmbientTickHandler {
     
     public void onRender(Object object) {
         if (showDebugInfo && engine != null && !mc.isPaused() && environment != null && mc.level != null) {
-            GuiGraphics graphics = (GuiGraphics) object;
+            GuiGraphicsExtractor graphics = (GuiGraphicsExtractor) object;
             
             graphics.nextStratum();
             

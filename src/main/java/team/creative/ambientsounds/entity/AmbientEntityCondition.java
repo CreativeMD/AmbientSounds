@@ -215,7 +215,7 @@ public class AmbientEntityCondition {
     }
     
     private boolean containsTag(String[] tag, Entity entity) {
-        Set<String> tags = entity.getTags();
+        Set<String> tags = entity.entityTags();
         for (int i = 0; i < tag.length; i++)
             if (tags.contains(tag[i]))
                 return true;
