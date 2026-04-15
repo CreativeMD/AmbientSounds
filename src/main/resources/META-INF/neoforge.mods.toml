@@ -16,14 +16,14 @@ license="LGPL-3.0-only"
 [[dependencies.ambientsounds]]
     modId="neoforge"
     type="required"
-    versionRange="[26.1.0.1-beta,)"
+    versionRange="[26.1.2.10-beta,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.ambientsounds]]
     modId="minecraft"
     type="required"
-    versionRange="[26.1,)"
+    versionRange="[26.2,)"
     ordering="NONE"
     side="BOTH"
 
