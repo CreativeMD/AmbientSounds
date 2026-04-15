@@ -23,7 +23,7 @@ license="LGPL-3.0-only"
 [[dependencies.ambientsounds]]
     modId="minecraft"
     type="required"
-    versionRange="[26.2,)"
+    versionRange="[26.1.2,)"
     ordering="NONE"
     side="BOTH"
 
