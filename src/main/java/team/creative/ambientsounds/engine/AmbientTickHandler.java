@@ -36,6 +36,7 @@ public class AmbientTickHandler {
     
     public boolean showDebugInfo = false;
     private boolean shouldReload = false;
+    private boolean waitForReload = false;
     
     public void scheduleReload() {
         shouldReload = true;
@@ -44,6 +45,7 @@ public class AmbientTickHandler {
     public void setEngine(AmbientEngine engine) {
         this.engine = engine;
         initConfiguration();
+        waitForReload = false;
     }
     
     public void initConfiguration() {
@@ -153,11 +155,12 @@ public class AmbientTickHandler {
         }
         
         if (shouldReload) {
+            waitForReload = true;
             AmbientSounds.reloadAsync();
             shouldReload = false;
         }
         
-        if (engine == null)
+        if (engine == null || waitForReload)
             return;
         
         Level level = mc.level;
