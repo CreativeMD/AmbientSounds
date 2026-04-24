@@ -5,8 +5,7 @@
             "category": "wind",
             "files": [
                 "ambientsounds:wind.light-wind",
-                "ambientsounds:wind.light-wind2",
-                "ambientsounds:wind.light-wind3"
+                "ambientsounds:wind.light-wind2"
             ],
             "transition": 200,
             "air": {
