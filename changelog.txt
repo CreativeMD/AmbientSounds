@@ -1,3 +1,10 @@
+6.3.6
+Make savanna cicadas and cricket depend on sand or grass being around
+Renamed light-wind3 to heavy-wind2 (suggested by Catomon)
+Fixed playing cold (light-wind) in caves
+Fixed possible crash when reloading
+Fixed issue reported by ModernFix of registering reloader resource manager too late
+
 6.3.4
 Added trapdoors to solids
 
