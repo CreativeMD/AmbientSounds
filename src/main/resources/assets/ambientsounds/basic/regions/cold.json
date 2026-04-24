@@ -21,7 +21,10 @@
             "temperature": {
                 "max": 0,
                 "min": -5
-            }
+            },
+            "regions": [
+                "surface"
+            ]
         }
     ],
     "sound-collections": [
