@@ -25,6 +25,10 @@
                 "ambientsounds:animals.cricket2",
                 "ambientsounds:animals.cricket3"
             ],
+            "features": [
+                "grass",
+                "sand"
+            ],
             "overall-raining": false,
             "length": {
                 "min": 1000,
@@ -38,6 +42,10 @@
             "category": "cicadas",
             "files": [
                 "ambientsounds:animals.cicadas"
+            ],
+            "features": [
+                "grass",
+                "sand"
             ],
             "overall-raining": false,
             "day": 0.15,
@@ -82,6 +90,10 @@
                 "ambientsounds:animals.cricket-warm-night",
                 "ambientsounds:animals.cricket-warm-night2"
             ],
+            "features": [
+                "grass",
+                "sand"
+            ],
             "overall-raining": false,
             "length": {
                 "min": 1000,
@@ -125,6 +137,9 @@
                 "min": 2000,
                 "max": 3000
             },
+            "features": [
+                "tree"
+            ],
             "overall-raining": false
         }
     ]
