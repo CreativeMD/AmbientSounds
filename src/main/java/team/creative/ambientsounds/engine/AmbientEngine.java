@@ -481,6 +481,9 @@ public class AmbientEngine {
     }
     
     public void fastTick(AmbientEnvironment env) {
+        if (soundEngine == null)
+            return;
+        
         soundEngine.tick(env);
         
         if (!activeRegions.isEmpty()) {
