@@ -65,7 +65,7 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClientRenderGui(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
-        loader.registerClientStarted(() -> {
+        Runnable register = () -> {
             Minecraft minecraft = Minecraft.getInstance();
             ReloadableResourceManager reloadableResourceManager = (ReloadableResourceManager) minecraft.getResourceManager();
             
@@ -82,7 +82,12 @@ public class AmbientSounds implements ClientLoader {
                     // NO-OP
                 }
             });
-        });
+        };
+        
+        if (loader.fabric())
+            loader.registerClientStarted(register);
+        else
+            register.run();
         
         CreativeCoreClient.registerClientConfig(MODID);
     }
