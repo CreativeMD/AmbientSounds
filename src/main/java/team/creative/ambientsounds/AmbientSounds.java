@@ -64,19 +64,27 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClientRenderGui(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
         
-        loader.registerReloadListener(Identifier.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
-            @SuppressWarnings("NullableProblems")
-            @Override
-            protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-                AmbientSounds.reloadAsync();
-                return null;
-            }
-            
-            @Override
-            protected void apply(@Nullable Void object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-                // NO-OP
-            }
-        });
+        Runnable register = () -> {
+            loader.registerReloadListener(Identifier.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
+                @SuppressWarnings("NullableProblems")
+                @Override
+                protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+                    AmbientSounds.reloadAsync();
+                    return null;
+                }
+                
+                @Override
+                protected void apply(@Nullable Void object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+                    // NO-OP
+                }
+            });
+        };
+        
+        if (loader.fabric())
+            loader.registerClientStarted(register);
+        else
+            register.run();
+        
         CreativeCoreClient.registerClientConfig(MODID);
     }
     
