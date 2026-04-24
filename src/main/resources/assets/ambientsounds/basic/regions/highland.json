@@ -32,7 +32,8 @@
             "name": "heavy-wind",
             "category": "wind",
             "files": [
-                "ambientsounds:wind.heavy-wind"
+                "ambientsounds:wind.heavy-wind",
+                "ambientsounds:wind.heavy-wind2"
             ],
             "air": {
                 "min": 0.6
