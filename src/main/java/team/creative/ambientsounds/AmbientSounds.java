@@ -87,7 +87,7 @@ public class AmbientSounds implements ClientLoader {
         if (loader.fabric())
             loader.registerClientStarted(register);
         else
-            register.run();
+            Minecraft.getInstance().execute(register);
         
         CreativeCoreClient.registerClientConfig(MODID);
     }
