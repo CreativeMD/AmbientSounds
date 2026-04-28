@@ -1,3 +1,6 @@
+6.3.7
+Fixed executing reloader manager off thread
+
 6.3.6
 Make savanna cicadas and cricket depend on sand or grass being around
 Renamed light-wind3 to heavy-wind2 (suggested by Catomon)
