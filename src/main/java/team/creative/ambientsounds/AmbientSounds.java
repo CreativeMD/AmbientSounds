@@ -22,6 +22,7 @@ import team.creative.ambientsounds.engine.AmbientEngine;
 import team.creative.ambientsounds.engine.AmbientTickHandler;
 import team.creative.creativecore.CreativeCore;
 import team.creative.creativecore.ICreativeLoader;
+import team.creative.creativecore.Side;
 import team.creative.creativecore.client.ClientLoader;
 import team.creative.creativecore.client.CreativeCoreClient;
 
@@ -37,6 +38,28 @@ public class AmbientSounds implements ClientLoader {
     public AmbientSounds() {
         ICreativeLoader loader = CreativeCore.loader();
         loader.registerClient(this);
+        if (loader.getOverallSide() == Side.CLIENT) {
+            Runnable register = () -> {
+                loader.registerReloadListener(Identifier.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
+                    @SuppressWarnings("NullableProblems")
+                    @Override
+                    protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+                        AmbientSounds.reloadAsync();
+                        return null;
+                    }
+                    
+                    @Override
+                    protected void apply(@Nullable Void object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+                        // NO-OP
+                    }
+                });
+            };
+            
+            if (loader.fabric())
+                loader.registerClientStarted(register);
+            else
+                register.run();
+        }
     }
     
     public static void scheduleReload() {
@@ -63,27 +86,6 @@ public class AmbientSounds implements ClientLoader {
         loader.registerClientTick(TICK_HANDLER::onTick);
         loader.registerClientRenderGui(TICK_HANDLER::onRender);
         loader.registerLoadLevel(TICK_HANDLER::loadLevel);
-        
-        Runnable register = () -> {
-            loader.registerReloadListener(Identifier.tryBuild(AmbientSounds.MODID, "engine"), new SimplePreparableReloadListener<Void>() {
-                @SuppressWarnings("NullableProblems")
-                @Override
-                protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-                    AmbientSounds.reloadAsync();
-                    return null;
-                }
-                
-                @Override
-                protected void apply(@Nullable Void object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-                    // NO-OP
-                }
-            });
-        };
-        
-        if (loader.fabric())
-            loader.registerClientStarted(register);
-        else
-            register.run();
         
         CreativeCoreClient.registerClientConfig(MODID);
     }
