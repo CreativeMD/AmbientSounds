@@ -191,12 +191,12 @@ public class AirPocketScanner extends Thread {
         protected boolean north;
         
         public BlockPosInspection(BlockPos pos) {
-            super(pos);
+            super(pos.getX(), pos.getY(), pos.getZ());
             this.east = this.west = this.up = this.down = this.south = this.north = true;
         }
         
         public BlockPosInspection(BlockPos pos, Direction direction) {
-            super(pos);
+            super(pos.getX(), pos.getY(), pos.getZ());
             add(direction);
         }
         

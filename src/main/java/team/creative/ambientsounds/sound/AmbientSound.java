@@ -11,6 +11,8 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.gson.annotations.JsonAdapter;
 
 import net.minecraft.client.resources.sounds.Sound;
@@ -373,6 +375,7 @@ public class AmbientSound extends AmbientCondition {
         public double transitionVolume = 1;
         
         public Sound sound;
+        protected @Nullable WeighedSoundEvents soundEvent;
         
         public double pitch;
         public int duration = -1;
@@ -448,18 +451,23 @@ public class AmbientSound extends AmbientCondition {
         }
         
         @Override
-        public WeighedSoundEvents resolve(SoundManager soundManager) {
+        public @Nullable WeighedSoundEvents getSoundEvent() {
+            return soundEvent;
+        }
+        
+        @Override
+        public @Nullable WeighedSoundEvents getOrResolve(SoundManager soundManager) {
             if (this.identifier.equals(SoundManager.INTENTIONALLY_EMPTY_SOUND_LOCATION)) {
                 this.sound = SoundManager.INTENTIONALLY_EMPTY_SOUND;
                 return SoundManager.INTENTIONALLY_EMPTY_SOUND_EVENT;
             }
-            WeighedSoundEvents weighedSoundEvents = soundManager.getSoundEvent(this.identifier);
-            if (weighedSoundEvents == null)
+            this.soundEvent = soundManager.getSoundEvent(this.identifier);
+            if (soundEvent == null)
                 this.sound = SoundManager.EMPTY_SOUND;
             else
-                this.sound = weighedSoundEvents.getSound(rand);
+                this.sound = soundEvent.getSound(rand);
             
-            return weighedSoundEvents;
+            return soundEvent;
         }
         
         @Override
