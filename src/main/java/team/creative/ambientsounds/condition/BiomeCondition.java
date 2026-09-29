@@ -2,6 +2,8 @@ package team.creative.ambientsounds.condition;
 
 import java.util.regex.Pattern;
 
+import net.minecraft.resources.ResourceLocation;
+
 public record BiomeCondition(boolean tag, Pattern pattern) {
     
     public static BiomeCondition of(String name) {
@@ -17,6 +19,11 @@ public record BiomeCondition(boolean tag, Pattern pattern) {
         for (int i = 0; i < names.length; i++)
             compiled[i] = of(names[i]);
         return compiled;
+    }
+    
+    /** Whether the pattern matches the given biome or biome tag id. The result only depends on both, so it is remembered. */
+    public boolean matches(ResourceLocation location) {
+        return BiomeMatchCache.matches(pattern, location);
     }
     
 }
