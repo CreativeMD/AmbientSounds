@@ -84,9 +84,9 @@ public class BiomeEnvironment implements Iterable<Pair<BiomeArea, AmbientVolume>
         public boolean checkBiome(BiomeCondition[] conditions) {
             for (BiomeCondition condition : conditions) {
                 if (condition.tag()) {
-                    if (biome.tags().anyMatch(x -> condition.pattern().matcher(x.location().toString()).matches()))
+                    if (biome.tags().anyMatch(x -> condition.matches(x.location())))
                         return true;
-                } else if (condition.pattern().matcher(identifier.toString()).matches())
+                } else if (condition.matches(identifier))
                     return true;
             }
             return false;

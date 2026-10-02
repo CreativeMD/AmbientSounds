@@ -1,12 +1,18 @@
 package team.creative.ambientsounds.environment;
 
+import java.util.function.Predicate;
+
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import team.creative.ambientsounds.dimension.AmbientDimension;
 import team.creative.ambientsounds.engine.AmbientEngine;
 import team.creative.ambientsounds.environment.pocket.AirPocket;
@@ -16,11 +22,14 @@ import team.creative.creativecore.client.render.text.DebugTextRenderer;
 
 public class TerrainEnvironment {
     
+    /** Every state getHeightBlock stops at passes this (solid render requires canOcclude), so a section whose palette has no such state can be skipped */
+    private static final Predicate<BlockState> POSSIBLE_HEIGHT_BLOCK = state -> state.canOcclude() || state.is(BlockTags.LEAVES) || state.getFluidState().is(FluidTags.WATER);
+    
     public static int getHeightBlock(Level level, MutableBlockPos pos) {
         int y;
         int heighest = 0;
         
-        for (y = level.getMaxY(); y > level.getMinY(); --y) {
+        for (y = getHeightScanStart(level, pos); y > level.getMinY(); --y) {
             pos.setY(y);
             BlockState state = level.getBlockState(pos);
             if (state.isSolidRender() || state.is(BlockTags.LEAVES) || level.getFluidState(pos).is(FluidTags.WATER)) {
@@ -30,6 +39,24 @@ public class TerrainEnvironment {
         }
         
         return heighest;
+    }
+    
+    /** Highest y getHeightBlock has to start at: the top of the highest section whose palette could contain a height block.
+     * Only loaded columns of the client level are bounded, every other case starts at the build limit like before. */
+    private static int getHeightScanStart(Level level, MutableBlockPos pos) {
+        int start = level.getMaxY();
+        int chunkX = SectionPos.blockToSectionCoord(pos.getX());
+        int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
+        if (level.getClass() != ClientLevel.class || !level.hasChunk(chunkX, chunkZ))
+            return start;
+        // above the build limit the level reports void air and sections without blocks report air, both must be unable to match
+        if (POSSIBLE_HEIGHT_BLOCK.test(Blocks.VOID_AIR.defaultBlockState()) || POSSIBLE_HEIGHT_BLOCK.test(Blocks.AIR.defaultBlockState()))
+            return start;
+        LevelChunkSection[] sections = level.getChunk(chunkX, chunkZ).getSections();
+        for (int i = sections.length - 1; i >= 0; i--)
+            if (sections[i] != null && sections[i].maybeHas(POSSIBLE_HEIGHT_BLOCK))
+                return SectionPos.sectionToBlockCoord(level.getMinSectionY() + i, 15);
+        return level.getMinY() + 1; // nothing to find, the scan still ends at the same y
     }
     
     public double averageHeight;
