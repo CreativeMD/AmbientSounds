@@ -143,6 +143,12 @@ public class AmbientTickHandler {
     public void loadLevel(LevelAccessor level) {
         if (level.isClientSide() && engine != null)
             engine.onClientLoad();
+        if (environment != null && environment.terrain.scanner != null) {
+            try {
+                environment.terrain.scanner.interrupt();
+                environment.terrain.scanner = null;
+            } catch (NullPointerException e) {}
+        }
     }
     
     public void onTick() {
