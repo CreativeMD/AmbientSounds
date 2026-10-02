@@ -1,3 +1,8 @@
+6.3.9
+Close air pocket scanner as soon as a new level is loaded
+Cache biome regex matches and bound the terrain height scan (Thanks to BonsUnleashed)
+Compile dimension name patterns once instead of on every tick (Thanks to BonsUnleashed)
+
 6.3.6
 Make savanna cicadas and cricket depend on sand or grass being around
 Renamed light-wind3 to heavy-wind2 (suggested by Catomon)
