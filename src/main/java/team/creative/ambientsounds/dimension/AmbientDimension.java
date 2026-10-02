@@ -3,6 +3,7 @@ package team.creative.ambientsounds.dimension;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -29,6 +30,9 @@ public class AmbientDimension {
     public transient HashMap<String, AmbientCondition> biomeTypeSelectors = new HashMap<>();
     
     public transient String name;
+    
+    public transient Pattern[] dimensionPatterns;
+    public transient Pattern[] badDimensionPatterns;
     
     public boolean mute = false;
     
@@ -78,26 +82,34 @@ public class AmbientDimension {
         for (AmbientCondition condition : biomeTypeSelectors.values())
             condition.init(engine);
         
-        if (badDimensionNames != null)
-            for (int i = 0; i < badDimensionNames.length; i++)
+        if (badDimensionNames != null) {
+            badDimensionPatterns = new Pattern[badDimensionNames.length];
+            for (int i = 0; i < badDimensionNames.length; i++) {
                 badDimensionNames[i] = ".*" + badDimensionNames[i].toLowerCase().replace("*", ".*").replace("?", "\\?") + ".*";
-            
-        if (dimensionNames != null)
-            for (int i = 0; i < dimensionNames.length; i++)
+                badDimensionPatterns[i] = Pattern.compile(badDimensionNames[i]);
+            }
+        }
+        
+        if (dimensionNames != null) {
+            dimensionPatterns = new Pattern[dimensionNames.length];
+            for (int i = 0; i < dimensionNames.length; i++) {
                 dimensionNames[i] = ".*" + dimensionNames[i].toLowerCase().replace("*", ".*").replace("?", "\\?") + ".*";
+                dimensionPatterns[i] = Pattern.compile(dimensionNames[i]);
+            }
+        }
     }
     
     public boolean is(Level level) {
         String dimensionTypeName = level.dimension().identifier().toString();
         
-        if (badDimensionNames != null)
-            for (int j = 0; j < badDimensionNames.length; j++)
-                if (dimensionTypeName.matches(badDimensionNames[j]))
+        if (badDimensionPatterns != null)
+            for (int j = 0; j < badDimensionPatterns.length; j++)
+                if (badDimensionPatterns[j].matcher(dimensionTypeName).matches())
                     return false;
                 
-        if (dimensionNames != null)
-            for (int j = 0; j < dimensionNames.length; j++)
-                if (dimensionTypeName.matches(dimensionNames[j]))
+        if (dimensionPatterns != null)
+            for (int j = 0; j < dimensionPatterns.length; j++)
+                if (dimensionPatterns[j].matcher(dimensionTypeName).matches())
                     return true;
                 
         return dimensionNames == null;
