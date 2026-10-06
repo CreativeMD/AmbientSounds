@@ -8,7 +8,8 @@
         "forest.roofed",
         "jungle",
         "rain",
-        "pale-garden"
+        "pale-garden",
+        "vampire-forest"
     ],
     "temperature": {
         "min": 0.2,
