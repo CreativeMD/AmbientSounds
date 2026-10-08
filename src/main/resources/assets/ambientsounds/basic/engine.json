@@ -43,6 +43,11 @@
         "#minecraft:slabs",
         "#minecraft:trapdoors"
     ],
+    "water": [
+        "minecraft:water",
+        "c:water",
+        "c:salt_water"
+    ],
     "biome-types": [
         "surface",
         "underground"
