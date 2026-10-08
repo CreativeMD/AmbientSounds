@@ -32,11 +32,14 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import team.creative.ambientsounds.AmbientSounds;
 import team.creative.ambientsounds.block.AmbientBlockGroup;
 import team.creative.ambientsounds.dimension.AmbientDimension;
@@ -144,9 +147,9 @@ public class AmbientEngine {
             engine.soundEngine = soundEngine;
             
             AmbientSounds.LOGGER.info(
-                "Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} blockgroups, {} sound collections, {} regions, {} sounds, {} sound categories, {} solids and {} biome types",
+                "Loaded AmbientEngine '{}' v{}. {} dimension(s), {} features, {} blockgroups, {} sound collections, {} regions, {} sounds, {} sound categories, {} solids, {} water tags and {} biome types",
                 engine.name, engine.version, engine.dimensions.size(), engine.features.size(), engine.blockGroups.size(), engine.soundCollections.size(), engine.allRegions.size(),
-                engine.allSounds.size(), engine.soundCategories.size(), engine.solids.length, engine.biomeTypes.length);
+                engine.allSounds.size(), engine.soundCategories.size(), engine.solids.length, engine.water.length, engine.biomeTypes.length);
             return engine;
         } finally {
             engineInput.close();
@@ -251,6 +254,7 @@ public class AmbientEngine {
     public transient int maxAirPocketCount;
     
     public transient AmbientBlockGroup considerSolid;
+    public transient List<TagKey<Fluid>> considerWater;
     public transient double squaredBiomeDistance;
     
     public AmbientRegion getRegion(String name) {
@@ -302,6 +306,8 @@ public class AmbientEngine {
     public int skyMaxCount = 100;
     
     public String[] solids = {};
+    
+    public String[] water = {};
     
     @SerializedName("biome-types")
     public String[] biomeTypes = {};
@@ -433,6 +439,11 @@ public class AmbientEngine {
         if (solids != null)
             considerSolid.add(solids);
         
+        considerWater = new ArrayList<>();
+        if (water != null)
+            for (int i = 0; i < water.length; i++)
+                considerWater.add(TagKey.create(Registries.FLUID, Identifier.tryParse(water[i])));
+            
         squaredBiomeDistance = Math.pow(biomeScanCount * biomeScanDistance * 2, 2); // It is actually twice the distance, so the farthest away biome still has half of the volume
         
         onClientLoad();

@@ -3,10 +3,12 @@ package team.creative.ambientsounds.environment;
 import java.util.HashMap;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import team.creative.ambientsounds.condition.AmbientTime;
 import team.creative.ambientsounds.condition.AmbientVolume;
 import team.creative.ambientsounds.dimension.AmbientDimension;
@@ -51,7 +53,7 @@ public class AmbientEnvironment {
         return rainSurfaceVolume > 0;
     }
     
-    public void analyzeFast(AmbientDimension dimension, Player player, Level level, float deltaTime) {
+    public void analyzeFast(AmbientEngine engine, AmbientDimension dimension, Player player, Level level, float deltaTime) {
         this.dimension = dimension;
         this.raining = level.isRainingAt(player.blockPosition().above());
         this.snowing = level.getBiome(player.blockPosition()).value().coldEnoughToSnow(player.blockPosition(), level.getSeaLevel()) && level.isRaining();
@@ -64,7 +66,7 @@ public class AmbientEnvironment {
         
         this.temperature = SereneSeasonsCompat.getTemperature(player);
         
-        analyzeUnderwater(player, level);
+        analyzeUnderwater(engine, player, level);
         analyzeTime(level, player, deltaTime);
         entity.analyzeFast(dimension, player, level, deltaTime);
     }
@@ -78,11 +80,25 @@ public class AmbientEnvironment {
         this.dayTimeHour = sunAngle * AmbientTime.ANGLE_TO_TIME;
     }
     
-    public void analyzeUnderwater(Player player, Level level) {
+    private boolean isEyeInFluid(AmbientEngine engine, Player player) {
+        for (TagKey<Fluid> fluid : engine.considerWater)
+            if (player.isEyeInFluid(fluid))
+                return true;
+        return false;
+    }
+    
+    private boolean isWater(FluidState fluid, AmbientEngine engine) {
+        for (TagKey<Fluid> tag : engine.considerWater)
+            if (fluid.is(tag))
+                return true;
+        return false;
+    }
+    
+    public void analyzeUnderwater(AmbientEngine engine, Player player, Level level) {
         int depth = 0;
-        if (player.isEyeInFluid(FluidTags.WATER)) {
+        if (isEyeInFluid(engine, player)) {
             BlockPos blockpos = BlockPos.containing(player.getEyePosition());
-            while (level.getFluidState(blockpos).is(FluidTags.WATER)) {
+            while (isWater(level.getFluidState(blockpos), engine)) {
                 depth++;
                 blockpos = blockpos.above();
             }
@@ -90,7 +106,7 @@ public class AmbientEnvironment {
         this.underwater = depth;
     }
     
-    public void analyzeSlow(AmbientDimension dimension, AmbientEngine engine, Player player, Level level, float deltaTime) {
+    public void analyzeSlow(AmbientEngine engine, AmbientDimension dimension, Player player, Level level, float deltaTime) {
         terrain.analyze(engine, dimension, player, level);
         biome = new BiomeEnvironment(engine, player, level, biomeVolume);
         rainSurfaceVolume = biome.rainVolume();

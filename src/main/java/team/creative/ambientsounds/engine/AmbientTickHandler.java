@@ -190,10 +190,10 @@ public class AmbientTickHandler {
             }
             
             if (timer % engine.environmentTickTime == 0)
-                environment.analyzeSlow(newDimension, engine, player, level, timer);
+                environment.analyzeSlow(engine, newDimension, player, level, timer);
             
             if (timer % engine.soundTickTime == 0) {
-                environment.analyzeFast(newDimension, player, level, mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+                environment.analyzeFast(engine, newDimension, player, level, mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
                 environment.dimension.manipulateEnviroment(environment);
                 
                 engine.tick(environment);
