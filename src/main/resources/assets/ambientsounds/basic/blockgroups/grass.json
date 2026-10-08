@@ -3,5 +3,9 @@
     "minecraft:podzol",
     "minecraft:grass",
     "minecraft:fern",
-    "minecraft:tall_grass"
+    "minecraft:tall_grass",
+    "biomeswevegone:lush_grass_block",
+    "biomeswevegone:prairie_grass",
+    "biomeswevegone:tall_prairie_grass",
+    "#regions_unexplored:grass"
 ]
