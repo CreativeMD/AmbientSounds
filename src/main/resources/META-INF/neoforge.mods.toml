@@ -5,12 +5,12 @@ license="LGPL-3.0-only"
 
 [[mods]]
     modId="ambientsounds"
-    iconFile="ambientsounds.png"
-    version="6.3.9"
+    version="6.3.10"
     displayName="AmbientSounds"
     displayURL="https://modrinth.com/mod/ambientsounds"
     authors="CreativeMD"
     description='''Expands minecraft's ambient sounds.'''
+    iconFile="ambientsounds.png"
     displayTest="NONE"
 
 [[dependencies.ambientsounds]]
