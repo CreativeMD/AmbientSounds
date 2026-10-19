@@ -12,9 +12,6 @@
         "jungle",
         "rain"
     ],
-    "bad-biomes": [
-        "river"
-    ],
     "temperature": {
         "min": 0.2
     },
