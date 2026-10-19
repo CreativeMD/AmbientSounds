@@ -1,3 +1,7 @@
+6.3.11
+Added better differentiation between grass and grass blocks to support custom biomes with different ground materials
+Fixed not playing crickets near rivers
+
 6.3.10
 Added grass variants of biomeswevegone and regionsunexplored
 Added support for other water types
