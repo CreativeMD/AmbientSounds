@@ -2,7 +2,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'com.modrinth.minotaur' version '2.+'
-    id 'net.neoforged.gradle.userdev' version '7.1.+'
+    id 'net.neoforged.moddev' version '2.0.+'
 }
 
 group= "team.creative" + project.mod_id
@@ -11,23 +11,28 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 project.evaluationDependsOn(":CreativeCore")
 
-dependencies {
-    implementation "net.neoforged:neoforge:${forge_version}"
-    
-    implementation project(':CreativeCore')
+neoForge {
+    version = "${forge_version}"
+    validateAccessTransformers = true
+
+    runs {
+        client {
+            client()
+        }
+    }
+
+    mods {
+        AmbientSounds {
+            sourceSet sourceSets.main
+        }
+        CreativeCore {
+            sourceSet project(':CreativeCore').sourceSets.main
+        }
+    }
 }
 
-runs {
-    configureEach {
-        workingDirectory project.file('run')
-        systemProperty 'forge.logging.console.level', 'debug'
-        
-        modSource project.sourceSets.main
-        modSource project(":CreativeCore").sourceSets.main
-    }
-    
-    client {
-    }
+dependencies {
+    implementation project(':CreativeCore')
 }
 
 modProperties = [ '    displayTest="NONE"' ]
@@ -35,4 +40,4 @@ modDependencies = [
     [ modId: "creativecore", type: "required", ordering: "NONE", side: "BOTH", versionRange: "[" + creativecore_version + ",)" ]
 ]
 modMixins = [ "ambientsounds.mixins.json" ]
-modSides=[ "client" ]
+modSides=[ "Client" ]

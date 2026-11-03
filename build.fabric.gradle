@@ -23,4 +23,4 @@ dependencies {
 modDependencies = [
     creativecore: ">=" + creativecore_version
 ]
-modSides=[ "client" ]
+modSides=[ "Client" ]
